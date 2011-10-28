@@ -29,7 +29,7 @@ func (dbg *DebugData) Init () {
 
 func (mater *Mater) DebugDraw () {
 	dbg := &(mater.Dbg)
-	cam := mater.Camera
+	cam := mater.Scene.Camera
 	gl.PushMatrix()
 		gl.Color4f(0, 1, 0, .5)
 		Render.DrawCircle(Vector2{cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2}, cam.ScreenSize.Y / 2.0 - 5.0, false)

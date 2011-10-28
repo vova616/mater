@@ -5,23 +5,22 @@ import (
 	. "box2d/vector2"
 	"gob"
 	"os"
-	"json"
-	"io/ioutil"
 )
 
 type Mater struct {
-	Camera *Camera
+	DefaultCamera Camera
 	Running, Paused bool
 	Dbg DebugData
 	Scene *Scene
 }
 
 func (mater *Mater) Init (cam *Camera) {
-	mater.Camera = cam
+	mater.DefaultCamera = *cam
 	dbg := &(mater.Dbg)
 	dbg.Init()
 	mater.Scene = new(Scene)
-	mater.Scene.Init()
+	mater.Scene.Init(mater)
+	mater.Scene.Camera = cam
 
 	mater.Dbg.DebugView = NewDebugView(mater.Scene.World)
 }
@@ -32,7 +31,8 @@ func (mater *Mater) OnResize (width, height int) {
 	}
 
 	w, h := float64(width), float64(height)
-	mater.Camera.ScreenSize = Vector2{w, h}
+	mater.DefaultCamera.ScreenSize = Vector2{w, h}
+	mater.Scene.Camera.ScreenSize = Vector2{w, h}
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
@@ -48,54 +48,31 @@ func (mater *Mater) Update (dt float64) {
 
 func (mater *Mater) Draw () {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	mater.Camera.PreDraw()
+	mater.Scene.Camera.PreDraw()
 	{
 
 	}
-	mater.Camera.PostDraw()
+	mater.Scene.Camera.PostDraw()
 }
 
-var encodeType = "gob"
 func (mater *Mater) SaveScene (path string) os.Error{
 	scene := mater.Scene
-	if encodeType == "gob" {
 
-		file, err := os.Create(path)
-		if err != nil {
-			dbg.Printf("Error opening File: %v", err)
-			return err
-		}
-		defer file.Close()
-
-		encoder := gob.NewEncoder(file)
-		err = encoder.Encode(scene)
-		if err != nil {
-			dbg.Printf("Error encoding Scene: %v", err)
-			return err
-		}
-
-		return nil
-	} else if encodeType == "json" {
-
-		sceneData, err := json.MarshalIndent(scene, "", "\t")
-		if err != nil {
-			dbg.Printf("Error marshaling World: %v", err)
-			return err
-		}
-
-		file, err := os.Create(path)
-		if err != nil {
-			dbg.Printf("Error opening File: %v", err)
-			return err
-		}
-		defer file.Close()
-
-		if _, err := file.Write(sceneData); err != nil {
-			dbg.Printf("Error writing File: %v", err)
-			return err
-		}
-
+	file, err := os.Create(path)
+	if err != nil {
+		dbg.Printf("Error opening File: %v", err)
+		return err
 	}
+	defer file.Close()
+
+	encoder := gob.NewEncoder(file)
+	err = encoder.Encode(scene)
+	if err != nil {
+		dbg.Printf("Error encoding Scene: %v", err)
+		return err
+	}
+
+	return nil
 
 	return os.NewError("Unknown encoding")
 }
@@ -104,46 +81,20 @@ func (mater *Mater) LoadScene (path string) os.Error {
 
 	var scene *Scene
 
-	if encodeType == "gob" {
+	file, err := os.Open(path)
+	if err != nil {
+		dbg.Printf("Error opening File: %v", err)
+		return err
+	}
+	defer file.Close()
 
-		file, err := os.Open(path)
-		if err != nil {
-			dbg.Printf("Error opening File: %v", err)
-			return err
-		}
-		defer file.Close()
+	scene = new(Scene)
+	decoder := gob.NewDecoder(file)
 
-		scene = new(Scene)
-		decoder := gob.NewDecoder(file)
-
-		err = decoder.Decode(scene)
-		if err != nil {
-			dbg.Printf("Error decoding Scene: %v", err)
-			return err
-		}
-
-	} else if encodeType == "json" {
-		file, err := os.Open(path)
-		if err != nil {
-			dbg.Printf("Error opening File: %v", err)
-			return err
-		}
-		defer file.Close()
-
-		var data []byte
-		data, err = ioutil.ReadAll(file)
-		if err != nil {
-			dbg.Printf("Error reading File: %v", err)
-			return err
-		}
-
-		scene = new(Scene)
-		err = json.Unmarshal(data, scene)
-
-		if err != nil {
-			dbg.Printf("Error unmarshaling World: %v", err)
-			return err
-		}
+	err = decoder.Decode(scene)
+	if err != nil {
+		dbg.Printf("Error decoding Scene: %v", err)
+		return err
 	}
 
 	mater.Scene = scene
