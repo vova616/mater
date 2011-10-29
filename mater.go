@@ -56,8 +56,12 @@ func (mater *Mater) Draw () {
 	mater.Scene.Camera.PostDraw()
 }
 
+var saveDirectory = "saves/"
+
 func (mater *Mater) SaveScene (path string) os.Error{
 	scene := mater.Scene
+
+	path = saveDirectory + path
 
 	file, err := os.Create(path)
 	if err != nil {
@@ -79,6 +83,8 @@ func (mater *Mater) SaveScene (path string) os.Error{
 func (mater *Mater) LoadScene (path string) os.Error {
 
 	var scene *Scene
+
+	path = saveDirectory + path
 
 	file, err := os.Open(path)
 	if err != nil {
