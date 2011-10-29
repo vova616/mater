@@ -67,11 +67,7 @@ func (cam Camera) WorldToScreen (worldPos Vector2) Vector2 {
 	sx := c * tx - s * ty
 	sy := s * tx + c * ty
 	
-	v := new(Vector2)
-	v.X = sx * cam.Scale.X
-	v.Y = sy * cam.Scale.Y
-	
-	return *v
+	return Vector2{sx * cam.Scale.X, sy * cam.Scale.Y}
 }
 
 func (cam Camera) ScreenToWorld (screenPos Vector2) Vector2 {
@@ -90,10 +86,7 @@ func (cam Camera) ScreenToWorld (screenPos Vector2) Vector2 {
 	sx -= (cam.ScreenSize.X / 2) / cam.Scale.X
 	sy -= (cam.ScreenSize.Y / 2) / cam.Scale.Y
 	
-	v := new(Vector2)
-	v.X, v.Y = sx, sy
-	
-	return *v
+	return Vector2{sx, sy}
 }
 
 
