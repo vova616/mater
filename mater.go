@@ -7,8 +7,6 @@ import (
 	"os"
 )
 
-var lastSave string
-
 type Mater struct {
 	DefaultCamera Camera
 	Running, Paused bool

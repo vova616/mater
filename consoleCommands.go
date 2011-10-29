@@ -22,27 +22,49 @@ func init () {
 	}
 }
 
+var lastSave string
+
 func command_save (mater *Mater, params []string) {
+	var path string
 	if len(params) < 1 {
-		fmt.Printf("Usage: save <filename>\n")
-		return
+		if lastSave != "" {
+			path = lastSave
+		} else {
+			fmt.Printf("Usage: save <filename>\n")
+			return
+		}
+	} else {
+		path = params[0]
 	}
 
-	path := params[0]
-	fmt.Printf("Saving  to %v\n", path)
-	mater.SaveScene(path)
+	fmt.Printf("Saving to %v\n", path)
+	err := mater.SaveScene(path)
+
+	if err == nil {
+		lastSave = path
+	}
 }
 
 func command_load (mater *Mater, params []string) {
+	var path string
 	if len(params) < 1 {
-		fmt.Printf("Usage: load <filename>\n")
-		return
+		if lastSave != "" {
+			path = lastSave
+		} else {
+			fmt.Printf("Usage: load <filename>\n")
+			return
+		}
+	} else {
+		path = params[0]
 	}
 
-	path := params[0]
-	fmt.Printf("Loading  from %v\n", path)
+	fmt.Printf("Loading from %v\n", path)
 	mater.Paused = true
-	mater.LoadScene(path)
+	err := mater.LoadScene(path)
+
+	if err == nil {
+		lastSave = path
+	}
 }
 
 func command_quit (mater *Mater, params []string) {
