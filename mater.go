@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+var lastSave string
+
 type Mater struct {
 	DefaultCamera Camera
 	Running, Paused bool
@@ -17,7 +19,7 @@ type Mater struct {
 func (mater *Mater) Init (cam *Camera) {
 	mater.DefaultCamera = *cam
 	dbg := &(mater.Dbg)
-	dbg.Init()
+	dbg.Init(mater)
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
 	mater.Scene.Camera = cam
@@ -43,6 +45,7 @@ func (mater *Mater) OnResize (width, height int) {
 }
 
 func (mater *Mater) Update (dt float64) {
+	
 	mater.Scene.Update(dt)
 }
 
@@ -73,8 +76,6 @@ func (mater *Mater) SaveScene (path string) os.Error{
 	}
 
 	return nil
-
-	return os.NewError("Unknown encoding")
 }
 
 func (mater *Mater) LoadScene (path string) os.Error {
@@ -99,6 +100,11 @@ func (mater *Mater) LoadScene (path string) os.Error {
 
 	mater.Scene = scene
 	scene.World.Enabled = true
+
+	if mater.Scene.Camera == nil {
+		cam := mater.DefaultCamera
+		mater.Scene.Camera = &cam
+	}
 
 	mater.Dbg.DebugView.Reset(mater.Scene.World)
 

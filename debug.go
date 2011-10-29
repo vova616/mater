@@ -19,12 +19,15 @@ type DebugData struct {
 		Values int
 	}
 	DebugView *DebugView
+	Console *Console
 }
 
-func (dbg *DebugData) Init () {
+func (dbg *DebugData) Init (mater *Mater) {
 	dbg.TimeData.Values = 128
 	dbg.TimeData.DrawTime = make([]float64, dbg.TimeData.Values)
 	dbg.TimeData.UpdateTime = make([]float64, dbg.TimeData.Values)
+	dbg.Console = new(Console)
+	dbg.Console.Init(mater)
 }
 
 func (mater *Mater) DebugDraw () {
