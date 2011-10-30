@@ -4,9 +4,18 @@ import (
 	"github.com/jteeuwen/glfw"
 )
 
-var QuickSavePath = "saves/quicksave.dat"
+var QuickSavePath = "quicksave.dat"
+
+type OnKeyCallbackFunc func (mater *Mater, key, state int) OnKeyCallbackFunc
 
 func (mater *Mater) OnKey (key, state int) {
+
+	mater.OnKeyCallback = mater.OnKeyCallback(mater,key, state)
+	
+}
+
+func DefaultKeyCallback (mater *Mater, key, state int) OnKeyCallbackFunc {
+	
 	if state == 1 {
 		switch key {
 		case glfw.KeyF3:
@@ -27,4 +36,6 @@ func (mater *Mater) OnKey (key, state int) {
 			mater.Paused = true
 		}
 	}
+
+	return DefaultKeyCallback
 }

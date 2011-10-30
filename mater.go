@@ -12,6 +12,7 @@ type Mater struct {
 	Running, Paused bool
 	Dbg DebugData
 	Scene *Scene
+	OnKeyCallback OnKeyCallbackFunc
 }
 
 func (mater *Mater) Init (cam *Camera) {
@@ -23,6 +24,8 @@ func (mater *Mater) Init (cam *Camera) {
 	mater.Scene.Camera = cam
 
 	mater.Dbg.DebugView = NewDebugView(mater.Scene.World)
+
+	mater.OnKeyCallback = DefaultKeyCallback
 }
 
 func (mater *Mater) OnResize (width, height int) {
