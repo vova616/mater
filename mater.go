@@ -1,14 +1,16 @@
 package mater
 
 import (
-	"gl"
 	. "box2d/vector2"
-	"gob"
+	"bytes"
+	"gl"
+	"json"
 	"os"
 )
 
 type Mater struct {
 	DefaultCamera Camera
+	ScreenSize Vector2
 	Running, Paused bool
 	Dbg DebugData
 	Scene *Scene
@@ -34,8 +36,9 @@ func (mater *Mater) OnResize (width, height int) {
 	}
 
 	w, h := float64(width), float64(height)
-	mater.DefaultCamera.ScreenSize = Vector2{w, h}
-	mater.Scene.Camera.ScreenSize = Vector2{w, h}
+	mater.ScreenSize = Vector2{w, h}
+	mater.DefaultCamera.ScreenSize = mater.ScreenSize
+	mater.Scene.Camera.ScreenSize = mater.ScreenSize
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
@@ -73,10 +76,19 @@ func (mater *Mater) SaveScene (path string) os.Error{
 	}
 	defer file.Close()
 
-	encoder := gob.NewEncoder(file)
-	err = encoder.Encode(scene)
+	//encoder := json.NewEncoder(file)
+	//err = encoder.Encode(scene)
+
+	dataString, err := json.MarshalIndent(scene, "", "\t")
 	if err != nil {
 		dbg.Printf("Error encoding Scene: %v", err)
+		return err
+	}
+
+	buf := bytes.NewBuffer(dataString)
+	n, err := buf.WriteTo(file)
+	if err != nil {
+		dbg.Printf("Error after writing %v characters to File: %v", n, err)
 		return err
 	}
 
@@ -97,7 +109,7 @@ func (mater *Mater) LoadScene (path string) os.Error {
 	defer file.Close()
 
 	scene = new(Scene)
-	decoder := gob.NewDecoder(file)
+	decoder := json.NewDecoder(file)
 
 	err = decoder.Decode(scene)
 	if err != nil {
@@ -111,6 +123,8 @@ func (mater *Mater) LoadScene (path string) os.Error {
 	if mater.Scene.Camera == nil {
 		cam := mater.DefaultCamera
 		mater.Scene.Camera = &cam
+	} else {
+		mater.Scene.Camera.ScreenSize = mater.ScreenSize
 	}
 
 	mater.Dbg.DebugView.Reset(mater.Scene.World)

@@ -1,6 +1,7 @@
 package mater
 
 import (
+	"mater/render"
 	. "box2d"
 	. "box2d/vector2"
 	"box2d/settings"
@@ -100,7 +101,7 @@ func (dv *DebugView) DrawDebugData () {
 
 	gl.Color3f(.4, .4, .4)
 	for _, aabb := range(world.GetDynamicTreeNodes()) {
-		Render.DrawQuad(aabb.LowerBound, aabb.UpperBound, false)
+		render.DrawQuad(aabb.LowerBound, aabb.UpperBound, false)
 	}
 
 	//Draw shapes
@@ -136,15 +137,15 @@ func (dv *DebugView) DrawDebugData () {
 		gl.Color3f(.4, .9, .4)
 		p1 := point.Position
 		p2 := Add(p1, Scale(point.Normal, axisScale))
-		Render.DrawLine(p1, p2)
+		render.DrawLine(p1, p2)
 		
 		gl.Begin(gl.POINTS)
 		if point.State == PointState_Add {
 			gl.Color3f(.3, .95, .3)
-			Render.DrawCircle(p1, .1, true)
+			render.DrawCircle(p1, .1, true)
 		} else if point.State == PointState_Persist {
 			gl.Color3f(.3, .3, .95)
-			Render.DrawCircle(p1, .1, true)
+			render.DrawCircle(p1, .1, true)
 		}
 		gl.End()
 	}
@@ -155,7 +156,7 @@ func DrawShape(shape *Shape, xf *Transform) {
 	switch shape.ShapeType() {
 		case ShapeType_Circle:
 			circle := shape.ShapeClass.(*CircleShape)
-			Render.DrawCircle(Add(xf.Position, circle.Position()), circle.Radius(), false)
+			render.DrawCircle(Add(xf.Position, circle.Position()), circle.Radius(), false)
 			break
 		case ShapeType_Polygon:
 			poly := shape.ShapeClass.(*PolygonShape)
@@ -164,7 +165,7 @@ func DrawShape(shape *Shape, xf *Transform) {
 			for i := 0; i < vertCount; i++ {
 				_tmpVertices[i] = MultiplyTransformVect(xf, &poly.Vertices[i])
 			}
-			Render.DrawPoly(_tmpVertices, vertCount, false)
+			render.DrawPoly(_tmpVertices, vertCount, false)
 			break
 	}
 }
