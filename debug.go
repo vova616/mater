@@ -1,12 +1,27 @@
 package mater
 
 import (
+	"os"
 	"gl"
 	. "box2d/vector2"
 	"mater/util"
+	. "mater/texutil"
+	"ftgl-go"
 )
 
 var dbg = &util.Dbg
+var TestTexture *Texture
+
+var TestFont *ftgl.Font
+func init() {
+	var err os.Error
+	TestFont, err = ftgl.CreatePixmapFont("fonts/ttf-bitstream-vera-1.10/VeraMono.ttf")
+	if err != nil {
+		dbg.Printf("Error loading font")
+		return
+	}
+	TestFont.SetFontFaceSize(72, 72);
+}
 
 type DebugData struct {
 	SingleStep bool
@@ -37,6 +52,26 @@ func (mater *Mater) DebugDraw () {
 		gl.Color4f(0, 1, 0, .5)
 		Render.DrawCircle(Vector2{cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2}, cam.ScreenSize.Y / 2.0 - 5.0, false)
 		
+		TestFont.RenderFont("TestText", ftgl.RENDER_ALL)
+		/*{
+			size := 64.0
+			verts := [4]Vector2{
+				Vector2{-size, -size},
+				Vector2{size, -size},
+				Vector2{size, size},
+				Vector2{-size, size},
+			}
+
+			tsize := 1.0
+			tc := [4]Vector2{
+				Vector2{-tsize, -tsize},
+				Vector2{tsize, -tsize},
+				Vector2{tsize, tsize},
+				Vector2{-tsize, tsize},
+			}
+			Render.DrawTextureQuad(TestTexture, verts, tc)
+		}*/
+
 		//draw collision objects
 		cam.PreDraw()
 			mater.Dbg.DebugView.DrawDebugData()

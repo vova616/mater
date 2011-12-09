@@ -2,23 +2,28 @@ package mater
 
 import (
 	"box2d"
-	"github.com/abneptis/GoUUID"
 )
 
 type Entity struct {
-	id *uuid.UUID
+	id int
 	EntityClass
 	Body *box2d.Body
 	Enabled bool
 	Scene *Scene
 }
 
+var lastId = 0
+func nextId() int {
+	lastId++
+	return lastId
+}
+
 func (entity *Entity) Init (entityClass EntityClass, scene *Scene) {
-	if entity.id != nil {
+	if entity.id != 0 {
 		return
 	}
 
-	entity.id = uuid.NewV4()
+	entity.id = nextId()
 	entity.Enabled = true
 	entity.Scene = scene
 
@@ -34,8 +39,8 @@ func (entity *Entity) Destroy () {
 	entity.Enabled = false
 }
 
-func (entity *Entity) Id () uuid.UUID {
-	return *entity.id
+func (entity *Entity) Id () int {
+	return entity.id
 }
 
 type EntityClass interface {

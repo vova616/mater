@@ -21,6 +21,7 @@ import (
 	"gl"
 	"math"
 	. "box2d/vector2"
+	. "mater/texutil"
 )
 
 type render struct {}
@@ -82,4 +83,20 @@ func (Render render) DrawPoly (vertices []Vector2, vertCount int, filled bool) {
 		v := vertices[i]
 		gl.Vertex2d(v.Unpack())
 	}
+}
+
+func (Render render) DrawTextureQuad (texture *Texture, vertices [4]Vector2, texCoords [4]Vector2) {
+	
+	gl.BindTexture (gl.TEXTURE_2D, uint(texture.Texture))
+	gl.Begin (gl.QUADS)
+
+	for i := 0; i < 4; i++ {
+		v := vertices[i]
+		tc := texCoords[i]
+
+		gl.TexCoord2d(tc.X, tc.Y)
+		gl.Vertex2d(v.X, v.Y)
+	}
+
+	gl.End ()
 }
