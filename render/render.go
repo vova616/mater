@@ -18,10 +18,10 @@
 package render
 
 import (
-	"gl"
-	"math"
 	. "box2d/vector2"
+	"gl"
 	. "mater/texutil"
+	"math"
 )
 
 func DrawQuad (upperLeft, lowerRight Vector2, filled bool) {
