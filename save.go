@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"json"
 	"os"
+	"box2d"
 )
 
 var saveDirectory = "saves/"
@@ -72,6 +73,172 @@ func (mater *Mater) LoadScene (path string) os.Error {
 	}
 
 	mater.Dbg.DebugView.Reset(mater.Scene.World)
+
+	return nil
+}
+
+type serializationState struct {
+	SerializedBodies map[*box2d.Body]bool
+}
+
+func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
+	bodyNum := len(scene.World.BodyList())
+	state := serializationState{
+		//allocate space for half of the bodies
+		//not all are going to be attached to entities
+		SerializedBodies: make(map[*box2d.Body]bool, bodyNum / 2),
+	}
+
+	buf := bytes.NewBuffer(nil)
+	encoder := json.NewEncoder(buf)
+
+	var err os.Error
+
+	buf.WriteString(`{"Camera":`)
+	encoder.Encode(scene.Camera)
+
+	buf.WriteString(`,"Entities":`)
+	entities, err := scene.MarshalEntities(&state)
+	if err != nil {
+		return nil, err
+	}
+	buf.Write(entities)
+
+
+	buf.WriteString(`,"World":`)
+	world, err := scene.MarshalWorld(&state)
+	if err != nil {
+		return nil, err
+	}
+	buf.Write(world)
+
+	buf.WriteByte('}')
+
+	return buf.Bytes(), nil
+}
+
+func (scene *Scene) MarshalEntities(state *serializationState) ([]byte, os.Error) {
+	buf := bytes.NewBuffer(nil)
+	encoder := json.NewEncoder(buf)
+
+	buf.WriteByte('[')
+	for _, entity := range scene.Entities {
+		body := entity.Body
+		if body != nil {
+			state.SerializedBodies[body] = true
+		}
+		//two entities can not be attached to the same body.
+		//if they are, once unserialized each of them has its own copy.
+
+		//workdaround till update: set Entity.Scene to nil so we don't serialize it
+		entity.Scene = nil
+
+		err := encoder.Encode(entity)
+		if err != nil {
+			return nil, err
+		}
+
+		buf.WriteByte(',')
+
+		//restore Entity.Scene
+		entity.Scene = scene	
+	}
+	if len(scene.Entities) > 0 {
+		//cut trailing comma
+		buf.Truncate(buf.Len() - 1)
+	}
+
+	buf.WriteByte(']')
+
+	return buf.Bytes(), nil
+}
+
+func (scene *Scene) MarshalWorld(state *serializationState) ([]byte, os.Error) {
+	buf := bytes.NewBuffer(nil)
+	encoder := json.NewEncoder(buf)
+
+	world := scene.World
+
+	buf.WriteByte('{')
+	buf.WriteString(`"Gravity":`)
+	encoder.Encode(world.Gravity)
+
+	buf.WriteString(`,"Bodies":`)
+	buf.WriteByte('[')
+
+	//actual number of serialized bodies may be different than the total number of bodies
+	//because of that we keep track how many we actually write
+	bodyNum := 0
+	for _, body := range world.BodyList() {
+		
+		if state.SerializedBodies[body] {
+			continue
+		}
+		bodyNum++
+
+		err := encoder.Encode(body)
+		if err != nil {
+			return nil, err
+		}
+
+		buf.WriteByte(',')
+	}
+
+	if bodyNum > 0 {
+		//cut trailing comma
+		buf.Truncate(buf.Len() - 1)
+	}
+	buf.WriteByte(']')
+
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
+}
+
+func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
+	sceneData := struct {
+		Camera *Camera
+		World *box2d.World
+		Entities []json.RawMessage
+	}{}
+
+	err := json.Unmarshal(data, &sceneData)
+	if err != nil {
+		return err
+	}
+
+	sd := &sceneData
+
+	scene.Camera = sd.Camera
+	scene.World = sd.World
+
+	if scene.Entities == nil {
+		scene.Entities = make([]*Entity, 0, 32)
+	}
+
+	for _, rawEntity := range sd.Entities {
+		err := scene.UnmarshalEntity(rawEntity)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (scene *Scene) UnmarshalEntity(entityData []byte) os.Error {
+	entity := Entity{}
+
+	err := json.Unmarshal(entityData, &entity)
+	if err != nil {
+		return err
+	}
+
+	entity.Scene = scene
+	if entity.Body != nil {
+		entity.Body.RegisterBody(scene.World)
+	}
+
+	scene.Entities = append(scene.Entities, &entity)
 
 	return nil
 }

@@ -14,15 +14,17 @@ type Mater struct {
 	OnKeyCallback OnKeyCallbackFunc
 }
 
-func (mater *Mater) Init (cam *Camera) {
-	mater.DefaultCamera = *cam
+func (mater *Mater) Init () {
 	dbg := &(mater.Dbg)
 	dbg.Init(mater)
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
-	mater.Scene.Camera = cam
 
-	mater.Dbg.DebugView = NewDebugView(mater.Scene.World)
+	if dbg.DebugView == nil {
+		mater.Dbg.DebugView = NewDebugView(mater.Scene.World)
+	} else {
+		mater.Dbg.DebugView.Reset(mater.Scene.World)
+	}
 
 	mater.OnKeyCallback = DefaultKeyCallback
 }
@@ -35,7 +37,9 @@ func (mater *Mater) OnResize (width, height int) {
 	w, h := float64(width), float64(height)
 	mater.ScreenSize = Vector2{w, h}
 	mater.DefaultCamera.ScreenSize = mater.ScreenSize
-	mater.Scene.Camera.ScreenSize = mater.ScreenSize
+	if mater.Scene != nil {
+		mater.Scene.Camera.ScreenSize = mater.ScreenSize
+	}
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()

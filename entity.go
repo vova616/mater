@@ -6,10 +6,9 @@ import (
 
 type Entity struct {
 	id int
-	EntityClass
-	Body *box2d.Body
+	Body *box2d.Body `json:",omitempty"`
 	Enabled bool
-	Scene *Scene
+	Scene *Scene `json:"-,omitempty"`
 }
 
 var lastId = 0
@@ -18,7 +17,7 @@ func nextId() int {
 	return lastId
 }
 
-func (entity *Entity) Init (entityClass EntityClass, scene *Scene) {
+func (entity *Entity) Init (scene *Scene) {
 	if entity.id != 0 {
 		return
 	}
@@ -26,16 +25,10 @@ func (entity *Entity) Init (entityClass EntityClass, scene *Scene) {
 	entity.id = nextId()
 	entity.Enabled = true
 	entity.Scene = scene
-
-	entity.EntityClass = entityClass
-	entityClass.Init(entity)
 }
 
 func (entity *Entity) Destroy () {
-	entity.EntityClass.Destroy()
-
 	entity.Scene = nil
-	entity.EntityClass = nil
 	entity.Enabled = false
 }
 
