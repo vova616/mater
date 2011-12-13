@@ -4,10 +4,10 @@ import (
 	. "box2d/vector2"
 	"gl"
 	"mater/render"
-	"mater/util"
+	"mater/log"
 )
 
-var dbg = &util.Dbg
+var dbg = &log.Dbg
 
 type DebugData struct {
 	SingleStep bool
@@ -15,9 +15,9 @@ type DebugData struct {
 	Console *Console
 }
 
-func (dbg *DebugData) Init (mater *Mater) {
-	dbg.Console = new(Console)
-	dbg.Console.Init(mater)
+func (dd *DebugData) Init (mater *Mater) {
+	dd.Console = new(Console)
+	dd.Console.Init(mater)
 }
 
 func (mater *Mater) DebugDraw () {

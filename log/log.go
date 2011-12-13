@@ -1,6 +1,6 @@
-package util
+package log
 
-import (
+import(
 	"log"
 	"fmt"
 	"os"

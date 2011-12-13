@@ -20,11 +20,11 @@ package render
 import (
 	"ftgl-go"
 	"gl"
-	"mater/util"
+	"mater/log"
 	"os"
 )
 
-var dbg = &util.Dbg
+var dbg = &log.Dbg
 
 var Font *ftgl.Font
 func init() {
