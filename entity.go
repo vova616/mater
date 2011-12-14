@@ -9,6 +9,7 @@ type Entity struct {
 	Body *box2d.Body `json:",omitempty"`
 	Enabled bool
 	Scene *Scene `json:"-,omitempty"`
+	Components map[string]Component
 }
 
 var lastId = 0
@@ -25,19 +26,24 @@ func (entity *Entity) Init (scene *Scene) {
 	entity.id = nextId()
 	entity.Enabled = true
 	entity.Scene = scene
+	entity.Components = make(map[string]Component)
+}
+
+func (entity *Entity) Update (dt float64) {
+	for _, component := range entity.Components {
+		component.Update(entity, dt)
+	}
 }
 
 func (entity *Entity) Destroy () {
 	entity.Scene = nil
 	entity.Enabled = false
+
+	for _, component := range entity.Components {
+		component.Destroy(entity)
+	}
 }
 
 func (entity *Entity) Id () int {
 	return entity.id
-}
-
-type EntityClass interface {
-	Init (entity *Entity)
-	Update (dt float64)
-	Destroy()
 }

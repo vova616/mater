@@ -242,3 +242,49 @@ func (scene *Scene) UnmarshalEntity(entityData []byte) os.Error {
 
 	return nil
 }
+
+func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
+	buf := bytes.NewBuffer(nil)
+	encoder := json.NewEncoder(buf)
+
+	buf.WriteByte('{')
+	buf.WriteString(`"ID":`)
+	encoder.Encode(entity.id)
+
+	buf.WriteString(`,"Enabled":`)
+	encoder.Encode(entity.Enabled)
+
+	buf.WriteString(`,"Body":`)
+	err := encoder.Encode(entity.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	buf.WriteString(`,"Components":`)
+	buf.WriteByte('[')
+	ccount := 0
+	for _, component := range entity.Components {
+		if sc, ok := serializableComponents[component.Name()]; ok {
+			ccount++
+			buf.WriteByte('"')
+			buf.WriteString(component.Name())
+			buf.WriteString(`":`)
+			data, err := sc.MarshalJSON(entity)
+			if err != nil {
+				return nil, err
+			}
+			buf.Write(data)
+			buf.WriteByte(',')
+		}
+	}
+
+	if ccount > 0 {
+		//cut trailing comma
+		buf.Truncate(buf.Len() - 1)
+	}
+
+	buf.WriteByte(']')
+	buf.WriteByte('}')
+
+	return buf.Bytes(), nil
+}
