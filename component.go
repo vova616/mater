@@ -5,6 +5,7 @@ import (
 )
 
 type Component interface {
+	//name can be different than the name components register themselves with an entity, but it is then used when unmarshalling them because interfaces cannot be unmarhsalled from json
 	Name () string
 	Init (owner *Entity)
 	Update (owner *Entity, dt float64)
@@ -12,23 +13,18 @@ type Component interface {
 }
 
 func (entity *Entity) AddComponent(component Component) {
-	entity.Components[component.Name()] = component
+	//components have to add/remove themselves from entity.Components
 	component.Init(entity)
 }
 
 func (entity *Entity) RemoveComponent(component Component) {
-	name := component.Name()
-	if _, ok := entity.Components[name]; ok {
-		component.Destroy(entity)
-		entity.Components[name] = nil, false
-	}
+	//components have to add/remove themselves from entity.Components
+	component.Destroy(entity)
 }
 
 func (entity *Entity) RemoveComponentName(name string) {
-	component, ok := entity.Components[name]
-	if ok {
+	if component, ok := entity.Components[name]; ok {
 		component.Destroy(entity)
-		entity.Components[name] = nil, false
 	}
 }
 
@@ -41,6 +37,9 @@ type SerializableComponent interface {
 var serializableComponents = make(map[string]SerializableComponent)
 
 func RegisterSerializableComponent(name string, component SerializableComponent) {
-	
 	serializableComponents[name] = component
+}
+
+func UnregisterSerializableComponent(name string) {
+	serializableComponents[name] = nil, false
 }

@@ -18,15 +18,11 @@ func nextId() int {
 	return lastId
 }
 
-func (entity *Entity) Init (scene *Scene) {
-	if entity.id != 0 {
-		return
-	}
-
+func NewEntity () *Entity {
+	entity := new(Entity)
 	entity.id = nextId()
-	entity.Enabled = true
-	entity.Scene = scene
 	entity.Components = make(map[string]Component)
+	return entity
 }
 
 func (entity *Entity) Update (dt float64) {
@@ -36,12 +32,15 @@ func (entity *Entity) Update (dt float64) {
 }
 
 func (entity *Entity) Destroy () {
-	entity.Scene = nil
 	entity.Enabled = false
 
 	for _, component := range entity.Components {
 		component.Destroy(entity)
 	}
+
+	entity.Body = nil
+	entity.Scene.RemoveEntity(entity)
+	entity.Scene = nil
 }
 
 func (entity *Entity) Id () int {

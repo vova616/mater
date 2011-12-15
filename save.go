@@ -130,18 +130,12 @@ func (scene *Scene) MarshalEntities(state *serializationState) ([]byte, os.Error
 		//two entities can not be attached to the same body.
 		//if they are, once unserialized each of them has its own copy.
 
-		//workdaround till update: set Entity.Scene to nil so we don't serialize it
-		entity.Scene = nil
-
 		err := encoder.Encode(entity)
 		if err != nil {
 			return nil, err
 		}
 
 		buf.WriteByte(',')
-
-		//restore Entity.Scene
-		entity.Scene = scene	
 	}
 	if len(scene.Entities) > 0 {
 		//cut trailing comma
@@ -212,7 +206,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	scene.World = sd.World
 
 	if scene.Entities == nil {
-		scene.Entities = make([]*Entity, 0, 32)
+		scene.Entities = make(map[int]*Entity, 32)
 	}
 
 	for _, rawEntity := range sd.Entities {
@@ -226,19 +220,23 @@ func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 }
 
 func (scene *Scene) UnmarshalEntity(entityData []byte) os.Error {
-	entity := Entity{}
+	entity := new(Entity)
+	entity.Scene = scene
 
-	err := json.Unmarshal(entityData, &entity)
+	err := json.Unmarshal(entityData, entity)
 	if err != nil {
 		return err
 	}
 
-	entity.Scene = scene
+	if entity.Components == nil {
+		entity.Components = make(map[string]Component)
+	}
+	
 	if entity.Body != nil {
 		entity.Body.RegisterBody(scene.World)
 	}
 
-	scene.Entities = append(scene.Entities, &entity)
+	scene.AddEntity(entity)
 
 	return nil
 }
@@ -264,10 +262,11 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 	buf.WriteByte('[')
 	ccount := 0
 	for _, component := range entity.Components {
-		if sc, ok := serializableComponents[component.Name()]; ok {
+		name := component.Name()
+		if sc, ok := serializableComponents[name]; ok {
 			ccount++
 			buf.WriteByte('"')
-			buf.WriteString(component.Name())
+			buf.WriteString(name)
 			buf.WriteString(`":`)
 			data, err := sc.MarshalJSON(entity)
 			if err != nil {
