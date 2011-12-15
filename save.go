@@ -225,17 +225,38 @@ func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	return nil
 }
 
-func (scene *Scene) UnmarshalEntity(entityData []byte) os.Error {
-	entity := new(Entity)
-	entity.Scene = scene
+func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
+	entityData := struct {
+		ID int
+		Enabled bool
+		Body *box2d.Body
+		Components map[string]json.RawMessage
+	}{}
+	ed := &entityData
 
-	err := json.Unmarshal(entityData, entity)
+	err := json.Unmarshal(data, ed)
 	if err != nil {
 		return err
 	}
 
-	if entity.Components == nil {
-		entity.Components = make(map[string]Component)
+	entity := new(Entity)
+	entity.Scene = scene
+
+	entity.id = ed.ID
+	entity.Enabled = ed.Enabled
+	entity.Body = ed.Body
+
+	entity.Components = make(map[string]Component, len(ed.Components))
+
+	for name, componentData := range ed.Components {
+		if sc, ok := serializableComponents[name]; ok {
+			//components should initialize themselves when unmarshalled
+			component, err := sc.UnmarshalJSON(entity, componentData)
+			_ = component //ignore unused warning
+			if err != nil {
+				return err
+			}
+		}
 	}
 	
 	if entity.Body != nil {
@@ -265,7 +286,7 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 	}
 
 	buf.WriteString(`,"Components":`)
-	buf.WriteByte('[')
+	buf.WriteByte('{')
 	ccount := 0
 	for _, component := range entity.Components {
 		name := component.Name()
@@ -274,7 +295,7 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 			buf.WriteByte('"')
 			buf.WriteString(name)
 			buf.WriteString(`":`)
-			data, err := sc.MarshalJSON(entity)
+			data, err := sc.MarshalJSON(component, entity)
 			if err != nil {
 				return nil, err
 			}
@@ -288,7 +309,7 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 		buf.Truncate(buf.Len() - 1)
 	}
 
-	buf.WriteByte(']')
+	buf.WriteByte('}')
 	buf.WriteByte('}')
 
 	return buf.Bytes(), nil

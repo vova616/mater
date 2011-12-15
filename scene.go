@@ -20,6 +20,11 @@ func (scene *Scene) Init (mater *Mater) {
 
 func (scene *Scene) Update (dt float64) {
 	scene.World.Step(dt)
+	for _, entity := range scene.Entities {
+		if entity.Enabled {
+			entity.Update(dt)
+		}
+	}
 }
 
 func (scene *Scene) AddEntity(entity *Entity) {
