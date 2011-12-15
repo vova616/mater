@@ -12,10 +12,10 @@ type Entity struct {
 	Components map[string]Component
 }
 
-var lastId = 0
+var lastEntityId = 0
 func nextId() int {
-	lastId++
-	return lastId
+	lastEntityId++
+	return lastEntityId
 }
 
 func NewEntity () *Entity {

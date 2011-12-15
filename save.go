@@ -97,6 +97,9 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 	buf.WriteString(`{"Camera":`)
 	encoder.Encode(scene.Camera)
 
+	buf.WriteString(`,"LastEntityId":`)
+	encoder.Encode(lastEntityId)
+
 	buf.WriteString(`,"Entities":`)
 	entities, err := scene.MarshalEntities(&state)
 	if err != nil {
@@ -190,6 +193,7 @@ func (scene *Scene) MarshalWorld(state *serializationState) ([]byte, os.Error) {
 
 func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	sceneData := struct {
+		LastEntityId int
 		Camera *Camera
 		World *box2d.World
 		Entities []json.RawMessage
@@ -201,6 +205,8 @@ func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	}
 
 	sd := &sceneData
+
+	lastEntityId = sd.LastEntityId
 
 	scene.Camera = sd.Camera
 	scene.World = sd.World
