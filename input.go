@@ -9,7 +9,16 @@ var QuickSavePath = "quicksave.json"
 type OnKeyCallbackFunc func (mater *Mater, key, state int) OnKeyCallbackFunc
 
 func (mater *Mater) OnKey (key, state int) {
+	//first global key bindings
+	if state == 1 {
+		switch key {
+			case glfw.KeyF1:
+				println("Editmode!")
+				return
+		}
+	}
 
+	//
 	mater.OnKeyCallback = mater.OnKeyCallback(mater,key, state)
 	
 }

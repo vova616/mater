@@ -250,14 +250,15 @@ func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
 	entity.Components = make(map[string]Component, len(ed.Components))
 
 	for name, componentData := range ed.Components {
-		if sc, ok := serializableComponents[name]; ok {
-			//components should initialize themselves when unmarshalled
-			component, err := sc.UnmarshalJSON(entity, componentData)
-			_ = component //ignore unused warning
-			if err != nil {
-				return err
-			}
+		component := NewComponent(name)
+		if component == nil {
+			continue
 		}
+		err := component.UnmarshalJSON(entity, componentData)
+		if err != nil {
+			return err
+		}
+		entity.Components[name] = component
 	}
 	
 	if entity.Body != nil {
@@ -291,18 +292,21 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 	ccount := 0
 	for _, component := range entity.Components {
 		name := component.Name()
-		if sc, ok := serializableComponents[name]; ok {
-			ccount++
-			buf.WriteByte('"')
-			buf.WriteString(name)
-			buf.WriteString(`":`)
-			data, err := sc.MarshalJSON(component, entity)
-			if err != nil {
-				return nil, err
-			}
-			buf.Write(data)
-			buf.WriteByte(',')
+		data, err := component.MarshalJSON(entity)
+		if err != nil {
+			return nil, err
 		}
+		//Don't write anything if the component returns nil
+		if data == nil {
+			continue
+		}
+
+		ccount++
+		buf.WriteByte('"')
+		buf.WriteString(name)
+		buf.WriteString(`":`)		
+		buf.Write(data)
+		buf.WriteByte(',')
 	}
 
 	if ccount > 0 {

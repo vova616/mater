@@ -2,18 +2,25 @@ package mater
 
 import (
 	"os"
+	"reflect"
+	"fmt"
 )
 
 type Component interface {
-	//name can be different than the name components register themselves with an entity, but it is then used when unmarshalling them because interfaces cannot be unmarhsalled from json
+	//used to identify the component
 	Name () string
 	//Only called when creating a new component at runtime
 	//Unmarshalled Components have to call it themselves
 	Init (owner *Entity)
 	//Called once per frame if owner.Enabled is true
 	Update (owner *Entity, dt float64)
-	//Called when removed from an Entity and beofre the entity itself is destroyed
+	//Called when removed from an Entity or before the entity is destroyed
 	Destroy (owner *Entity)
+
+	//
+	MarshalJSON(owner *Entity) ([]byte, os.Error)
+
+	UnmarshalJSON(owner *Entity, data []byte) (os.Error)
 }
 
 func (entity *Entity) AddComponent(component Component) {
@@ -32,18 +39,18 @@ func (entity *Entity) RemoveComponentName(name string) {
 	}
 }
 
-//For a component to be un/marshalled it has to be registered as a serializable component
-type SerializableComponent interface {
-	MarshalJSON(component Component, owner *Entity) ([]byte, os.Error)
-	UnmarshalJSON(owner *Entity, data []byte) (Component, os.Error)
+var components = make(map[string]reflect.Type)
+
+func RegisterComponent(component Component) {
+	components[component.Name()] = reflect.Indirect(reflect.ValueOf(component)).Type()
 }
 
-var serializableComponents = make(map[string]SerializableComponent)
+func NewComponent(name string) Component {
+	compType, ok := components[name]
+	if ok == false {
+		return nil
+	}
 
-func RegisterSerializableComponent(name string, component SerializableComponent) {
-	serializableComponents[name] = component
-}
-
-func UnregisterSerializableComponent(name string) {
-	serializableComponents[name] = nil, false
+	component := reflect.New(compType)
+	return component.Interface().(Component)
 }
