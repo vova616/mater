@@ -3,7 +3,6 @@ package mater
 import (
 	"os"
 	"reflect"
-	"fmt"
 )
 
 type Component interface {
