@@ -8,8 +8,7 @@ import (
 type Component interface {
 	//used to identify the component
 	Name () string
-	//Only called when creating a new component at runtime
-	//Unmarshalled Components have to call it themselves
+	//Called when added to an entitity
 	Init (owner *Entity)
 	//Called once per frame if owner.Enabled is true
 	Update (owner *Entity, dt float64)
@@ -17,25 +16,31 @@ type Component interface {
 	Destroy (owner *Entity)
 
 	//
-	MarshalJSON(owner *Entity) ([]byte, os.Error)
+	Marshal(owner *Entity) ([]byte, os.Error)
 
-	UnmarshalJSON(owner *Entity, data []byte) (os.Error)
+	Unmarshal(owner *Entity, data []byte) (os.Error)
 }
 
 func (entity *Entity) AddComponent(component Component) {
-	//components have to add/remove themselves from entity.Components
+	name := component.Name()
+	//destroy the old component if there is one
+	if c2, ok := entity.Components[name]; ok {
+		c2.Destroy(entity)
+	}
+	entity.Components[name] = component
 	component.Init(entity)
 }
 
 func (entity *Entity) RemoveComponent(component Component) {
-	//components have to add/remove themselves from entity.Components
 	component.Destroy(entity)
+	entity.Components[component.Name()] = nil, false
 }
 
 func (entity *Entity) RemoveComponentName(name string) {
 	if component, ok := entity.Components[name]; ok {
 		component.Destroy(entity)
 	}
+	entity.Components[name] = nil, false
 }
 
 var components = make(map[string]reflect.Type)

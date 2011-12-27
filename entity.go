@@ -1,12 +1,10 @@
 package mater
 
 import (
-	"box2d"
 )
 
 type Entity struct {
 	id int
-	Body *box2d.Body `json:",omitempty"`
 	Enabled bool
 	Scene *Scene `json:"-,omitempty"`
 	Components map[string]Component
@@ -38,7 +36,6 @@ func (entity *Entity) Destroy () {
 		component.Destroy(entity)
 	}
 
-	entity.Body = nil
 	entity.Scene.RemoveEntity(entity)
 	entity.Scene = nil
 }

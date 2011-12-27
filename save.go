@@ -78,18 +78,7 @@ func (mater *Mater) LoadScene (path string) os.Error {
 	return nil
 }
 
-type serializationState struct {
-	SerializedBodies map[*box2d.Body]bool
-}
-
 func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
-	bodyNum := len(scene.World.BodyList())
-	state := serializationState{
-		//allocate space for half of the bodies
-		//not all are going to be attached to entities
-		SerializedBodies: make(map[*box2d.Body]bool, bodyNum / 2),
-	}
-
 	buf := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buf)
 
@@ -102,7 +91,7 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 	encoder.Encode(lastEntityId)
 
 	buf.WriteString(`,"Entities":`)
-	entities, err := scene.MarshalEntities(&state)
+	entities, err := scene.MarshalEntities()
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +99,7 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 
 
 	buf.WriteString(`,"World":`)
-	world, err := scene.MarshalWorld(&state)
+	world, err := scene.MarshalWorld()
 	if err != nil {
 		return nil, err
 	}
@@ -121,18 +110,12 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 	return buf.Bytes(), nil
 }
 
-func (scene *Scene) MarshalEntities(state *serializationState) ([]byte, os.Error) {
+func (scene *Scene) MarshalEntities() ([]byte, os.Error) {
 	buf := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buf)
 
 	buf.WriteByte('[')
 	for _, entity := range scene.Entities {
-		body := entity.Body
-		if body != nil {
-			state.SerializedBodies[body] = true
-		}
-		//two entities can not be attached to the same body.
-		//if they are, once unserialized each of them has its own copy.
 
 		err := encoder.Encode(entity)
 		if err != nil {
@@ -151,7 +134,7 @@ func (scene *Scene) MarshalEntities(state *serializationState) ([]byte, os.Error
 	return buf.Bytes(), nil
 }
 
-func (scene *Scene) MarshalWorld(state *serializationState) ([]byte, os.Error) {
+func (scene *Scene) MarshalWorld() ([]byte, os.Error) {
 	buf := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buf)
 
@@ -169,7 +152,8 @@ func (scene *Scene) MarshalWorld(state *serializationState) ([]byte, os.Error) {
 	bodyNum := 0
 	for _, body := range world.BodyList() {
 		
-		if state.SerializedBodies[body] {
+		//if a bodies UserData is set, we do not serialize it
+		if body.UserData != nil {
 			continue
 		}
 		bodyNum++
@@ -230,7 +214,6 @@ func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
 	entityData := struct {
 		ID int
 		Enabled bool
-		Body *box2d.Body
 		Components map[string]json.RawMessage
 	}{}
 	ed := &entityData
@@ -245,7 +228,6 @@ func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
 
 	entity.id = ed.ID
 	entity.Enabled = ed.Enabled
-	entity.Body = ed.Body
 
 	entity.Components = make(map[string]Component, len(ed.Components))
 
@@ -254,15 +236,12 @@ func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
 		if component == nil {
 			continue
 		}
-		err := component.UnmarshalJSON(entity, componentData)
+		err := component.Unmarshal(entity, componentData)
 		if err != nil {
 			return err
 		}
 		entity.Components[name] = component
-	}
-	
-	if entity.Body != nil {
-		entity.Body.RegisterBody(scene.World)
+		component.Init(entity)
 	}
 
 	scene.AddEntity(entity)
@@ -281,18 +260,12 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 	buf.WriteString(`,"Enabled":`)
 	encoder.Encode(entity.Enabled)
 
-	buf.WriteString(`,"Body":`)
-	err := encoder.Encode(entity.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	buf.WriteString(`,"Components":`)
 	buf.WriteByte('{')
 	ccount := 0
 	for _, component := range entity.Components {
 		name := component.Name()
-		data, err := component.MarshalJSON(entity)
+		data, err := component.Marshal(entity)
 		if err != nil {
 			return nil, err
 		}
