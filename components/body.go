@@ -35,6 +35,7 @@ func (body *Body) Init (owner *Entity) {
 		//set the transform to point to this one
 		xf.Transform = body.Transform()
 	}
+	body.RegisterBody(owner.Scene.World)
 }
 
 func (body *Body) Update (owner *Entity, dt float64) {
@@ -67,7 +68,6 @@ func (body *Body) Unmarshal(owner *Entity, data []byte) (os.Error) {
 		return os.NewError("nil Body")
 	}
 
-	body.RegisterBody(owner.Scene.World)
 	return nil
 }
 
