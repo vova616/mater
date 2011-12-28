@@ -55,6 +55,9 @@ func (xf *Transform) Marshal(owner *Entity) ([]byte, os.Error) {
 }
 
 func (xf *Transform) Unmarshal(owner *Entity, data []byte) (os.Error) {
+	if xf.Transform == nil {
+		xf.Transform = new(box2d.Transform)
+	}
 	return json.Unmarshal(data, xf.Transform)
 }
 
