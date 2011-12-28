@@ -63,6 +63,8 @@ func (mater *Mater) LoadScene (path string) os.Error {
 		return err
 	}
 
+	mater.Scene.Destroy()
+
 	mater.Scene = scene
 	scene.World.Enabled = true
 

@@ -34,3 +34,9 @@ func (scene *Scene) AddEntity(entity *Entity) {
 func (scene *Scene) RemoveEntity(entity *Entity) {
 	scene.Entities[entity.Id()] = nil, false
 }
+
+func (scene *Scene) Destroy () {
+	for _, entity := range scene.Entities {
+		entity.Destroy()
+	}
+}

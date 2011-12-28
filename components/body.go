@@ -47,6 +47,8 @@ func (body *Body) Destroy (owner *Entity) {
 		dbg.Printf("Error: Body component is not initialized correctly!")
 		return
 	}
+	owner.Scene.World.RemoveBody(body.Body)
+	body.Body.SetEnabled(false)
 	body.Body.UserData = nil
 }
 
