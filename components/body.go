@@ -9,8 +9,6 @@ import (
 
 type Body struct {
 	*box2d.Body
-	//saving owner in case it is needed for collision callbacks
-	owner *Entity
 }
 
 func (body *Body) Name () string {
@@ -18,13 +16,12 @@ func (body *Body) Name () string {
 }
 
 func (body *Body) Init (owner *Entity) {
-	body.owner = owner
 	if body.Body == nil {
 		dbg.Printf("Error: Body component is not initialized correctly!")
 		return
 	}
 
-	body.Body.UserData = body
+	body.Body.UserData = owner
 
 	if tcomp, ok := owner.Components["Transform"]; ok {
 		//the owner already has a transform attached, change this bodies transform to it
