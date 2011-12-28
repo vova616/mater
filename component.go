@@ -52,6 +52,7 @@ func RegisterComponent(component Component) {
 func NewComponent(name string) Component {
 	compType, ok := components[name]
 	if ok == false {
+		dbg.Printf("Error loading component \"%v\", not registered!", name)
 		return nil
 	}
 

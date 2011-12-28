@@ -12,12 +12,9 @@ func init () {
 }
 
 type DebugLog struct {
-	Enabled bool
 	logger *log.Logger
 }
 
 func (dl *DebugLog) Printf (format string, v ...interface{}) {
-	if dl.Enabled {
-		dl.logger.Output(2, fmt.Sprintf(format, v...))
-	}
+	dl.logger.Output(2, fmt.Sprintf(format, v...))
 }
