@@ -20,6 +20,10 @@ func (mater *Mater) Init () {
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
 
+	cl := &MaterContactListener{mater}
+	mater.Scene.World.SetContactListener(cl)
+	mater.Scene.World.SetContactFilter(cl)
+
 	if dbg.DebugView == nil {
 		mater.Dbg.DebugView = NewDebugView(mater.Scene.World)
 	} else {

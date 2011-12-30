@@ -75,6 +75,9 @@ func (mater *Mater) LoadScene (path string) os.Error {
 		mater.Scene.Camera.ScreenSize = mater.ScreenSize
 	}
 
+	cl := &MaterContactListener{mater}
+	mater.Scene.World.SetContactListener(cl)
+	mater.Scene.World.SetContactFilter(cl)
 	mater.Dbg.DebugView.Reset(mater.Scene.World)
 
 	return nil
