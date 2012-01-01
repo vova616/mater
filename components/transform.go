@@ -2,14 +2,14 @@ package components
 
 import (
 	. "mater"
-	"box2d"
+	"mater/transform"
 	"json"
 	"os"
 )
 
 //wrapper around box2d.Transform
 type Transform struct {
-	*box2d.Transform
+	*transform.Transform
 }
 
 func (xf *Transform) Name () string {
@@ -25,19 +25,19 @@ func (xf *Transform) Init (owner *Entity) {
 		if bcomp, ok := owner.Components["Body"]; ok {
 			body := bcomp.(*Body)
 			//take its transform
-			xf.Transform = body.Transform()
+			xf.Transform = &body.Transform
 		} else {
 			//create a new one
-			xf.Transform = new(box2d.Transform)
+			xf.Transform = new(transform.Transform)
 		}
 	} else {
 		//we do, check if our owner has a body attached
 		if bcomp, ok := owner.Components["Body"]; ok {
 			body := bcomp.(*Body)
 			//set its transform
-			body.SetTransform(&xf.Position, xf.Angle())
+			body.Transform = *xf.Transform
 			//take the address of the bodies transform
-			xf.Transform = body.Transform()
+			xf.Transform = &body.Transform
 		}
 	}
 }
@@ -56,7 +56,7 @@ func (xf *Transform) Marshal(owner *Entity) ([]byte, os.Error) {
 
 func (xf *Transform) Unmarshal(owner *Entity, data []byte) (os.Error) {
 	if xf.Transform == nil {
-		xf.Transform = new(box2d.Transform)
+		xf.Transform = new(transform.Transform)
 	}
 	return json.Unmarshal(data, xf.Transform)
 }

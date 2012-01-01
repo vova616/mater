@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"json"
 	"os"
-	"box2d"
+	"mater/collision"
 	"fmt"
 )
 
@@ -66,7 +66,7 @@ func (mater *Mater) LoadScene (path string) os.Error {
 	mater.Scene.Destroy()
 
 	mater.Scene = scene
-	scene.World.Enabled = true
+	scene.Space.Enabled = true
 
 	if mater.Scene.Camera == nil {
 		cam := mater.DefaultCamera
@@ -75,10 +75,7 @@ func (mater *Mater) LoadScene (path string) os.Error {
 		mater.Scene.Camera.ScreenSize = mater.ScreenSize
 	}
 
-	cl := &MaterContactListener{mater}
-	mater.Scene.World.SetContactListener(cl)
-	mater.Scene.World.SetContactFilter(cl)
-	mater.Dbg.DebugView.Reset(mater.Scene.World)
+	mater.Dbg.DebugView.Reset(mater.Scene.Space)
 
 	return nil
 }
@@ -103,12 +100,11 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 	buf.Write(entities)
 
 
-	buf.WriteString(`,"World":`)
-	world, err := scene.MarshalWorld()
+	buf.WriteString(`,"Space":`)
+	err = encoder.Encode(scene.Space)
 	if err != nil {
 		return nil, err
 	}
-	buf.Write(world)
 
 	buf.WriteByte('}')
 
@@ -139,53 +135,11 @@ func (scene *Scene) MarshalEntities() ([]byte, os.Error) {
 	return buf.Bytes(), nil
 }
 
-func (scene *Scene) MarshalWorld() ([]byte, os.Error) {
-	buf := bytes.NewBuffer(nil)
-	encoder := json.NewEncoder(buf)
-
-	world := scene.World
-
-	buf.WriteByte('{')
-	buf.WriteString(`"Gravity":`)
-	encoder.Encode(world.Gravity)
-
-	buf.WriteString(`,"Bodies":`)
-	buf.WriteByte('[')
-
-	//actual number of serialized bodies may be different than the total number of bodies
-	//because of that we keep track how many we actually write
-	bodyNum := 0
-	for _, body := range world.BodyList() {
-		
-		//if a bodies UserData is set, we do not serialize it
-		if body.UserData != nil {
-			continue
-		}
-		bodyNum++
-
-		err := encoder.Encode(body)
-		if err != nil {
-			return nil, err
-		}
-
-		buf.WriteByte(',')
-	}
-
-	if bodyNum > 0 {
-		//cut trailing comma
-		buf.Truncate(buf.Len() - 1)
-	}
-	buf.WriteByte(']')
-
-	buf.WriteByte('}')
-	return buf.Bytes(), nil
-}
-
 func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	sceneData := struct {
 		LastEntityId int
 		Camera *Camera
-		World *box2d.World
+		Space *collision.Space
 		Entities []json.RawMessage
 	}{}
 
@@ -199,7 +153,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	lastEntityId = sd.LastEntityId
 
 	scene.Camera = sd.Camera
-	scene.World = sd.World
+	scene.Space = sd.Space
 
 	if scene.Entities == nil {
 		scene.Entities = make(map[int]*Entity, 32)

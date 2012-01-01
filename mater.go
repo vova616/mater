@@ -1,13 +1,13 @@
 package mater
 
 import (
-	. "box2d/vector2"
+	"mater/vect"
 	"gl"
 )
 
 type Mater struct {
 	DefaultCamera Camera
-	ScreenSize Vector2
+	ScreenSize vect.Vect
 	Running, Paused bool
 	Dbg DebugData
 	Scene *Scene
@@ -20,14 +20,10 @@ func (mater *Mater) Init () {
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
 
-	cl := &MaterContactListener{mater}
-	mater.Scene.World.SetContactListener(cl)
-	mater.Scene.World.SetContactFilter(cl)
-
 	if dbg.DebugView == nil {
-		mater.Dbg.DebugView = NewDebugView(mater.Scene.World)
+		mater.Dbg.DebugView = NewDebugView(mater.Scene.Space)
 	} else {
-		mater.Dbg.DebugView.Reset(mater.Scene.World)
+		mater.Dbg.DebugView.Reset(mater.Scene.Space)
 	}
 
 	mater.OnKeyCallback = DefaultKeyCallback
@@ -39,7 +35,7 @@ func (mater *Mater) OnResize (width, height int) {
 	}
 
 	w, h := float64(width), float64(height)
-	mater.ScreenSize = Vector2{w, h}
+	mater.ScreenSize = vect.Vect{w, h}
 	mater.DefaultCamera.ScreenSize = mater.ScreenSize
 	if mater.Scene != nil {
 		mater.Scene.Camera.ScreenSize = mater.ScreenSize

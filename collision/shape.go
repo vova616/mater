@@ -3,6 +3,7 @@ package collision
 import (
 	"mater/vect"
 	"mater/aabb"
+	"mater/transform"
 )
 
 //common shape data
@@ -22,7 +23,7 @@ const(
 type ShapeClass interface{
 	ShapeType() ShapeType
 	//compute the AABB
-	ComputeAABB(pos vect.Vect, rot float64) aabb.AABB
+	ComputeAABB(xf transform.Transform) aabb.AABB
 	//return if the given point is located inside the shape
-	TestPoint(point vect.Vect) bool
+	TestPoint(xf transform.Transform, point vect.Vect) bool
 }

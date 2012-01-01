@@ -2,113 +2,50 @@ package mater
 
 import (
 	"mater/render"
-	. "box2d"
-	. "box2d/vector2"
-	"box2d/settings"
+	"mater/collision"
+	"mater/vect"
 	"gl"
 )
 
-var _tmpVertices Vertices
+var _tmpVertices []vect.Vect
 func init () {
-	_tmpVertices = make(Vertices, settings.MaxPolygonVertices)
-}
-
-type _contactPoint struct {
-	Normal, Position Vector2
-	State PointState
+	_tmpVertices = make([]vect.Vect, 8)
 }
 
 type DebugView struct {
-	contactListener ContactListener
-	pointCount, lastPoint int
-	points []_contactPoint
-	world *World
+	space *collision.Space
 }
 
-func NewDebugView (world *World) *DebugView{
+func NewDebugView (space *collision.Space) *DebugView{
 	dv := new(DebugView)
-	dv.world = world
-	dv.points = make([]_contactPoint, 32)
-	if cl := world.ContactManager().ContactListener; cl != nil {
-		dv.contactListener = cl
-	}
-	world.SetContactListener(dv)
+	dv.space = space
 	return dv
 }
 
-func (dv *DebugView) Reset (world *World) {
-	dv.world = world
-	dv.points = make([]_contactPoint, 32)
-	dv.contactListener = nil
-	if cl := world.ContactManager().ContactListener; cl != nil {
-		dv.contactListener = cl
-	}
-	dv.pointCount = 0
-	dv.lastPoint = 0
-	world.SetContactListener(dv)
-}
-
-func (dv *DebugView) BeginContact (contact *Contact) {
-	if dv.contactListener != nil {
-		dv.contactListener.BeginContact(contact)
-	}
-}
-
-func (dv *DebugView) EndContact (contact *Contact) {
-	if dv.contactListener != nil {
-		dv.contactListener.EndContact(contact)
-	}
-}
-
-func (dv *DebugView) PostSolve (contact *Contact, impulse *ContactConstraint) {
-	if dv.contactListener != nil {
-		dv.contactListener.PostSolve(contact, impulse)
-	}
-}
-
-func (dv *DebugView) PreSolve (contact *Contact, oldManifold *Manifold) {
-	if dv.contactListener != nil {
-		dv.contactListener.PreSolve(contact, oldManifold)
-	}
-
-	manifold := contact.Manifold
-
-	if manifold.PointCount == 0 {
-		return
-	}
-
-	_, state2 := GetPointStates(oldManifold, &manifold)
-
-	normal, points := contact.GetWorldManifold()
-
-	for i := 0; i < manifold.PointCount; i++ {
-		var cp _contactPoint
-		cp.Position = points[i]
-		cp.Normal = normal
-		cp.State = state2[i]
-
-		if dv.lastPoint > len(dv.points) - 1 {
-			dv.points = append(dv.points, cp)
-		} else {
-			dv.points[dv.lastPoint] = cp
-		}
-		dv.lastPoint++
-	}
+func (dv *DebugView) Reset (space *collision.Space) {
+	dv.space = space
 }
 
 func (dv *DebugView) DrawDebugData () {
-	world := dv.world
+	space := dv.space
 
-	gl.Color3f(.4, .4, .4)
-	for _, aabb := range(world.GetDynamicTreeNodes()) {
-		render.DrawQuad(aabb.LowerBound, aabb.UpperBound, false)
+	//Draw static shapes
+	for _, b := range space.StaticBodies {
+		for _, s := range b.Shapes {
+			if b.Enabled == false {
+				//Inactive
+				gl.Color3f(.5, .8, .5)
+			} else {
+				//Static
+				gl.Color3f(1, 1, 1)
+			}
+			DrawShape(s)
+		}
 	}
 
-	//Draw shapes
-	for _, b := range(world.BodyList()) {
-		xf := &(*b.Transform())
-		for _, f := range(b.FixtureList()) {
-			if b.Enabled() == false {
+	/*
+
+	if b.Enabled == false {
 				//Inactive
 				gl.Color3f(.5, .8, .5)
 			} else if b.IsStatic() {
@@ -121,10 +58,8 @@ func (dv *DebugView) DrawDebugData () {
 				//Default
 				gl.Color3f(1, 0, 0)
 			}
-			DrawShape(f.Shape(), xf)
-		}
-	}
-
+			*/
+			/*
 	const axisScale = .3
 	
 	if dv.lastPoint != 0 {
@@ -149,16 +84,16 @@ func (dv *DebugView) DrawDebugData () {
 		}
 		gl.End()
 	}
-	dv.lastPoint = 0
+	dv.lastPoint = 0*/
 }
 
-func DrawShape(shape *Shape, xf *Transform) {
+func DrawShape(shape *collision.Shape) {
 	switch shape.ShapeType() {
-		case ShapeType_Circle:
-			circle := shape.ShapeClass.(*CircleShape)
-			render.DrawCircle(Add(xf.Position, circle.Position()), circle.Radius(), false)
+		case collision.ShapeType_Circle:
+			circle := shape.ShapeClass.(*collision.CircleShape)
+			render.DrawCircle(vect.Add(shape.Body.Position, circle.Position), circle.Radius, false)
 			break
-		case ShapeType_Polygon:
+		/*case ShapeType_Polygon:
 			poly := shape.ShapeClass.(*PolygonShape)
 			vertCount := len(poly.Vertices)
 
@@ -166,6 +101,6 @@ func DrawShape(shape *Shape, xf *Transform) {
 				_tmpVertices[i] = MultiplyTransformVect(xf, &poly.Vertices[i])
 			}
 			render.DrawPoly(_tmpVertices, vertCount, false)
-			break
+			break*/
 	}
 }

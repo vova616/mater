@@ -20,20 +20,20 @@ package mater
 import (
 	"math"
 	"gl"
-	. "box2d/vector2"
+	"mater/vect"
 )
 
 type Camera struct {
-	ScreenSize, Position, Scale, PrevPosition Vector2
+	ScreenSize, Position, Scale, PrevPosition vect.Vect
 	Rotation float64
-	Target *Vector2
+	Target *vect.Vect
 }
 
 func (cam Camera) PreDraw() {
 	gl.PushMatrix()
 	gl.Translated(cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2, 0)
 	if nil != cam.Target {
-		newPosition := Lerp(cam.PrevPosition, *cam.Target, 1)
+		newPosition := vect.Lerp(cam.PrevPosition, *cam.Target, 1)
 		gl.Translated(newPosition.X * cam.Scale.X, newPosition.Y * cam.Scale.Y, 0)
 		cam.PrevPosition = newPosition
 		cam.Position = newPosition
@@ -50,11 +50,11 @@ func (cam Camera) PostDraw() {
 	gl.PopMatrix()
 }
 
-func (cam Camera) Move(delta Vector2) {
-	cam.Position = Add(cam.Position, delta)
+func (cam Camera) Move(delta vect.Vect) {
+	cam.Position = vect.Add(cam.Position, delta)
 }
 
-func (cam Camera) WorldToScreen (worldPos Vector2) Vector2 {
+func (cam Camera) WorldToScreen (worldPos vect.Vect) vect.Vect {
 	c := math.Cos(-cam.Rotation)
 	s := math.Sin(-cam.Rotation)
 	
@@ -67,10 +67,10 @@ func (cam Camera) WorldToScreen (worldPos Vector2) Vector2 {
 	sx := c * tx - s * ty
 	sy := s * tx + c * ty
 	
-	return Vector2{sx * cam.Scale.X, sy * cam.Scale.Y}
+	return vect.Vect{sx * cam.Scale.X, sy * cam.Scale.Y}
 }
 
-func (cam Camera) ScreenToWorld (screenPos Vector2) Vector2 {
+func (cam Camera) ScreenToWorld (screenPos vect.Vect) vect.Vect {
 	c := math.Cos(cam.Rotation)
 	s := math.Sin(cam.Rotation)
 	
@@ -86,7 +86,7 @@ func (cam Camera) ScreenToWorld (screenPos Vector2) Vector2 {
 	sx -= (cam.ScreenSize.X / 2) / cam.Scale.X
 	sy -= (cam.ScreenSize.Y / 2) / cam.Scale.Y
 	
-	return Vector2{sx, sy}
+	return vect.Vect{sx, sy}
 }
 
 

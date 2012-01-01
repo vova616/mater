@@ -1,25 +1,24 @@
 package mater
 
 import (
-	"box2d"
+	"mater/collision"
 )
 
 type Scene struct {
-	World *box2d.World
+	Space *collision.Space
 	Camera *Camera
 	Entities map[int]*Entity
 }
 
-func (scene *Scene) Init (mater *Mater) {
-	scene.World = new(box2d.World)
+func (scene *Scene) Init(mater *Mater) {
+	scene.Space = collision.NewSpace()
 	cam := mater.DefaultCamera
 	scene.Camera = &cam
-	scene.World.Init()
 	scene.Entities = make(map[int]*Entity, 32)
 }
 
-func (scene *Scene) Update (dt float64) {
-	scene.World.Step(dt)
+func (scene *Scene) Update(dt float64) {
+	scene.Space.Step(dt)
 	for _, entity := range scene.Entities {
 		if entity.Enabled {
 			entity.Update(dt)
@@ -35,7 +34,7 @@ func (scene *Scene) RemoveEntity(entity *Entity) {
 	scene.Entities[entity.Id()] = nil, false
 }
 
-func (scene *Scene) Destroy () {
+func (scene *Scene) Destroy() {
 	for _, entity := range scene.Entities {
 		entity.Destroy()
 	}

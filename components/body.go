@@ -2,13 +2,13 @@ package components
 
 import (
 	. "mater"
-	"box2d"
+	"mater/collision"
 	"json"
 	"os"
 )
 
 type Body struct {
-	*box2d.Body
+	*collision.Body
 }
 
 func (body *Body) Name () string {
@@ -27,12 +27,12 @@ func (body *Body) Init (owner *Entity) {
 		//the owner already has a transform attached, change this bodies transform to it
 		xf := tcomp.(*Transform)
 
-		body.SetTransform(&xf.Position, xf.Angle())
+		body.Transform = *xf.Transform
 
 		//set the transform to point to this one
-		xf.Transform = body.Transform()
+		xf.Transform = &body.Transform
 	}
-	body.RegisterBody(owner.Scene.World)
+	owner.Scene.Space.AddBody(body.Body)
 }
 
 func (body *Body) Update (owner *Entity, dt float64) {
@@ -44,8 +44,8 @@ func (body *Body) Destroy (owner *Entity) {
 		dbg.Printf("Error: Body component is not initialized correctly!")
 		return
 	}
-	owner.Scene.World.RemoveBody(body.Body)
-	body.Body.SetEnabled(false)
+	body.Body.Enabled = false
+	owner.Scene.Space.RemoveBody(body.Body)
 	body.Body.UserData = nil
 }
 
@@ -55,7 +55,7 @@ func (body *Body) Marshal(owner *Entity) ([]byte, os.Error) {
 
 func (body *Body) Unmarshal(owner *Entity, data []byte) (os.Error) {
 	if body.Body == nil {
-		body.Body = new(box2d.Body)
+		body.Body = collision.NewBody(true)
 	}
 	err := json.Unmarshal(data, body.Body)
 
@@ -66,6 +66,8 @@ func (body *Body) Unmarshal(owner *Entity, data []byte) (os.Error) {
 	if body.Body == nil {
 		return os.NewError("nil Body")
 	}
+
+	owner.Scene.Space.AddBody(body.Body)
 
 	return nil
 }

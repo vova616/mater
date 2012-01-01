@@ -1,7 +1,7 @@
 package mater
 
 import (
-	. "box2d/vector2"
+	"mater/vect"
 	"gl"
 	"mater/render"
 	"mater/log"
@@ -24,7 +24,7 @@ func (mater *Mater) DebugDraw () {
 	cam := mater.Scene.Camera
 	gl.PushMatrix()
 		gl.Color4f(0, 1, 0, .5)
-		render.DrawCircle(Vector2{cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2}, cam.ScreenSize.Y / 2.0 - 5.0, false)
+		render.DrawCircle(vect.Vect{cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2}, cam.ScreenSize.Y / 2.0 - 5.0, false)
 		
 		if mater.Paused {
 			gl.Color3f(1, 1, 1)

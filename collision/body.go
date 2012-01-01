@@ -1,6 +1,7 @@
 package collision
 
 import (
+	"mater/transform"
 	"mater/vect"
 	"log"
 )
@@ -9,6 +10,8 @@ type UserData interface{}
 
 //represents a rigid body
 type Body struct {
+	//position and rotation of the body
+	Transform transform.Transform
 	//the global position of the body.
 	Position vect.Vect
 	//the rotation of the body.
@@ -27,7 +30,10 @@ type Body struct {
 	//all the shapes that make up this body
 	Shapes []*Shape
 
-	World *World
+	Space *Space
+
+	Enabled bool
+	isStatic bool
 
 	//user defined data
 	UserData UserData
@@ -37,11 +43,13 @@ func (body *Body) init () {
 	body.mass = 1
 	body.invMass = 1
 	body.Shapes = make([]*Shape, 0, 1)
+	body.Enabled = true
 }
 
-func NewBody() *Body {
+func NewBody(static bool) *Body {
 	body := new(Body)
 	body.init()
+	body.isStatic = static
 
 	return body
 }
@@ -77,4 +85,8 @@ func (body *Body) RemoveShape(shape *Shape) {
 		}
 	}
 	log.Printf("Warning removing shape: shape not found!")
+}
+
+func (body *Body) IsStatic() bool {
+	return body.isStatic
 }

@@ -18,13 +18,13 @@
 package render
 
 import (
-	. "box2d/vector2"
+	"mater/vect"
 	"gl"
 	. "mater/texutil"
 	"math"
 )
 
-func DrawQuad (upperLeft, lowerRight Vector2, filled bool) {
+func DrawQuad (upperLeft, lowerRight vect.Vect, filled bool) {
 	if filled {
 		gl.Begin(gl.QUADS)
 	} else {
@@ -42,7 +42,7 @@ const (
 	circlestep = 45
 	deg2grad = math.Pi / 180
 )
-func DrawCircle (pos Vector2, radius float64, filled bool) {
+func DrawCircle (pos vect.Vect, radius float64, filled bool) {
 	if filled {
 		gl.Begin(gl.TRIANGLE_FAN)
 		gl.Vertex2d(pos.X, pos.Y)
@@ -58,18 +58,18 @@ func DrawCircle (pos Vector2, radius float64, filled bool) {
 	}
 }
 
-func DrawLine (start, end Vector2) {
+func DrawLine (start, end vect.Vect) {
 	gl.Begin(gl.LINES)
 	defer gl.End()
 	
-	gl.Vertex2d(start.Unpack())
-	gl.Vertex2d(end.Unpack())
+	gl.Vertex2d(start.X, start.Y)
+	gl.Vertex2d(end.X, end.Y)
 }
 
-func DrawPoly (vertices []Vector2, vertCount int, filled bool) {
+func DrawPoly (vertices []vect.Vect, vertCount int, filled bool) {
 	if filled {
 		gl.Begin(gl.TRIANGLE_FAN)
-		gl.Vertex2d(vertices[0].Unpack())
+		gl.Vertex2d(vertices[0].X, vertices[0].Y)
 	} else {
 		gl.Begin(gl.LINE_LOOP)
 	}
@@ -77,11 +77,11 @@ func DrawPoly (vertices []Vector2, vertCount int, filled bool) {
 
 	for i := 0; i < vertCount; i++ {
 		v := vertices[i]
-		gl.Vertex2d(v.Unpack())
+		gl.Vertex2d(v.X, v.Y)
 	}
 }
 
-func DrawTextureQuad (texture *Texture, vertices [4]Vector2, texCoords [4]Vector2) {
+func DrawTextureQuad (texture *Texture, vertices [4]vect.Vect, texCoords [4]vect.Vect) {
 	
 	gl.BindTexture (gl.TEXTURE_2D, uint(texture.Texture))
 	gl.Begin (gl.QUADS)
