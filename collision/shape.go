@@ -11,7 +11,7 @@ type Shape struct {
 	Body *Body
 	Restitution, Friction float64
 	AABB aabb.AABB
-	//the actual iomplementation of the shape
+	//the actual implementation of the shape
 	ShapeClass
 }
 

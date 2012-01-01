@@ -11,6 +11,14 @@ type CircleShape struct {
 	Radius float64
 }
 
+func NewCirleShape(pos vect.Vect, radius float64) *Shape {
+	shape := new(Shape)
+	shape.ShapeClass = &CircleShape{
+		pos, radius,
+	}
+	return shape
+}
+
 func (circle *CircleShape) ShapeType() ShapeType {
 	return ShapeType_Circle
 }

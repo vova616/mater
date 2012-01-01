@@ -12,10 +12,6 @@ type UserData interface{}
 type Body struct {
 	//position and rotation of the body
 	Transform transform.Transform
-	//the global position of the body.
-	Position vect.Vect
-	//the rotation of the body.
-	Rotation float64
 
 	Velocity vect.Vect
 	AngularVelocity float64
@@ -66,12 +62,13 @@ func (body *Body) AddShape(shape *Shape) {
 		return
 	}
 
-	if shape.Body == nil {
+	if shape.ShapeClass == nil {
 		log.Printf("Error adding shape: shape.ShapeClass == nil")
 		return
 	}
 
 	shape.Body = body
+	shape.AABB = shape.ComputeAABB(body.Transform)
 	body.Shapes = append(body.Shapes, shape)
 }
 
