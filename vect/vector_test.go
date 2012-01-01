@@ -2,6 +2,7 @@ package vect
 
 import (
 	"testing"
+	"math"
 )
 
 type addTest struct {
@@ -69,6 +70,29 @@ func TestMax (t *testing.T) {
 		v := Max(at.in1, at.in2)
 		if !Equals(at.out, v) {
 			t.Errorf("Max(%v, %v) = %v, want %v.", at.in1, at.in2, v, at.out)
+		}
+	}
+}
+
+type distTest struct {
+	in1, in2 Vect
+	out float64
+}
+var distTests = []distTest{
+	{Vect{0, 0}, Vect{0, 0}, 0},
+	{Vect{0, 2}, Vect{0, 0}, 2},
+	{Vect{2, 0}, Vect{0, 0}, 2},
+	{Vect{0, 0}, Vect{4, 0}, 4},
+	{Vect{0, 0}, Vect{0, 4}, 4},
+	{Vect{1, 1}, Vect{0, 0}, math.Sqrt(2)},
+	{Vect{1, 1}, Vect{2, 2}, math.Sqrt(2)},
+}
+
+func TestDist (t *testing.T) {
+	for _, at := range distTests {
+		v := Dist(at.in1, at.in2)
+		if at.out != v {
+			t.Errorf("Dist(%v, %v) = %v, want %v.", at.in1, at.in2, v, at.out)
 		}
 	}
 }
