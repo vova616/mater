@@ -4,6 +4,7 @@ import (
 	"mater/vect"
 	"mater/aabb"
 	"mater/transform"
+	"os"
 )
 
 //common shape data
@@ -26,4 +27,8 @@ type ShapeClass interface{
 	ComputeAABB(xf transform.Transform) aabb.AABB
 	//return if the given point is located inside the shape
 	TestPoint(xf transform.Transform, point vect.Vect) bool
+
+	//
+	MarshalShape(shape *Shape) ([]byte, os.Error)
+	UnmarshalShape(shape *Shape, data []byte) (os.Error)
 }

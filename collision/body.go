@@ -19,7 +19,6 @@ type Body struct {
 	Force vect.Vect
 	Torque vect.Vect
 
-	Friction float64
 	mass, invMass float64
 	i, invI float64
 
@@ -36,8 +35,8 @@ type Body struct {
 }
 
 func (body *Body) init () {
-	body.mass = 1
-	body.invMass = 1
+	body.SetMass(1)
+	body.SetInertia(1)
 	body.Shapes = make([]*Shape, 0, 1)
 	body.Enabled = true
 }
@@ -86,4 +85,24 @@ func (body *Body) RemoveShape(shape *Shape) {
 
 func (body *Body) IsStatic() bool {
 	return body.isStatic
+}
+
+func (body *Body) SetMass(mass float64) {
+	if mass == 0 {
+		log.Printf("Error: mass = 0 not valid, setting to 1")
+		mass = 1
+	}
+
+	body.mass = mass
+	body.invMass = 1.0 / mass
+}
+
+func (body *Body) SetInertia(i float64) {
+	if i <= 0 {
+		log.Printf("Error: inertia <= 0 not valid, setting to 1")
+		i = 1
+	}
+	
+	body.i = i
+	body.invI = 1.0 / i
 }

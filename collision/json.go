@@ -7,8 +7,10 @@ import (
 	"json"
 	"os"
 	"log"
+	"strings"
 )
 
+//START SPACE REGION
 func (space *Space) MarshalJSON() ([]byte, os.Error) {
 	buf := new(bytes.Buffer)
 	encoder := json.NewEncoder(buf)
@@ -16,7 +18,11 @@ func (space *Space) MarshalJSON() ([]byte, os.Error) {
 	buf.WriteByte('{')
 
 	buf.WriteString(`"Gravity":`)
-	encoder.Encode(space.Gravity)
+	err := encoder.Encode(space.Gravity)
+	if err != nil {
+		log.Printf("Error decoding gravity")
+		return nil, err
+	}
 
 	buf.WriteString(`,"StaticBodies":`)
 	buf.WriteByte('[')
@@ -84,7 +90,7 @@ func (space *Space) UnmarshalJSON(data []byte) os.Error {
 	
 	err := json.Unmarshal(data, &spaceData)
 	if err != nil {
-		log.Printf("Error unmarshaling space")
+		log.Printf("Error decoding space")
 		return err
 	}
 
@@ -102,17 +108,18 @@ func (space *Space) UnmarshalJSON(data []byte) os.Error {
 
 	return nil
 }
+//END SPACE REGION
 
+//START BODY REGION
 func (body *Body) MarshalJSON() ([]byte, os.Error) {
 	if body.IsStatic() {
 		bodyData := struct{
-			Transform transform.Transform
-			Friction, Mass, Inertia float64
+			Transform *transform.Transform
+			Mass, Inertia float64
 			Shapes []*Shape
 			Enabled bool
 		}{
-			Transform: body.Transform,
-			Friction: body.Friction,
+			Transform: &body.Transform,
 			Mass: body.mass,
 			Inertia: body.i,
 			Shapes: body.Shapes,
@@ -122,16 +129,15 @@ func (body *Body) MarshalJSON() ([]byte, os.Error) {
 		return json.Marshal(&bodyData)
 	} else {
 		bodyData := struct{
-			Transform transform.Transform
-			Friction, Mass, Inertia float64
+			Transform *transform.Transform
+			Mass, Inertia float64
 			Shapes []*Shape
 			Enabled bool
 			Velocity vect.Vect
 			AngularVelocity float64
 			Force, Torque vect.Vect
 		}{
-			Transform: body.Transform,
-			Friction: body.Friction,
+			Transform: &body.Transform,
 			Mass: body.mass,
 			Inertia: body.i,
 			Shapes: body.Shapes,
@@ -146,3 +152,143 @@ func (body *Body) MarshalJSON() ([]byte, os.Error) {
 	}
 	return nil, nil
 }
+
+func (body *Body) UnmarshalJSON(data []byte) os.Error {
+	if body.Shapes == nil {
+		//body probably not initialized
+		body.init()
+	}
+	bodyData := struct{
+		Transform *transform.Transform
+		Mass, Inertia float64
+		Shapes []*Shape
+		Enabled bool
+		Velocity vect.Vect
+		AngularVelocity float64
+		Force, Torque vect.Vect
+	}{//initializing everything to the bodies default values
+		Transform: &body.Transform,
+		Mass: body.mass,
+		Inertia: body.i,
+		Shapes: body.Shapes,
+		Enabled: body.Enabled,
+		Velocity: body.Velocity,
+		AngularVelocity: body.AngularVelocity,
+		Force: body.Force, 
+		Torque: body.Torque,
+	}
+
+	err := json.Unmarshal(data, &bodyData)
+	if err != nil {
+		log.Printf("Error decoding body")
+		return err
+	}
+
+	body.Transform = *bodyData.Transform
+	body.Velocity = bodyData.Velocity
+	body.AngularVelocity = bodyData.AngularVelocity
+
+	body.Force = bodyData.Force
+	body.Torque = bodyData.Torque
+
+	body.SetMass(bodyData.Mass)
+	body.SetInertia(bodyData.Inertia)
+
+	body.Enabled = bodyData.Enabled
+
+	for _, shape := range bodyData.Shapes {
+		body.AddShape(shape)
+	}
+
+	return nil
+}
+//END BODY REGION
+
+//START SHAPE REGION
+func (shape *Shape) MarshalJSON() ([]byte, os.Error) {
+	if shape.ShapeClass == nil {
+		log.Printf("Error: shape.ShapeClass not set")
+		return nil, os.NewError("shape.ShapeClass not set")
+	}
+
+	return shape.ShapeClass.MarshalShape(shape)
+}
+
+func (shape *Shape) UnmarshalJSON(data []byte) (os.Error) {
+	shapeType := struct{
+		ShapeType string
+	}{}
+
+	err := json.Unmarshal(data, &shapeType)
+	if err != nil {
+		log.Printf("Error: could not find shapetype")
+		return err
+	}
+
+	switch strings.ToLower(shapeType.ShapeType) {
+		case "circle":
+			circle := new(CircleShape)
+			shape.ShapeClass = circle
+			return circle.UnmarshalShape(shape, data)
+	}
+
+	log.Printf("Error: unknown shapetype: %v", shapeType.ShapeType)
+	return os.NewError("Unknown shapetype")
+}
+//END SHAPE REGION
+
+//START CIRCLESHAPE REGION
+func (circle *CircleShape) MarshalShape(shape *Shape) ([]byte, os.Error) {
+
+	if shape.ShapeClass != circle {
+		log.Printf("Error: circleshape and shape.ShapeClass don't match")
+		return nil, os.NewError("Wrong parent shape")
+	}
+
+	circleData := struct {
+		ShapeType string
+		Friction, Restitution float64
+		Position vect.Vect
+		Radius float64
+	}{
+		ShapeType: "Circle",
+		Friction: shape.Friction,
+		Restitution: shape.Restitution,
+		Position: circle.Position,
+		Radius: circle.Radius,
+	}
+
+	return json.Marshal(&circleData)
+}
+
+func (circle *CircleShape) UnmarshalShape(shape *Shape, data []byte) os.Error {
+	if shape.ShapeClass != circle {
+		log.Printf("Error: circleshape and shape.ShapeClass don't match")
+		return os.NewError("Wrong parent shape")
+	}
+
+	circleData := struct {
+		Friction, Restitution float64
+		Position vect.Vect
+		Radius float64
+	}{
+		Friction: shape.Friction,
+		Restitution: shape.Restitution,
+		Position: circle.Position,
+		Radius: circle.Radius,
+	}
+
+	err := json.Unmarshal(data, &circleData)
+	if err != nil {
+		log.Printf("Error decoding CircleShape")
+		return err
+	}
+
+	shape.Friction = circleData.Friction
+	shape.Restitution = circleData.Restitution
+	circle.Position = circleData.Position
+	circle.Radius = circleData.Radius
+
+	return nil
+}
+//END CIRCLESHAPE REGION
