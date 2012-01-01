@@ -43,6 +43,20 @@ func (dv *DebugView) DrawDebugData () {
 		}
 	}
 
+	//Draw dynamic shapes
+	for _, b := range space.DynamicBodies {
+		for _, s := range b.Shapes {
+			if b.Enabled == false {
+				//Inactive
+				gl.Color3f(.5, .7, .5)
+			} else {
+				//Normal
+				gl.Color3f(1, 0, 0)
+			}
+			DrawShape(s)
+		}
+	}
+
 	/*
 
 	if b.Enabled == false {
