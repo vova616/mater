@@ -23,7 +23,7 @@ type Body struct {
 	AngularVelocity float64
 
 	Force vect.Vect
-	Torque vect.Vect
+	Torque float64
 
 	mass, invMass float64
 	i, invI float64

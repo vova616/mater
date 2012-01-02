@@ -145,7 +145,8 @@ func (body *Body) MarshalJSON() ([]byte, os.Error) {
 			Enabled bool
 			Velocity vect.Vect
 			AngularVelocity float64
-			Force, Torque vect.Vect
+			Force vect.Vect
+			Torque float64
 		}{
 			Transform: &body.Transform,
 			Mass: body.mass,
@@ -175,7 +176,8 @@ func (body *Body) UnmarshalJSON(data []byte) os.Error {
 		Enabled bool
 		Velocity vect.Vect
 		AngularVelocity float64
-		Force, Torque vect.Vect
+		Force vect.Vect
+		Torque float64
 	}{//initializing everything to the bodies default values
 		Transform: &body.Transform,
 		Mass: body.mass,

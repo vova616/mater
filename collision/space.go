@@ -45,4 +45,26 @@ func (space *Space) RemoveBody(body *Body) {
 
 func (space *Space) Step(dt float64) {
 	
+	if dt <= 0.0 {
+		return
+	}
+
+	inv_dt := 1.0 / dt
+	_ = inv_dt
+	
+	//Integrate forces
+	for _, body := range space.Bodies {
+		if body.IsStatic() {
+			continue
+		}
+
+		//b.Velocity += dt * (gravity + b.invMass * b.Force)
+		newVel := vect.Add(space.Gravity, vect.Mult(body.Force, body.invMass))
+		newVel.Mult(dt)
+		body.Velocity.Add(newVel)
+
+		body.AngularVelocity += dt * body.invI * body.Torque
+	}
+
+
 }
