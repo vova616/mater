@@ -28,10 +28,15 @@ func (space *Space) MarshalJSON() ([]byte, os.Error) {
 	buf.WriteByte('[')
 
 	staticBodyNum := 0
-	for _, body := range space.StaticBodies {
+	for _, body := range space.Bodies {
 		if body.UserData != nil {
 			continue
 		}
+
+		if body.IsStatic() == false {
+			continue
+		}
+
 		staticBodyNum++
 
 		err := encoder.Encode(body)
@@ -53,10 +58,15 @@ func (space *Space) MarshalJSON() ([]byte, os.Error) {
 	buf.WriteByte('[')
 
 	dynamicBodyNum := 0
-	for _, body := range space.DynamicBodies {
+	for _, body := range space.Bodies {
 		if body.UserData != nil {
 			continue
 		}
+
+		if body.IsStatic() == true {
+			continue
+		}
+
 		dynamicBodyNum++
 
 		err := encoder.Encode(body)
@@ -97,12 +107,12 @@ func (space *Space) UnmarshalJSON(data []byte) os.Error {
 	space.Gravity = spaceData.Gravity
 
 	for _, body := range spaceData.DynamicBodies {
-		body.isStatic = false
+		body.BodyType = BodyType_Static
 		space.AddBody(body)
 	}
 
 	for _, body := range spaceData.StaticBodies {
-		body.isStatic = true
+		body.BodyType = BodyType_Dynamic
 		space.AddBody(body)
 	}
 

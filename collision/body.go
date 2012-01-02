@@ -8,6 +8,12 @@ import (
 
 type UserData interface{}
 
+type BodyType uint8
+const (
+	BodyType_Static = iota
+	BodyType_Dynamic
+)
+
 //represents a rigid body
 type Body struct {
 	//position and rotation of the body
@@ -28,23 +34,23 @@ type Body struct {
 	Space *Space
 
 	Enabled bool
-	isStatic bool
+	BodyType BodyType
 
 	//user defined data
 	UserData UserData
 }
 
-func (body *Body) init () {
+func (body *Body) init() {
 	body.SetMass(1)
 	body.SetInertia(1)
 	body.Shapes = make([]*Shape, 0, 1)
 	body.Enabled = true
 }
 
-func NewBody(static bool) *Body {
+func NewBody(bodyType BodyType) *Body {
 	body := new(Body)
 	body.init()
-	body.isStatic = static
+	body.BodyType = bodyType
 
 	return body
 }
@@ -84,7 +90,7 @@ func (body *Body) RemoveShape(shape *Shape) {
 }
 
 func (body *Body) IsStatic() bool {
-	return body.isStatic
+	return body.BodyType == BodyType_Static
 }
 
 func (body *Body) SetMass(mass float64) {

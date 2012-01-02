@@ -29,30 +29,19 @@ func (dv *DebugView) Reset (space *collision.Space) {
 func (dv *DebugView) DrawDebugData () {
 	space := dv.space
 
-	//Draw static shapes
-	for _, b := range space.StaticBodies {
-		for _, s := range b.Shapes {
-			if b.Enabled == false {
-				//Inactive
-				gl.Color3f(.5, .8, .5)
-			} else {
-				//Static
-				gl.Color3f(1, 1, 1)
-			}
-			DrawShape(s)
+	//Draw shapes
+	for _, b := range space.Bodies {
+		if b.Enabled == false {
+			//Inactive
+			gl.Color3f(.5, .8, .5)
+		} else if b.IsStatic() {
+			//Static
+			gl.Color3f(1, 1, 1)
+		} else {
+			//Normal
+			gl.Color3f(1, 0, 0)
 		}
-	}
-
-	//Draw dynamic shapes
-	for _, b := range space.DynamicBodies {
 		for _, s := range b.Shapes {
-			if b.Enabled == false {
-				//Inactive
-				gl.Color3f(.5, .7, .5)
-			} else {
-				//Normal
-				gl.Color3f(1, 0, 0)
-			}
 			DrawShape(s)
 		}
 	}

@@ -8,13 +8,11 @@ import (
 type Space struct {
 	Enabled bool
 	Gravity vect.Vect
-	StaticBodies []*Body
-	DynamicBodies []*Body
+	Bodies []*Body
 }
 
 func (space *Space) init() {
-	space.StaticBodies = make([]*Body, 0, 8)
-	space.DynamicBodies = make([]*Body, 0, 8)
+	space.Bodies = make([]*Body, 0, 16)
 	space.Enabled = true
 }
 
@@ -26,43 +24,23 @@ func NewSpace() *Space {
 }
 
 func (space *Space) AddBody(body *Body) {
-	if body.IsStatic() {
-		if body.Space != nil {
-			log.Printf("Error adding static body: body.Space != nil")
-			return
-		}
-		body.Space = space
-		space.StaticBodies = append(space.StaticBodies, body)
-	} else {
-		if body.Space != nil {
-			log.Printf("Error adding dynamic body: body.Space != nil")
-			return
-		}
-		body.Space = space
-		space.DynamicBodies = append(space.DynamicBodies, body)
+	if body.Space != nil {
+		log.Printf("Error adding body: body.Space != nil")
+		return
 	}
+	body.Space = space
+	space.Bodies = append(space.Bodies, body)
 }
 
 func (space *Space) RemoveBody(body *Body) {
-	if body.IsStatic() {
-		bodies := space.StaticBodies
-		for i, b := range bodies {
-			if b == body {
-				space.StaticBodies = append(bodies[:i], bodies[i+1:]...)
-				return
-			}
+	bodies := space.Bodies
+	for i, b := range bodies {
+		if b == body {
+			space.Bodies = append(bodies[:i], bodies[i+1:]...)
+			return
 		}
-		log.Printf("Warning removing body: static body not found!")
-	} else {
-		bodies := space.StaticBodies
-		for i, b := range bodies {
-			if b == body {
-				space.StaticBodies = append(bodies[:i], bodies[i+1:]...)
-				return
-			}
-		}
-		log.Printf("Warning removing body: dynamic body not found!")
 	}
+	log.Printf("Warning removing body: body not found!")
 }
 
 func (space *Space) Step(dt float64) {

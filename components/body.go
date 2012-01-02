@@ -55,7 +55,7 @@ func (body *Body) Marshal(owner *Entity) ([]byte, os.Error) {
 
 func (body *Body) Unmarshal(owner *Entity, data []byte) (os.Error) {
 	if body.Body == nil {
-		body.Body = collision.NewBody(true)
+		body.Body = collision.NewBody(collision.BodyType_Static)
 	}
 	err := json.Unmarshal(data, body.Body)
 
