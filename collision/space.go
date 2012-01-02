@@ -2,6 +2,7 @@ package collision
 
 import (
 	"mater/vect"
+	"mater/aabb"
 	"log"
 )
 
@@ -9,10 +10,12 @@ type Space struct {
 	Enabled bool
 	Gravity vect.Vect
 	Bodies []*Body
+	Arbiters []*Arbiter
 }
 
 func (space *Space) init() {
 	space.Bodies = make([]*Body, 0, 16)
+	space.Arbiters = make([]*Arbiter, 0, 32)
 	space.Enabled = true
 }
 
@@ -52,6 +55,9 @@ func (space *Space) Step(dt float64) {
 	inv_dt := 1.0 / dt
 	_ = inv_dt
 
+	//broadphase
+	space.Broadphase()
+
 	//Integrate forces
 	for _, body := range space.Bodies {
 		if body.IsStatic() {
@@ -66,7 +72,6 @@ func (space *Space) Step(dt float64) {
 		body.AngularVelocity += dt * body.invI * body.Torque
 	}
 
-
 	//stuff
 
 	//Integrate velocities
@@ -79,5 +84,65 @@ func (space *Space) Step(dt float64) {
 
 		rot := body.Transform.Angle()
 		body.Transform.SetAngle(rot + dt * body.AngularVelocity)
+
+		body.UpdateAABBs()
+	}
+}
+
+func (space *Space) Broadphase() {
+	for i := 0; i < len(space.Bodies) - 1; i++ {
+		bi := space.Bodies[i]
+
+		for j := i + 1; j < len(space.Bodies); j++ {
+			bj := space.Bodies[j]
+
+			if bi.IsStatic() && bj.IsStatic() {
+				continue
+			}
+
+			for _, si := range bi.Shapes {
+				for _, sj := range bj.Shapes {
+					//check aabbs for overlap
+					if !aabb.TestOverlap(si.AABB, sj.AABB) {
+						continue
+					}
+
+					newArb := CreateArbiter(si, sj)
+
+					//search if this arbiter already exists
+					var oldArb *Arbiter
+					index := 0
+					
+					for i , arb := range space.Arbiters {
+						if arb.Equals(newArb) {
+							oldArb = arb
+							index = i
+							break
+						}
+					}
+
+					if newArb.NumContacts > 0 {
+						//insert or update the arbiter
+						if oldArb == nil {
+							//insert
+							space.Arbiters = append(space.Arbiters, newArb)
+						} else {
+							//update
+							oldArb.Update(newArb.Contacts, newArb.NumContacts)
+						}
+
+					} else {
+						if oldArb != nil {
+							//remove the arbiter
+							space.Arbiters = append(space.Arbiters[:index], space.Arbiters[index+1:]...)
+						}
+						newArb.Delete()
+					}
+
+				}
+			}
+
+
+		}
 	}
 }

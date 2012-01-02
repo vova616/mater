@@ -112,3 +112,9 @@ func (body *Body) SetInertia(i float64) {
 	body.i = i
 	body.invI = 1.0 / i
 }
+
+func (body *Body) UpdateAABBs () {
+	for _, shape := range body.Shapes {
+		shape.AABB = shape.ComputeAABB(body.Transform)
+	}
+}

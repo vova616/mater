@@ -43,6 +43,15 @@ func (dv *DebugView) DrawDebugData () {
 		}
 		for _, s := range b.Shapes {
 			DrawShape(s)
+
+		}
+	}
+
+	//Draw aabbs
+	for _, b := range space.Bodies {
+		gl.Color3f(.7, .7, .7)
+		for _, s := range b.Shapes {
+			render.DrawQuad(s.AABB.Lower, s.AABB.Upper, false)
 		}
 	}
 
