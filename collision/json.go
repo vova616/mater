@@ -107,12 +107,12 @@ func (space *Space) UnmarshalJSON(data []byte) os.Error {
 	space.Gravity = spaceData.Gravity
 
 	for _, body := range spaceData.DynamicBodies {
-		body.BodyType = BodyType_Static
+		body.BodyType = BodyType_Dynamic
 		space.AddBody(body)
 	}
 
 	for _, body := range spaceData.StaticBodies {
-		body.BodyType = BodyType_Dynamic
+		body.BodyType = BodyType_Static
 		space.AddBody(body)
 	}
 

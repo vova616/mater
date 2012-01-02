@@ -51,7 +51,7 @@ func (space *Space) Step(dt float64) {
 
 	inv_dt := 1.0 / dt
 	_ = inv_dt
-	
+
 	//Integrate forces
 	for _, body := range space.Bodies {
 		if body.IsStatic() {
@@ -67,4 +67,17 @@ func (space *Space) Step(dt float64) {
 	}
 
 
+	//stuff
+
+	//Integrate velocities
+	for _, body := range space.Bodies {
+		if body.IsStatic() {
+			continue
+		}
+
+		body.Transform.Position.Add(vect.Mult(body.Velocity, dt))
+
+		rot := body.Transform.Angle()
+		body.Transform.SetAngle(rot + dt * body.AngularVelocity)
+	}
 }
