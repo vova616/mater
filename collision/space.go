@@ -6,6 +6,14 @@ import (
 	"log"
 )
 
+type settings struct {
+	AccumulateImpulses bool
+}
+
+var Settings settings = settings{
+	AccumulateImpulses: true,
+}
+
 type Space struct {
 	Enabled bool
 	Gravity vect.Vect
