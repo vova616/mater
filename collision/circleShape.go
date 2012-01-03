@@ -25,7 +25,7 @@ func (circle *CircleShape) ShapeType() ShapeType {
 
 func (circle *CircleShape) ComputeAABB(xf transform.Transform) aabb.AABB {
 	//global center of the circle
-	center := vect.Add(xf.Position, circle.Position)
+	center := vect.Add(xf.Position, xf.RotateVect(circle.Position))
 	rv := vect.Vect{circle.Radius, circle.Radius}
 
 	return aabb.AABB{

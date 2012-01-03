@@ -24,6 +24,13 @@ func (rot *Rotation) Angle() float64 {
 	return math.Atan2(rot.S, rot.C)
 }
 
+func (rot *Rotation) RotateVect(v vect.Vect) vect.Vect {
+	return vect.Vect {
+		X: v.X * rot.C - v.Y * rot.S,
+		Y: v.X * rot.S + v.Y * rot.C,
+	}
+}
+
 type Transform struct {
 	Position vect.Vect
 	Rotation

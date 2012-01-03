@@ -100,10 +100,11 @@ func (dv *DebugView) DrawDebugData () {
 }
 
 func DrawShape(shape *collision.Shape) {
+	xf := shape.Body.Transform
 	switch shape.ShapeType() {
 		case collision.ShapeType_Circle:
 			circle := shape.ShapeClass.(*collision.CircleShape)
-			render.DrawCircle(vect.Add(shape.Body.Transform.Position, circle.Position), circle.Radius, false)
+			render.DrawCircle(vect.Add(xf.Position, xf.RotateVect(circle.Position)), circle.Radius, false)
 			break
 		/*case ShapeType_Polygon:
 			poly := shape.ShapeClass.(*PolygonShape)
