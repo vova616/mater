@@ -24,6 +24,7 @@ func (rot *Rotation) Angle() float64 {
 	return math.Atan2(rot.S, rot.C)
 }
 
+//rotates the input vector.
 func (rot *Rotation) RotateVect(v vect.Vect) vect.Vect {
 	return vect.Vect {
 		X: v.X * rot.C - v.Y * rot.S,
@@ -44,4 +45,9 @@ func (xf *Transform) SetIdentity() {
 func (xf *Transform) Set(pos vect.Vect, rot float64) {
 	xf.Position = pos
 	xf.SetAngle(rot)
+}
+
+//moves and roates the input vector.
+func (xf *Transform) TransformVect(v vect.Vect) vect.Vect {
+	return vect.Add(xf.Position, xf.RotateVect(v))
 }
