@@ -8,10 +8,14 @@ import (
 
 type settings struct {
 	AccumulateImpulses bool
+	PositionCorrection bool
+	Iterations int
 }
 
 var Settings settings = settings{
 	AccumulateImpulses: true,
+	PositionCorrection: true,
+	Iterations: 1,
 }
 
 type Space struct {
@@ -19,6 +23,7 @@ type Space struct {
 	Gravity vect.Vect
 	Bodies []*Body
 	Arbiters []*Arbiter
+	Iterations int
 }
 
 func (space *Space) init() {
@@ -61,7 +66,6 @@ func (space *Space) Step(dt float64) {
 	}
 
 	inv_dt := 1.0 / dt
-	_ = inv_dt
 
 	//broadphase
 	space.Broadphase()
@@ -80,7 +84,17 @@ func (space *Space) Step(dt float64) {
 		body.AngularVelocity += dt * body.invI * body.Torque
 	}
 
-	//stuff
+	//Perform pre-steps
+	for _, arb := range space.Arbiters {
+		arb.PreStep(inv_dt)
+	}
+
+	//Perform Iterations
+	for i := 0; i < Settings.Iterations; i++ {
+		for _, arb := range space.Arbiters {
+			arb.ApplyImpulse()
+		}
+	}
 
 	//Integrate velocities
 	for _, body := range space.Bodies {

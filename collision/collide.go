@@ -59,6 +59,8 @@ func collideCircles(contacts *[max_points]Contact, sA, sB *Shape, csA, csB *Circ
 		norm = vect.Mult(delta, 1.0 / dist)
 	}
 
+	norm.Mult(-1)
+
 	con.Reset(pos, norm, dist - minDist)
 
 	con.R1 = vect.Sub(con.Position, p1)

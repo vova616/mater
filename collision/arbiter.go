@@ -93,6 +93,54 @@ func (arb *Arbiter) Update(newContacts [max_points]Contact, numNewContacts int) 
 	arb.NumContacts = numNewContacts
 }
 
+func (arb *Arbiter) PreStep(inv_dt float64) {
+	const allowedPenetration = 0.01
+	biasFactor := 0.0
+	if Settings.PositionCorrection {
+		biasFactor = 0.2
+	}
+
+	b1 := arb.ShapeA.Body
+	b2 := arb.ShapeB.Body
+
+	for i := 0; i < arb.NumContacts; i++ {
+		c := &arb.Contacts[i]
+
+		r1 := c.R1
+		r2 := c.R2
+
+		//Precompute normal mass, tangent mass, and bias
+		rn1 := vect.Dot(r1, c.Normal)
+		rn2 := vect.Dot(r2, c.Normal)
+		kNormal := b1.invMass + b2.invMass
+		kNormal += b1.invI * (vect.Dot(r1, r1) - rn1 * rn1) + 
+				   b2.invI * (vect.Dot(r2, r2) - rn2 * rn2)
+		c.MassNormal = 1.0 / kNormal
+
+		tangent := vect.CrossVF(c.Normal, 1.0)
+		rt1 := vect.Dot(r1, tangent)
+		rt2 := vect.Dot(r2, tangent)
+		kTangent := b1.invMass + b2.invMass
+		kTangent += b1.invI * (vect.Dot(r1, r1) - rt1 * rt1) +
+					b2.invI * (vect.Dot(r2, r2) - rt2 * rt2)
+		c.MassTangent = 1.0 / kTangent
+
+		c.Bias = -biasFactor * inv_dt * math.Fmin(0.0, c.Separation + allowedPenetration)
+
+		if Settings.AccumulateImpulses {
+			//Apply normal + friction impulse
+			P := vect.Add(vect.Mult(c.Normal, c.Pn), vect.Mult(tangent, c.Pt))
+
+			b1.Velocity.Sub(vect.Mult(P, b1.invMass))
+			b1.AngularVelocity -= b1.invI * vect.Cross(r1, P)
+
+			b2.Velocity.Add(vect.Mult(P, b2.invMass))
+			b2.AngularVelocity += b2.invI * vect.Cross(r2, P)
+		}
+
+	}
+}
+
 func (arb *Arbiter) ApplyImpulse() {
 	sA := arb.ShapeA
 	sB := arb.ShapeB
@@ -104,7 +152,7 @@ func (arb *Arbiter) ApplyImpulse() {
 	//xfB := b2.Transform
 
 	for i := 0; i < arb.NumContacts; i++ {
-		c := arb.Contacts[i]
+		c := &arb.Contacts[i]
 
 		// Relative velocity at contact
 		dv := vect.Vect{}
