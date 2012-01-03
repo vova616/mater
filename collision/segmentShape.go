@@ -10,7 +10,11 @@ type SegmentShape struct {
 	A, B vect.Vect
 	Radius float64
 
+	//Normal and global points and normal
 	n, ta, tb, tn vect.Vect
+
+	//used when chaining segments together
+	a_tangent, b_tangent vect.Vect
 }
 
 func NewSegmentShape(a, b vect.Vect, r float64) *Shape {

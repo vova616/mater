@@ -87,6 +87,35 @@ func circle2segment(contacts *[max_points]Contact, circle *CircleShape, segment 
 		return 0
 	}
 
+	//Calculate tangential distance along segment
+	dt := -vect.Cross(segment.tn, circle.tc)
+	dtMin := -vect.Cross(segment.tn, segment.ta)
+	dtMax := -vect.Cross(segment.tn, segment.ta)
 
-	return 0
+	// Decision tree to decide which feature of the segment to collide with.
+	if dt < dtMin {
+		if dt < (dtMin - rsum) {
+			return 0
+		} else {
+			return segmentEncapQuery(circle.tc, segment.ta, circle.Radius, segment.Radius, &contacts[0], segment.a_tangent)
+		}
+	} else {
+		if dt < dtMax {
+			n := segment.tn
+			if dn >= 0.0 {
+				n.Mult(-1)
+			}
+			con := &contacts[0]
+			pos := vect.Add(circle.tc, vect.Mult(n, circle.Radius + dist * 0.5))
+			con.Reset(pos, n, dist)
+			return 1
+		} else {
+			if dt < (dtMax + rsum) {
+				return segmentEncapQuery(circle.tc, segment.tb, circle.Radius, segment.Radius, &contacts[0], segment.b_tangent)
+			} else {
+				return 0
+			}
+		}
+	}
+	panic("Never reached")
 }
