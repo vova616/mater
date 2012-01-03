@@ -11,7 +11,9 @@ func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
 		case ShapeType_Circle:
 			switch sB.ShapeType() {
 				case ShapeType_Circle:
-					return circle2circle(contacts, sA, sB, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*CircleShape))
+					return circle2circle(contacts, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*CircleShape))
+				case ShapeType_Segment:
+					return circle2segment(contacts, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*SegmentShape))
 				default:
 					log.Printf("Warning: ShapeB unknown shapetype")
 					return 0
@@ -23,15 +25,9 @@ func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
 	return 0
 }
 
-func circle2circle(contacts *[max_points]Contact, sA, sB *Shape, csA, csB *CircleShape) int {
+func circle2circle(contacts *[max_points]Contact, csA, csB *CircleShape) int {
 
-	xfA := sA.Body.Transform
-	xfB := sB.Body.Transform
-
-	p1 := xfA.TransformVect(csA.Position)
-	p2 := xfB.TransformVect(csB.Position)
-
-	return circle2circleQuery(p1, p2, csA.Radius, csB.Radius, &contacts[0])
+	return circle2circleQuery(csA.tc, csB.tc, csA.Radius, csB.Radius, &contacts[0])
 }
 
 func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
@@ -80,8 +76,17 @@ func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent v
 	panic("Never reached")
 }
 
-func circle2segment(contacts *[max_points]Contact, sA *Shape, circle *CircleShape, sB *Shape,  segment *SegmentShape) int {
-	//xf1 := sA.Body.Transform
-	//xf2 := sB.Body.Transform
+func circle2segment(contacts *[max_points]Contact, circle *CircleShape, segment *SegmentShape) int {
+
+	rsum := circle.Radius + segment.Radius
+
+	//Calculate normal distance from segment
+	dn := vect.Dot(segment.tn, circle.tc) - vect.Dot(segment.ta, segment.tn)
+	dist := math.Fabs(dn) - rsum
+	if dist > 0.0 {
+		return 0
+	}
+
+
 	return 0
 }

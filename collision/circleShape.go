@@ -9,12 +9,15 @@ import (
 type CircleShape struct {
 	Position vect.Vect
 	Radius float64
+	//center in global coordinates
+	tc vect.Vect
 }
 
 func NewCircle(pos vect.Vect, radius float64) *Shape {
 	shape := new(Shape)
 	shape.ShapeClass = &CircleShape{
-		pos, radius,
+		Position: pos, 
+		Radius: radius,
 	}
 	return shape
 }
@@ -26,6 +29,7 @@ func (circle *CircleShape) ShapeType() ShapeType {
 func (circle *CircleShape) Update(xf transform.Transform) aabb.AABB {
 	//global center of the circle
 	center := xf.TransformVect(circle.Position)
+	circle.tc = center
 	rv := vect.Vect{circle.Radius, circle.Radius}
 
 	return aabb.AABB{
