@@ -72,7 +72,7 @@ func (body *Body) AddShape(shape *Shape) {
 	}
 
 	shape.Body = body
-	shape.AABB = shape.ComputeAABB(body.Transform)
+	shape.Update()
 	body.Shapes = append(body.Shapes, shape)
 }
 
@@ -120,9 +120,9 @@ func (body *Body) SetInertia(i float64) {
 	body.invI = 1.0 / i
 }
 
-func (body *Body) UpdateAABBs () {
+func (body *Body) UpdateShapes () {
 	for _, shape := range body.Shapes {
-		shape.AABB = shape.ComputeAABB(body.Transform)
+		shape.Update()
 	}
 }
 

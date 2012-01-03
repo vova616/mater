@@ -169,3 +169,7 @@ func Lerp(v1, v2 Vect, s float64) Vect {
 		v1.Y + (v1.Y - v2.Y) * s,
 	}
 }
+
+func Perp(v Vect) Vect {
+	return Vect{-v.Y, v.X}
+}

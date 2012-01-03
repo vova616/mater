@@ -82,6 +82,8 @@ func (space *Space) Step(dt float64) {
 		body.Velocity.Add(newVel)
 
 		body.AngularVelocity += dt * body.invI * body.Torque
+
+		body.UpdateShapes()
 	}
 
 	//Perform pre-steps
@@ -107,7 +109,7 @@ func (space *Space) Step(dt float64) {
 		rot := body.Transform.Angle()
 		body.Transform.SetAngle(rot + dt * body.AngularVelocity)
 
-		body.UpdateAABBs()
+		body.UpdateShapes()
 	}
 }
 

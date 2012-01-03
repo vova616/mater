@@ -11,7 +11,7 @@ func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
 		case ShapeType_Circle:
 			switch sB.ShapeType() {
 				case ShapeType_Circle:
-					return collideCircles(contacts, sA, sB, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*CircleShape))
+					return circle2circle(contacts, sA, sB, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*CircleShape))
 				default:
 					log.Printf("Warning: ShapeB unknown shapetype")
 					return 0
@@ -23,7 +23,7 @@ func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
 	return 0
 }
 
-func collideCircles(contacts *[max_points]Contact, sA, sB *Shape, csA, csB *CircleShape) int {
+func circle2circle(contacts *[max_points]Contact, sA, sB *Shape, csA, csB *CircleShape) int {
 
 	xfA := sA.Body.Transform
 	xfB := sB.Body.Transform
@@ -78,4 +78,10 @@ func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent v
 		return 0
 	}
 	panic("Never reached")
+}
+
+func circle2segment(contacts *[max_points]Contact, sA *Shape, circle *CircleShape, sB *Shape,  segment *SegmentShape) int {
+	//xf1 := sA.Body.Transform
+	//xf2 := sB.Body.Transform
+	return 0
 }

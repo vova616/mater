@@ -322,12 +322,14 @@ func (segment *SegmentShape) MarshalShape(shape *Shape) ([]byte, os.Error) {
 		ShapeType string
 		Friction, Restitution float64
 		A, B vect.Vect
+		Radius float64
 	} {
 		ShapeType: "Segment",
 		Friction: shape.Friction,
 		Restitution: shape.Restitution,
 		A: segment.A,
 		B: segment.B,
+		Radius: segment.Radius,
 	}
 
 	return json.Marshal(&segmentData)
@@ -341,11 +343,13 @@ func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) os.Error 
 	segmentData := struct {
 		Friction, Restitution float64
 		A, B vect.Vect
+		Radius float64
 	} {
 		Friction: shape.Friction,
 		Restitution: shape.Restitution,
 		A: segment.A,
 		B: segment.B,
+		Radius: segment.Radius,
 	}
 
 	err := json.Unmarshal(data, &segmentData)
@@ -358,6 +362,7 @@ func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) os.Error 
 	shape.Restitution = segmentData.Restitution
 	segment.A = segmentData.A
 	segment.B = segmentData.B
+	segment.Radius = segmentData.Radius
 
 	return nil
 }
