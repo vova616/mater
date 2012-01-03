@@ -244,6 +244,10 @@ func (shape *Shape) UnmarshalJSON(data []byte) (os.Error) {
 			circle := new(CircleShape)
 			shape.ShapeClass = circle
 			return circle.UnmarshalShape(shape, data)
+		case "segment":
+			segment := new(SegmentShape)
+			shape.ShapeClass = segment
+			return segment.UnmarshalShape(shape, data)
 	}
 
 	log.Printf("Error: unknown shapetype: %v", shapeType.ShapeType)
@@ -306,3 +310,55 @@ func (circle *CircleShape) UnmarshalShape(shape *Shape, data []byte) os.Error {
 	return nil
 }
 //END CIRCLESHAPE REGION
+
+//START SEGMENTSHAPE REGION
+func (segment *SegmentShape) MarshalShape(shape *Shape) ([]byte, os.Error) {
+	if shape.ShapeClass != segment {
+		log.Printf("Error: segmentshape and shape.ShapeClass don't match")
+		return nil, os.NewError("Wrong parent shape")
+	}
+
+	segmentData := struct {
+		ShapeType string
+		Friction, Restitution float64
+		A, B vect.Vect
+	} {
+		ShapeType: "Segment",
+		Friction: shape.Friction,
+		Restitution: shape.Restitution,
+		A: segment.A,
+		B: segment.B,
+	}
+
+	return json.Marshal(&segmentData)
+}
+
+func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) os.Error {
+	if shape.ShapeClass != segment {
+		log.Printf("Error: segmentshape and shape.ShapeClass don't match")
+		return os.NewError("Wrong parent shape")
+	}
+	segmentData := struct {
+		Friction, Restitution float64
+		A, B vect.Vect
+	} {
+		Friction: shape.Friction,
+		Restitution: shape.Restitution,
+		A: segment.A,
+		B: segment.B,
+	}
+
+	err := json.Unmarshal(data, &segmentData)
+	if err != nil {
+		log.Printf("Error decoding SegmentShape")
+		return err
+	}
+
+	shape.Friction = segmentData.Friction
+	shape.Restitution = segmentData.Restitution
+	segment.A = segmentData.A
+	segment.B = segmentData.B
+
+	return nil
+}
+//END SEGMENTSHAPE REGION

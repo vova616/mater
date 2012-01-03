@@ -69,3 +69,13 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 
 	return 1
 }
+
+func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent vect.Vect) int {
+	count := circle2circleQuery(p1, p2, r1, r2, con)
+	if vect.Dot(con.Normal, tangent) >= 0.0 {
+		return count
+	} else {
+		return 0
+	}
+	panic("Never reached")
+}
