@@ -28,10 +28,14 @@ func collideCircles(contacts *[max_points]Contact, sA, sB *Shape, csA, csB *Circ
 	xfA := sA.Body.Transform
 	xfB := sB.Body.Transform
 
-	minDist := csA.Radius + csB.Radius
-
 	p1 := xfA.TransformVect(csA.Position)
 	p2 := xfB.TransformVect(csB.Position)
+
+	return circle2circleQuery(p1, p2, csA.Radius, csB.Radius, &contacts[0])
+}
+
+func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
+	minDist := r1 + r2
 
 	delta := vect.Sub(p2, p1)
 	distSqr := delta.LengthSqr()
@@ -42,16 +46,13 @@ func collideCircles(contacts *[max_points]Contact, sA, sB *Shape, csA, csB *Circ
 
 	dist := math.Sqrt(distSqr)
 
-	con := &contacts[0]
-
 	con.Separation = dist - minDist
 	pDist := dist
 	if dist == 0.0 {
 		pDist = math.Inf(1)
 	}
 
-	pos := vect.Add(p1, vect.Mult(delta, 0.5 + (csA.Radius - 0.5 * minDist)/pDist))
-
+	pos := vect.Add(p1, vect.Mult(delta, 0.5 + (r1 - 0.5 * minDist)/pDist))
 
 	norm := vect.Vect{1, 0}
 
