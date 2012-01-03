@@ -121,6 +121,26 @@ func DrawShape(shape *collision.Shape) {
 			circle := shape.ShapeClass.(*collision.CircleShape)
 			render.DrawCircle(vect.Add(xf.Position, xf.RotateVect(circle.Position)), circle.Radius, false)
 			break
+		case collision.ShapeType_Segment:
+			segment := shape.ShapeClass.(*collision.SegmentShape)
+			a := xf.TransformVect(segment.A)
+			b := xf.TransformVect(segment.B)
+			r := segment.Radius
+			render.DrawLine(a, b)
+			if segment.Radius > 0.0 {
+				render.DrawCircle(a, r, false)
+				render.DrawCircle(b, r, false)
+
+				verts := [4]vect.Vect{
+					vect.Add(a, vect.Vect{0, r}),
+					vect.Add(a, vect.Vect{0, -r}),
+					vect.Add(b, vect.Vect{0, -r}),
+					vect.Add(b, vect.Vect{0, r}),
+				}
+				render.DrawPoly(verts[:], 4, false)
+
+			}
+			
 		/*case ShapeType_Polygon:
 			poly := shape.ShapeClass.(*PolygonShape)
 			vertCount := len(poly.Vertices)
