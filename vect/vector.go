@@ -151,14 +151,14 @@ func CrossVV(a, b Vect) float64 {
 
 //cross product between a vector and a float64.
 //result = {s * a.Y, -s * a.X}
-func CrossVD(a Vect, s float64) Vect {
+func CrossVF(a Vect, s float64) Vect {
 	return Vect{s * a.Y, -s * a.X}
 }
 
 //cross product between a float64 and a vector.
 //Not the same as CrossVD
 //result = {-s * a.Y, s * a.X}
-func CrossDV(a Vect, s float64) Vect {
+func CrossFV(s float64, a Vect) Vect {
 	return Vect{-s * a.Y, s * a.X}
 }
 
