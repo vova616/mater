@@ -4,6 +4,7 @@ import (
 	"mater/transform"
 	"mater/vect"
 	"log"
+	"math"
 )
 
 type UserData interface{}
@@ -34,15 +35,13 @@ type Body struct {
 	Space *Space
 
 	Enabled bool
-	BodyType BodyType
+	bodyType BodyType
 
 	//user defined data
 	UserData UserData
 }
 
 func (body *Body) init() {
-	body.SetMass(1)
-	body.SetInertia(1)
 	body.Shapes = make([]*Shape, 0, 1)
 	body.Enabled = true
 }
@@ -50,7 +49,7 @@ func (body *Body) init() {
 func NewBody(bodyType BodyType) *Body {
 	body := new(Body)
 	body.init()
-	body.BodyType = bodyType
+	body.SetBodyType(bodyType)
 
 	return body
 }
@@ -90,10 +89,14 @@ func (body *Body) RemoveShape(shape *Shape) {
 }
 
 func (body *Body) IsStatic() bool {
-	return body.BodyType == BodyType_Static
+	return body.bodyType == BodyType_Static
 }
 
 func (body *Body) SetMass(mass float64) {
+	if body.IsStatic() {
+		log.Printf("Error: can't change mass of a static body")
+		return
+	}
 	if mass == 0 {
 		log.Printf("Error: mass = 0 not valid, setting to 1")
 		mass = 1
@@ -104,6 +107,10 @@ func (body *Body) SetMass(mass float64) {
 }
 
 func (body *Body) SetInertia(i float64) {
+	if body.IsStatic() {
+		log.Printf("Error: can't change inertia of a static body")
+		return
+	}
 	if i <= 0 {
 		log.Printf("Error: inertia <= 0 not valid, setting to 1")
 		i = 1
@@ -116,5 +123,29 @@ func (body *Body) SetInertia(i float64) {
 func (body *Body) UpdateAABBs () {
 	for _, shape := range body.Shapes {
 		shape.AABB = shape.ComputeAABB(body.Transform)
+	}
+}
+
+func (body *Body) BodyType () BodyType {
+	return body.bodyType
+}
+
+func (body *Body) SetBodyType (bodyType BodyType) {
+	if bodyType == BodyType_Static {
+		body.bodyType = BodyType_Static
+
+		body.mass = math.Inf(1)
+		body.invMass = 0
+		body.i = math.Inf(1)
+		body.invI = 0
+	} else if bodyType == BodyType_Dynamic {
+		body.bodyType = BodyType_Dynamic
+
+		body.mass = 1
+		body.invMass = 1
+		body.i = 1
+		body.invI = 1
+	} else {
+		log.Printf("Error: Unknown BodyType")
 	}
 }

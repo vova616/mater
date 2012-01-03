@@ -107,12 +107,12 @@ func (space *Space) UnmarshalJSON(data []byte) os.Error {
 	space.Gravity = spaceData.Gravity
 
 	for _, body := range spaceData.DynamicBodies {
-		body.BodyType = BodyType_Dynamic
+		body.SetBodyType(BodyType_Dynamic)
 		space.AddBody(body)
 	}
 
 	for _, body := range spaceData.StaticBodies {
-		body.BodyType = BodyType_Static
+		body.SetBodyType(BodyType_Static)
 		space.AddBody(body)
 	}
 
@@ -203,8 +203,10 @@ func (body *Body) UnmarshalJSON(data []byte) os.Error {
 	body.Force = bodyData.Force
 	body.Torque = bodyData.Torque
 
-	body.SetMass(bodyData.Mass)
-	body.SetInertia(bodyData.Inertia)
+	if !body.IsStatic() {
+		body.SetMass(bodyData.Mass)
+		body.SetInertia(bodyData.Inertia)
+	}
 
 	body.Enabled = bodyData.Enabled
 
