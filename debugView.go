@@ -55,6 +55,21 @@ func (dv *DebugView) DrawDebugData () {
 		}
 	}
 
+	const contactRadius = 0.2
+	const contactNormalScale = 0.5
+
+	for _, arb := range space.Arbiters {
+		for i := 0; i < arb.NumContacts; i++ {
+			con := arb.Contacts[i]
+			gl.Color3f(0, 0, 1)
+			p1 := con.Position
+			p2 := vect.Add(p1, vect.Mult(con.Normal, contactNormalScale))
+			render.DrawLine(p1, p2)
+			gl.Color3f(0, 1, 0)
+			render.DrawCircle(con.Position, contactRadius, false)
+		}
+	}
+
 	/*
 
 	if b.Enabled == false {

@@ -29,7 +29,7 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 		arb.ShapeB = sa
 	}
 
-	arb.NumContacts = collide(arb.Contacts, sa, sb)
+	arb.NumContacts = collide(&arb.Contacts, sa, sb)
 
 	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
 

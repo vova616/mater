@@ -30,3 +30,13 @@ type Contact struct {
 	Bias float64
 	Feature FeaturePair
 }
+
+func (con *Contact) Reset (pos, norm vect.Vect, sep float64) {
+	con.Position = pos
+	con.Normal = norm
+	con.Separation = sep
+
+	con.Pn = 0.0
+	con.Pt = 0.0
+	con.Pnb = 0.0
+}
