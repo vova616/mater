@@ -1,16 +1,16 @@
 package collision
 
 import (
-	"math"
 	"mater/vect"
+	"math"
 )
 
 const max_points = 2
 
 type Arbiter struct {
 	ShapeA, ShapeB *Shape
-	Contacts [max_points]Contact
-	NumContacts int
+	Contacts       [max_points]Contact
+	NumContacts    int
 
 	Friction float64
 }
@@ -37,8 +37,8 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 	return arb
 }
 
-func (arb *Arbiter) Delete () {
-	
+func (arb *Arbiter) Delete() {
+
 }
 
 func (arb1 *Arbiter) Equals(arb2 *Arbiter) bool {
@@ -113,19 +113,19 @@ func (arb *Arbiter) PreStep(inv_dt float64) {
 		rn1 := vect.Dot(r1, c.Normal)
 		rn2 := vect.Dot(r2, c.Normal)
 		kNormal := b1.invMass + b2.invMass
-		kNormal += b1.invI * (vect.Dot(r1, r1) - rn1 * rn1) + 
-				   b2.invI * (vect.Dot(r2, r2) - rn2 * rn2)
+		kNormal += b1.invI*(vect.Dot(r1, r1)-rn1*rn1) +
+			b2.invI*(vect.Dot(r2, r2)-rn2*rn2)
 		c.MassNormal = 1.0 / kNormal
 
 		tangent := vect.CrossVF(c.Normal, 1.0)
 		rt1 := vect.Dot(r1, tangent)
 		rt2 := vect.Dot(r2, tangent)
 		kTangent := b1.invMass + b2.invMass
-		kTangent += b1.invI * (vect.Dot(r1, r1) - rt1 * rt1) +
-					b2.invI * (vect.Dot(r2, r2) - rt2 * rt2)
+		kTangent += b1.invI*(vect.Dot(r1, r1)-rt1*rt1) +
+			b2.invI*(vect.Dot(r2, r2)-rt2*rt2)
 		c.MassTangent = 1.0 / kTangent
 
-		c.Bias = -biasFactor * inv_dt * math.Fmin(0.0, c.Separation + allowedPenetration)
+		c.Bias = -biasFactor * inv_dt * math.Min(0.0, c.Separation+allowedPenetration)
 
 		if Settings.AccumulateImpulses {
 			//Apply normal + friction impulse
@@ -171,10 +171,10 @@ func (arb *Arbiter) ApplyImpulse() {
 		if Settings.AccumulateImpulses {
 			// Clamp the accumulated impulse
 			Pn0 := c.Pn
-			c.Pn = math.Fmax(Pn0 + dPn, 0.0)
+			c.Pn = math.Max(Pn0+dPn, 0.0)
 			dPn = c.Pn - Pn0
 		} else {
-			dPn = math.Fmax(dPn, 0.0)
+			dPn = math.Max(dPn, 0.0)
 		}
 
 		//Apply contact impulse
@@ -182,10 +182,10 @@ func (arb *Arbiter) ApplyImpulse() {
 
 		b1.Velocity.Sub(vect.Mult(Pn, b1.invMass))
 		b1.AngularVelocity -= b1.invI * vect.Cross(c.R1, Pn)
-		
+
 		b2.Velocity.Add(vect.Mult(Pn, b2.invMass))
 		b2.AngularVelocity += b2.invI * vect.Cross(c.R2, Pn)
-		
+
 		//Relative velocity at contact
 		{
 			t1 := vect.Add(b2.Velocity, vect.CrossFV(b2.AngularVelocity, c.R2))
@@ -204,7 +204,7 @@ func (arb *Arbiter) ApplyImpulse() {
 
 			//Clamp Friction
 			oldTangentImpulse := c.Pt
-			c.Pt = clamp(oldTangentImpulse + dPt, -maxPt, maxPt)
+			c.Pt = clamp(oldTangentImpulse+dPt, -maxPt, maxPt)
 			dPt = c.Pt - oldTangentImpulse
 		} else {
 			maxPt := arb.Friction * dPn
@@ -221,4 +221,3 @@ func (arb *Arbiter) ApplyImpulse() {
 		b2.AngularVelocity += b2.invI * vect.Cross(c.R2, Pt)
 	}
 }
-

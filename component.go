@@ -1,24 +1,21 @@
 package mater
 
-import (
-	"os"
-	"reflect"
-)
+import "reflect"
 
 type Component interface {
 	//used to identify the component
-	Name () string
+	Name() string
 	//Called when added to an entitity
-	Init (owner *Entity)
+	Init(owner *Entity)
 	//Called once per frame if owner.Enabled is true
-	Update (owner *Entity, dt float64)
+	Update(owner *Entity, dt float64)
 	//Called when removed from an Entity or before the entity is destroyed
-	Destroy (owner *Entity)
+	Destroy(owner *Entity)
 
 	//
-	Marshal(owner *Entity) ([]byte, os.Error)
+	Marshal(owner *Entity) ([]byte, error)
 
-	Unmarshal(owner *Entity, data []byte) (os.Error)
+	Unmarshal(owner *Entity, data []byte) error
 }
 
 func (entity *Entity) AddComponent(component Component) {
@@ -33,14 +30,14 @@ func (entity *Entity) AddComponent(component Component) {
 
 func (entity *Entity) RemoveComponent(component Component) {
 	component.Destroy(entity)
-	entity.Components[component.Name()] = nil, false
+	delete(entity.Components, component.Name())
 }
 
 func (entity *Entity) RemoveComponentName(name string) {
 	if component, ok := entity.Components[name]; ok {
 		component.Destroy(entity)
 	}
-	entity.Components[name] = nil, false
+	delete(entity.Components, name)
 }
 
 var components = make(map[string]reflect.Type)

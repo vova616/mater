@@ -1,15 +1,17 @@
 package texutil
 
 import (
-	"image"
-	"image/png"
-	"gl"
-	"os"
+	"errors"
 	"fmt"
+	"gl"
+	"image"
+	"image/color"
+	"image/png"
+	"os"
 )
 
 //
-func LoadPng (path string) (*Texture, os.Error) {
+func LoadPng(path string) (*Texture, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -37,32 +39,31 @@ func LoadPng (path string) (*Texture, os.Error) {
 
 	file.Close()
 
-	var format,dataType gl.GLenum
+	var format, dataType gl.GLenum
 	var data []byte
 	switch cfg.ColorModel {
-		case image.NRGBAColorModel, image.RGBAColorModel:
-			format = gl.RGBA8
-			dataType = gl.UNSIGNED_BYTE
-		case image.NRGBA64ColorModel, image.RGBA64ColorModel:
-			format = gl.RGBA16
-			dataType = gl.UNSIGNED_SHORT
-		default:
-			panic(cfg.ColorModel)
-			return nil, os.NewError("Data Format not supported!")
+	case color.NRGBAModel, color.RGBAModel:
+		format = gl.RGBA8
+		dataType = gl.UNSIGNED_BYTE
+	case color.NRGBA64Model, color.RGBA64Model:
+		format = gl.RGBA16
+		dataType = gl.UNSIGNED_SHORT
+	default:
+		panic(cfg.ColorModel)
+		return nil, errors.New("Data Format not supported!")
 	}
 
 	switch cfg.ColorModel {
-		case image.NRGBAColorModel:
-			data = img.(*image.NRGBA).Pix
-		case image.RGBAColorModel:
-			data = img.(*image.RGBA).Pix
-		case image.NRGBA64ColorModel:
-			data = img.(*image.NRGBA64).Pix
-		case image.RGBA64ColorModel:
-			data = img.(*image.RGBA).Pix
+	case color.NRGBAModel:
+		data = img.(*image.NRGBA).Pix
+	case color.RGBAModel:
+		data = img.(*image.RGBA).Pix
+	case color.NRGBA64Model:
+		data = img.(*image.NRGBA64).Pix
+	case color.RGBA64Model:
+		data = img.(*image.RGBA).Pix
 	}
 
-	
 	texture := new(Texture)
 
 	texture.Width = cfg.Width

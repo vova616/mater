@@ -5,8 +5,8 @@ import (
 )
 
 type Scene struct {
-	Space *collision.Space
-	Camera *Camera
+	Space    *collision.Space
+	Camera   *Camera
 	Entities map[int]*Entity
 }
 
@@ -31,7 +31,7 @@ func (scene *Scene) AddEntity(entity *Entity) {
 }
 
 func (scene *Scene) RemoveEntity(entity *Entity) {
-	scene.Entities[entity.Id()] = nil, false
+	delete(scene.Entities, entity.Id())
 }
 
 func (scene *Scene) Destroy() {

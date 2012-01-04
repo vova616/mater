@@ -1,30 +1,31 @@
 package collision
 
 import (
-	"mater/vect"
+	"log"
 	"mater/aabb"
 	"mater/transform"
-	"os"
-	"log"
+
+	"mater/vect"
 )
 
 //common shape data
 type Shape struct {
-	Body *Body
+	Body                  *Body
 	Restitution, Friction float64
-	AABB aabb.AABB
+	AABB                  aabb.AABB
 	//the actual implementation of the shape
 	ShapeClass
 }
 
 type ShapeType int
-const(
-	ShapeType_Circle = 0
+
+const (
+	ShapeType_Circle  = 0
 	ShapeType_Segment = 1
-	numShapes = iota
+	numShapes         = iota
 )
 
-type ShapeClass interface{
+type ShapeClass interface {
 	ShapeType() ShapeType
 	//update the shape with the new transform and compute the AABB
 	Update(xf transform.Transform) aabb.AABB
@@ -32,11 +33,11 @@ type ShapeClass interface{
 	TestPoint(xf transform.Transform, point vect.Vect) bool
 
 	//
-	MarshalShape(shape *Shape) ([]byte, os.Error)
-	UnmarshalShape(shape *Shape, data []byte) (os.Error)
+	MarshalShape(shape *Shape) ([]byte, error)
+	UnmarshalShape(shape *Shape, data []byte) error
 }
 
-func (shape *Shape) Update () {
+func (shape *Shape) Update() {
 	if shape.Body == nil {
 		log.Printf("Error: uninitialized shape")
 		return

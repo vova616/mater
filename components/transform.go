@@ -1,10 +1,9 @@
 package components
 
 import (
+	"encoding/json"
 	. "mater"
 	"mater/transform"
-	"json"
-	"os"
 )
 
 //wrapper around box2d.Transform
@@ -12,13 +11,13 @@ type Transform struct {
 	*transform.Transform
 }
 
-func (xf *Transform) Name () string {
+func (xf *Transform) Name() string {
 	return "Transform"
 }
 
 //If the Transform is set and the owner has a body attached, we replace its transform
 //else if the Transform is not set we try to take it from the owners body or create a new one
-func (xf *Transform) Init (owner *Entity) {
+func (xf *Transform) Init(owner *Entity) {
 	//check if we already have a transform
 	if xf.Transform == nil {
 		//we don't, see if our owner has a body attached
@@ -42,19 +41,19 @@ func (xf *Transform) Init (owner *Entity) {
 	}
 }
 
-func (xf *Transform) Update (owner *Entity, dt float64) {
-	
+func (xf *Transform) Update(owner *Entity, dt float64) {
+
 }
 
-func (xf *Transform) Destroy (owner *Entity) {
-	
+func (xf *Transform) Destroy(owner *Entity) {
+
 }
 
-func (xf *Transform) Marshal(owner *Entity) ([]byte, os.Error) {
+func (xf *Transform) Marshal(owner *Entity) ([]byte, error) {
 	return json.Marshal(xf.Transform)
 }
 
-func (xf *Transform) Unmarshal(owner *Entity, data []byte) (os.Error) {
+func (xf *Transform) Unmarshal(owner *Entity, data []byte) error {
 	if xf.Transform == nil {
 		xf.Transform = new(transform.Transform)
 	}

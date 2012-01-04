@@ -1,21 +1,21 @@
 package components
 
 import (
+	"encoding/json"
+	"errors"
 	. "mater"
 	"mater/collision"
-	"json"
-	"os"
 )
 
 type Body struct {
 	*collision.Body
 }
 
-func (body *Body) Name () string {
+func (body *Body) Name() string {
 	return "Body"
 }
 
-func (body *Body) Init (owner *Entity) {
+func (body *Body) Init(owner *Entity) {
 	if body.Body == nil {
 		dbg.Printf("Error: Body component is not initialized correctly!")
 		return
@@ -35,11 +35,11 @@ func (body *Body) Init (owner *Entity) {
 	owner.Scene.Space.AddBody(body.Body)
 }
 
-func (body *Body) Update (owner *Entity, dt float64) {
+func (body *Body) Update(owner *Entity, dt float64) {
 
 }
 
-func (body *Body) Destroy (owner *Entity) {
+func (body *Body) Destroy(owner *Entity) {
 	if body.Body == nil {
 		dbg.Printf("Error: Body component is not initialized correctly!")
 		return
@@ -49,11 +49,11 @@ func (body *Body) Destroy (owner *Entity) {
 	body.Body.UserData = nil
 }
 
-func (body *Body) Marshal(owner *Entity) ([]byte, os.Error) {
+func (body *Body) Marshal(owner *Entity) ([]byte, error) {
 	return json.Marshal(body.Body)
 }
 
-func (body *Body) Unmarshal(owner *Entity, data []byte) (os.Error) {
+func (body *Body) Unmarshal(owner *Entity, data []byte) error {
 	if body.Body == nil {
 		body.Body = collision.NewBody(collision.BodyType_Static)
 	}
@@ -64,7 +64,7 @@ func (body *Body) Unmarshal(owner *Entity, data []byte) (os.Error) {
 	}
 
 	if body.Body == nil {
-		return os.NewError("nil Body")
+		return errors.New("nil Body")
 	}
 
 	owner.Scene.Space.AddBody(body.Body)

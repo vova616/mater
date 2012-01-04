@@ -1,34 +1,34 @@
 package transform
 
 import (
-	"mater/vect"
-	"json"
-	"os"
+	"encoding/json"
 	"log"
+
+	"mater/vect"
 )
 
-func (xf *Transform) MarshalJSON() ([]byte, os.Error) {
+func (xf *Transform) MarshalJSON() ([]byte, error) {
 	xfData := struct {
-		X, Y float64
+		X, Y     float64
 		Rotation float64
 	}{
-		X: xf.Position.X,
-		Y: xf.Position.Y,
+		X:        xf.Position.X,
+		Y:        xf.Position.Y,
 		Rotation: xf.Angle(),
 	}
 
 	return json.Marshal(&xfData)
 }
 
-func (xf *Transform) UnmarshalJSON(data []byte) os.Error {
+func (xf *Transform) UnmarshalJSON(data []byte) error {
 	xf.SetIdentity()
 
 	xfData := struct {
-		X, Y float64
+		X, Y     float64
 		Rotation float64
 	}{
-		X: xf.Position.X,
-		Y: xf.Position.Y,
+		X:        xf.Position.X,
+		Y:        xf.Position.Y,
 		Rotation: xf.Angle(),
 	}
 

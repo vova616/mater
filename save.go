@@ -2,15 +2,15 @@ package mater
 
 import (
 	"bytes"
-	"json"
-	"os"
-	"mater/collision"
+	"encoding/json"
 	"fmt"
+	"mater/collision"
+	"os"
 )
 
 var saveDirectory = "saves/"
 
-func (mater *Mater) SaveScene (path string) os.Error{
+func (mater *Mater) SaveScene(path string) error {
 	scene := mater.Scene
 
 	path = saveDirectory + path
@@ -41,7 +41,7 @@ func (mater *Mater) SaveScene (path string) os.Error{
 	return nil
 }
 
-func (mater *Mater) LoadScene (path string) os.Error {
+func (mater *Mater) LoadScene(path string) error {
 
 	var scene *Scene
 
@@ -80,11 +80,11 @@ func (mater *Mater) LoadScene (path string) os.Error {
 	return nil
 }
 
-func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
+func (scene *Scene) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buf)
 
-	var err os.Error
+	var err error
 
 	buf.WriteString(`{"Camera":`)
 	encoder.Encode(scene.Camera)
@@ -99,7 +99,6 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 	}
 	buf.Write(entities)
 
-
 	buf.WriteString(`,"Space":`)
 	err = encoder.Encode(scene.Space)
 	if err != nil {
@@ -111,7 +110,7 @@ func (scene *Scene) MarshalJSON() ([]byte, os.Error) {
 	return buf.Bytes(), nil
 }
 
-func (scene *Scene) MarshalEntities() ([]byte, os.Error) {
+func (scene *Scene) MarshalEntities() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buf)
 
@@ -135,12 +134,12 @@ func (scene *Scene) MarshalEntities() ([]byte, os.Error) {
 	return buf.Bytes(), nil
 }
 
-func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
+func (scene *Scene) UnmarshalJSON(data []byte) error {
 	sceneData := struct {
 		LastEntityId int
-		Camera *Camera
-		Space *collision.Space
-		Entities []json.RawMessage
+		Camera       *Camera
+		Space        *collision.Space
+		Entities     []json.RawMessage
 	}{}
 
 	err := json.Unmarshal(data, &sceneData)
@@ -169,10 +168,10 @@ func (scene *Scene) UnmarshalJSON(data []byte) os.Error {
 	return nil
 }
 
-func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
+func (scene *Scene) UnmarshalEntity(data []byte) error {
 	entityData := struct {
-		ID int
-		Enabled bool
+		ID         int
+		Enabled    bool
 		Components map[string]json.RawMessage
 	}{}
 	ed := &entityData
@@ -208,7 +207,7 @@ func (scene *Scene) UnmarshalEntity(data []byte) os.Error {
 	return nil
 }
 
-func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
+func (entity *Entity) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	encoder := json.NewEncoder(buf)
 
@@ -236,7 +235,7 @@ func (entity *Entity) MarshalJSON() ([]byte, os.Error) {
 		ccount++
 		buf.WriteByte('"')
 		buf.WriteString(name)
-		buf.WriteString(`":`)		
+		buf.WriteString(`":`)
 		buf.Write(data)
 		buf.WriteByte(',')
 	}

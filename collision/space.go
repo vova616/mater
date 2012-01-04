@@ -83,7 +83,10 @@ func (space *Space) Step(dt float64) {
 		}
 
 		//b.Velocity += dt * (gravity + b.invMass * b.Force)
-		newVel := vect.Add(space.Gravity, vect.Mult(body.Force, body.invMass))
+		newVel := vect.Mult(body.Force, body.invMass)
+		if ! body.IgnoreGravity {
+			newVel.Add(space.Gravity)
+		}
 		newVel.Mult(dt)
 		body.Velocity.Add(newVel)
 
