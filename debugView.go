@@ -140,6 +140,10 @@ func DrawShape(shape *collision.Shape) {
 				render.DrawPoly(verts[:], 4, false)
 
 			}
+
+			//n := segment.Normal()
+			//render.DrawLine(a, vect.Add(a, n))
+			//render.DrawLine(b, vect.Add(b, n))
 			
 		/*case ShapeType_Polygon:
 			poly := shape.ShapeClass.(*PolygonShape)

@@ -56,8 +56,6 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 		norm = vect.Mult(delta, 1.0 / dist)
 	}
 
-	norm.Mult(-1)
-
 	con.Reset(pos, norm, dist - minDist)
 
 	con.R1 = vect.Sub(con.Position, p1)
@@ -65,6 +63,7 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 
 	return 1
 }
+
 
 func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent vect.Vect) int {
 	count := circle2circleQuery(p1, p2, r1, r2, con)
@@ -76,8 +75,8 @@ func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent v
 	panic("Never reached")
 }
 
+//circle-segment collision taken from chipmunk-physics
 func circle2segment(contacts *[max_points]Contact, circle *CircleShape, segment *SegmentShape) int {
-
 	rsum := circle.Radius + segment.Radius
 
 	//Calculate normal distance from segment
@@ -90,7 +89,7 @@ func circle2segment(contacts *[max_points]Contact, circle *CircleShape, segment 
 	//Calculate tangential distance along segment
 	dt := -vect.Cross(segment.tn, circle.tc)
 	dtMin := -vect.Cross(segment.tn, segment.ta)
-	dtMax := -vect.Cross(segment.tn, segment.ta)
+	dtMax := -vect.Cross(segment.tn, segment.tb)
 
 	// Decision tree to decide which feature of the segment to collide with.
 	if dt < dtMin {

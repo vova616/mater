@@ -36,7 +36,7 @@ func (segment *SegmentShape) Update(xf transform.Transform) aabb.AABB {
 	b := xf.TransformVect(segment.B)
 	segment.ta = a
 	segment.tb = b
-	segment.n = vect.Perp(vect.Normalize(vect.Sub(segment.A, segment.B)))
+	segment.n = vect.Perp(vect.Normalize(vect.Sub(segment.B, segment.A)))
 	segment.tn = xf.RotateVect(segment.n)
 
 	rv := vect.Vect{segment.Radius, segment.Radius}
@@ -57,4 +57,8 @@ func (segment *SegmentShape) Update(xf transform.Transform) aabb.AABB {
 func (segment *SegmentShape) TestPoint(xf transform.Transform, point vect.Vect) bool {
 	panic("Not yet implemented!")
 	return false
+}
+
+func (segment *SegmentShape) Normal() vect.Vect {
+	return segment.n
 }

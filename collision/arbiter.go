@@ -22,7 +22,7 @@ func newArbiter() *Arbiter {
 func CreateArbiter(sa, sb *Shape) *Arbiter {
 	arb := newArbiter()
 
-	if sa.ShapeType() < sb.ShapeType() {
+	if sa.ShapeType() <= sb.ShapeType() {
 		arb.ShapeA = sa
 		arb.ShapeB = sb
 	} else {
