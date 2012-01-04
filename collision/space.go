@@ -10,12 +10,14 @@ type settings struct {
 	AccumulateImpulses bool
 	PositionCorrection bool
 	Iterations int
+	AutoUpdateShapes bool
 }
 
 var Settings settings = settings{
 	AccumulateImpulses: true,
 	PositionCorrection: true,
 	Iterations: 1,
+	AutoUpdateShapes: true,
 }
 
 type Space struct {
@@ -45,6 +47,7 @@ func (space *Space) AddBody(body *Body) {
 		return
 	}
 	body.Space = space
+	body.UpdateShapes()
 	space.Bodies = append(space.Bodies, body)
 }
 
@@ -72,6 +75,9 @@ func (space *Space) Step(dt float64) {
 
 	//Integrate forces
 	for _, body := range space.Bodies {
+		if Settings.AutoUpdateShapes {
+			body.UpdateShapes()
+		}
 		if body.IsStatic() {
 			continue
 		}
@@ -82,8 +88,6 @@ func (space *Space) Step(dt float64) {
 		body.Velocity.Add(newVel)
 
 		body.AngularVelocity += dt * body.invI * body.Torque
-
-		body.UpdateShapes()
 	}
 
 	//Perform pre-steps
