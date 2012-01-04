@@ -6,27 +6,46 @@ import (
 	"log"
 )
 
-func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
-	switch sA.ShapeType() {
-		case ShapeType_Circle:
-			switch sB.ShapeType() {
-				case ShapeType_Circle:
-					return circle2circle(contacts, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*CircleShape))
-				case ShapeType_Segment:
-					return circle2segment(contacts, sA.ShapeClass.(*CircleShape), sB.ShapeClass.(*SegmentShape))
-				default:
-					log.Printf("Warning: ShapeB unknown shapetype")
-					return 0
-			}
-		default:
-			log.Printf("Warning: ShapeA unknown shapetype")
-			return 0
-	}
-	return 0
+type collisionHandler func(contacts *[max_points]Contact, sA, sB *Shape) int
+var collisionHandlers = [numShapes][numShapes]collisionHandler{
+	ShapeType_Circle: [numShapes]collisionHandler{
+		ShapeType_Circle: circle2circle,
+		ShapeType_Segment: circle2segment,
+	},
+	ShapeType_Segment: [numShapes]collisionHandler{
+		ShapeType_Circle: nil,
+		ShapeType_Segment: nil,
+	},
 }
 
-func circle2circle(contacts *[max_points]Contact, csA, csB *CircleShape) int {
+func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
+	stA := sA.ShapeType()
+	stB := sB.ShapeType()
 
+	if stA > stB {
+		log.Printf("Error: shapes not ordered")
+		return 0
+	}
+
+	handler := collisionHandlers[stA][stB]
+	if handler == nil {
+		return 0
+	}
+
+	return handler(contacts, sA, sB)
+}
+
+func circle2circle(contacts *[max_points]Contact, sA, sB *Shape) int {
+	csA, ok := sA.ShapeClass.(*CircleShape)
+	if ! ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
+	csB, ok := sB.ShapeClass.(*CircleShape)
+	if ! ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
 	return circle2circleQuery(csA.tc, csB.tc, csA.Radius, csB.Radius, &contacts[0])
 }
 
@@ -76,7 +95,18 @@ func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent v
 }
 
 //circle-segment collision taken from chipmunk-physics
-func circle2segment(contacts *[max_points]Contact, circle *CircleShape, segment *SegmentShape) int {
+func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
+	circle, ok := sA.ShapeClass.(*CircleShape)
+	if ! ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
+	segment, ok := sB.ShapeClass.(*SegmentShape)
+	if ! ok {
+		log.Printf("Error: ShapeB not a SegmentShape!")
+		return 0
+	}
+
 	rsum := circle.Radius + segment.Radius
 
 	//Calculate normal distance from segment

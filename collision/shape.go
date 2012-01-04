@@ -19,8 +19,9 @@ type Shape struct {
 
 type ShapeType int
 const(
-	ShapeType_Circle = iota
-	ShapeType_Segment
+	ShapeType_Circle = 0
+	ShapeType_Segment = 1
+	numShapes = iota
 )
 
 type ShapeClass interface{
