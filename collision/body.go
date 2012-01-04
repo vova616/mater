@@ -37,6 +37,8 @@ type Body struct {
 	Enabled bool
 	bodyType BodyType
 
+	fixedRotation bool
+
 	//user defined data
 	UserData UserData
 }
@@ -97,8 +99,8 @@ func (body *Body) SetMass(mass float64) {
 		log.Printf("Error: can't change mass of a static body")
 		return
 	}
-	if mass == 0 {
-		log.Printf("Error: mass = 0 not valid, setting to 1")
+	if mass <= 0 {
+		log.Printf("Error: mass <= 0 not valid, setting to 1")
 		mass = 1
 	}
 
@@ -115,22 +117,26 @@ func (body *Body) SetInertia(i float64) {
 		log.Printf("Error: inertia <= 0 not valid, setting to 1")
 		i = 1
 	}
+	if body.fixedRotation {
+		log.Printf("Error: can't change inertia for a fixed rotation body")
+		return
+	}
 	
 	body.i = i
 	body.invI = 1.0 / i
 }
 
-func (body *Body) UpdateShapes () {
+func (body *Body) UpdateShapes() {
 	for _, shape := range body.Shapes {
 		shape.Update()
 	}
 }
 
-func (body *Body) BodyType () BodyType {
+func (body *Body) BodyType() BodyType {
 	return body.bodyType
 }
 
-func (body *Body) SetBodyType (bodyType BodyType) {
+func (body *Body) SetBodyType(bodyType BodyType) {
 	if bodyType == BodyType_Static {
 		body.bodyType = BodyType_Static
 
@@ -148,4 +154,24 @@ func (body *Body) SetBodyType (bodyType BodyType) {
 	} else {
 		log.Printf("Error: Unknown BodyType")
 	}
+}
+
+func (body *Body) FixedRotation() bool {
+	return body.fixedRotation
+}
+
+func (body *Body) SetFixedRoattion(fixed bool) {
+	if body.fixedRotation == fixed {
+		return
+	}
+
+	if fixed {
+		body.i = math.Inf(1)
+		body.invI = 0
+	} else {
+		body.i = 1
+		body.invI = 1
+	}
+
+	body.fixedRotation = fixed
 }

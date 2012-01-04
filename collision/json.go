@@ -125,13 +125,10 @@ func (body *Body) MarshalJSON() ([]byte, os.Error) {
 	if body.IsStatic() {
 		bodyData := struct{
 			Transform *transform.Transform
-			Mass, Inertia float64
 			Shapes []*Shape
 			Enabled bool
 		}{
 			Transform: &body.Transform,
-			Mass: body.mass,
-			Inertia: body.i,
 			Shapes: body.Shapes,
 			Enabled: body.Enabled,
 		}
@@ -140,9 +137,10 @@ func (body *Body) MarshalJSON() ([]byte, os.Error) {
 	} else {
 		bodyData := struct{
 			Transform *transform.Transform
-			Mass, Inertia float64
 			Shapes []*Shape
 			Enabled bool
+			Mass float64
+			Inertia float64
 			Velocity vect.Vect
 			AngularVelocity float64
 			Force vect.Vect
@@ -171,7 +169,8 @@ func (body *Body) UnmarshalJSON(data []byte) os.Error {
 	}
 	bodyData := struct{
 		Transform *transform.Transform
-		Mass, Inertia float64
+		Mass float64
+		Inertia float64
 		Shapes []*Shape
 		Enabled bool
 		Velocity vect.Vect
