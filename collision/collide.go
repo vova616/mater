@@ -12,10 +12,17 @@ var collisionHandlers = [numShapes][numShapes]collisionHandler{
 	ShapeType_Circle: [numShapes]collisionHandler{
 		ShapeType_Circle:  circle2circle,
 		ShapeType_Segment: circle2segment,
+		ShapeType_Polygon: circle2polygon,
 	},
 	ShapeType_Segment: [numShapes]collisionHandler{
 		ShapeType_Circle:  nil,
 		ShapeType_Segment: nil,
+		ShapeType_Polygon: nil,
+	},
+	ShapeType_Polygon: [numShapes]collisionHandler{
+		ShapeType_Circle: nil,
+		ShapeType_Segment: nil,
+		ShapeType_Polygon: nil,
 	},
 }
 
@@ -145,6 +152,59 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 				return 0
 			}
 		}
+	}
+	panic("Never reached")
+}
+
+func circle2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
+	circle, ok := sA.ShapeClass.(*CircleShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
+	poly, ok := sB.ShapeClass.(*PolygonShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a SegmentShape!")
+		return 0
+	}
+
+	return circle2polyFunc(contacts, circle, poly)
+}
+
+func circle2polyFunc(contacts *[max_points]Contact, circle *CircleShape, poly *PolygonShape) int {
+	
+	axes := poly.TAxes
+
+	mini := 0
+	min := vect.Dot(axes[0].N, circle.tc) - axes[0].D - circle.Radius
+	for i, axis := range axes {
+		dist := vect.Dot(axis.N, circle.tc) - axis.D - circle.Radius
+		if dist > 0.0 {
+			return 0
+		} else if dist > min {
+			min = dist
+			mini = i
+		}
+	}
+
+	n := axes[mini].N
+	a := poly.TVerts[mini]
+	b := poly.TVerts[(mini + 1) % poly.NumVerts]
+	dta := vect.Cross(n, a)
+	dtb := vect.Cross(n, b)
+	dt := vect.Cross(n, circle.tc)
+
+	if dt < dtb {
+		return circle2circleQuery(circle.tc, b, circle.Radius, 0.0, &contacts[0])
+	} else if dt < dta {
+		contacts[0].Reset(
+			vect.Sub(circle.tc, vect.Mult(n, circle.Radius + min / 2.0)),
+			vect.Mult(n, -1),
+			min,
+		)
+		return 1
+	} else {
+		return circle2circleQuery(circle.tc, a, circle.Radius, 0.0, &contacts[0])
 	}
 	panic("Never reached")
 }
