@@ -117,27 +117,27 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 	rsum := circle.Radius + segment.Radius
 
 	//Calculate normal distance from segment
-	dn := vect.Dot(segment.tn, circle.Tc) - vect.Dot(segment.ta, segment.tn)
+	dn := vect.Dot(segment.Tn, circle.Tc) - vect.Dot(segment.Ta, segment.Tn)
 	dist := math.Abs(dn) - rsum
 	if dist > 0.0 {
 		return 0
 	}
 
 	//Calculate tangential distance along segment
-	dt := -vect.Cross(segment.tn, circle.Tc)
-	dtMin := -vect.Cross(segment.tn, segment.ta)
-	dtMax := -vect.Cross(segment.tn, segment.tb)
+	dt := -vect.Cross(segment.Tn, circle.Tc)
+	dtMin := -vect.Cross(segment.Tn, segment.Ta)
+	dtMax := -vect.Cross(segment.Tn, segment.Tb)
 
 	// Decision tree to decide which feature of the segment to collide with.
 	if dt < dtMin {
 		if dt < (dtMin - rsum) {
 			return 0
 		} else {
-			return segmentEncapQuery(circle.Tc, segment.ta, circle.Radius, segment.Radius, &contacts[0], segment.a_tangent)
+			return segmentEncapQuery(circle.Tc, segment.Ta, circle.Radius, segment.Radius, &contacts[0], segment.A_tangent)
 		}
 	} else {
 		if dt < dtMax {
-			n := segment.tn
+			n := segment.Tn
 			if dn >= 0.0 {
 				n.Mult(-1)
 			}
@@ -147,7 +147,7 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 			return 1
 		} else {
 			if dt < (dtMax + rsum) {
-				return segmentEncapQuery(circle.Tc, segment.tb, circle.Radius, segment.Radius, &contacts[0], segment.b_tangent)
+				return segmentEncapQuery(circle.Tc, segment.Tb, circle.Radius, segment.Radius, &contacts[0], segment.B_tangent)
 			} else {
 				return 0
 			}
