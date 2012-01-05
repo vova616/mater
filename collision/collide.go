@@ -54,7 +54,7 @@ func circle2circle(contacts *[max_points]Contact, sA, sB *Shape) int {
 		log.Printf("Error: ShapeA not a CircleShape!")
 		return 0
 	}
-	return circle2circleQuery(csA.tc, csB.tc, csA.Radius, csB.Radius, &contacts[0])
+	return circle2circleQuery(csA.Tc, csB.Tc, csA.Radius, csB.Radius, &contacts[0])
 }
 
 func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
@@ -117,14 +117,14 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 	rsum := circle.Radius + segment.Radius
 
 	//Calculate normal distance from segment
-	dn := vect.Dot(segment.tn, circle.tc) - vect.Dot(segment.ta, segment.tn)
+	dn := vect.Dot(segment.tn, circle.Tc) - vect.Dot(segment.ta, segment.tn)
 	dist := math.Abs(dn) - rsum
 	if dist > 0.0 {
 		return 0
 	}
 
 	//Calculate tangential distance along segment
-	dt := -vect.Cross(segment.tn, circle.tc)
+	dt := -vect.Cross(segment.tn, circle.Tc)
 	dtMin := -vect.Cross(segment.tn, segment.ta)
 	dtMax := -vect.Cross(segment.tn, segment.tb)
 
@@ -133,7 +133,7 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 		if dt < (dtMin - rsum) {
 			return 0
 		} else {
-			return segmentEncapQuery(circle.tc, segment.ta, circle.Radius, segment.Radius, &contacts[0], segment.a_tangent)
+			return segmentEncapQuery(circle.Tc, segment.ta, circle.Radius, segment.Radius, &contacts[0], segment.a_tangent)
 		}
 	} else {
 		if dt < dtMax {
@@ -142,12 +142,12 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 				n.Mult(-1)
 			}
 			con := &contacts[0]
-			pos := vect.Add(circle.tc, vect.Mult(n, circle.Radius+dist*0.5))
+			pos := vect.Add(circle.Tc, vect.Mult(n, circle.Radius+dist*0.5))
 			con.Reset(pos, n, dist)
 			return 1
 		} else {
 			if dt < (dtMax + rsum) {
-				return segmentEncapQuery(circle.tc, segment.tb, circle.Radius, segment.Radius, &contacts[0], segment.b_tangent)
+				return segmentEncapQuery(circle.Tc, segment.tb, circle.Radius, segment.Radius, &contacts[0], segment.b_tangent)
 			} else {
 				return 0
 			}
@@ -176,9 +176,9 @@ func circle2polyFunc(contacts *[max_points]Contact, circle *CircleShape, poly *P
 	axes := poly.TAxes
 
 	mini := 0
-	min := vect.Dot(axes[0].N, circle.tc) - axes[0].D - circle.Radius
+	min := vect.Dot(axes[0].N, circle.Tc) - axes[0].D - circle.Radius
 	for i, axis := range axes {
-		dist := vect.Dot(axis.N, circle.tc) - axis.D - circle.Radius
+		dist := vect.Dot(axis.N, circle.Tc) - axis.D - circle.Radius
 		if dist > 0.0 {
 			return 0
 		} else if dist > min {
@@ -192,19 +192,19 @@ func circle2polyFunc(contacts *[max_points]Contact, circle *CircleShape, poly *P
 	b := poly.TVerts[(mini + 1) % poly.NumVerts]
 	dta := vect.Cross(n, a)
 	dtb := vect.Cross(n, b)
-	dt := vect.Cross(n, circle.tc)
+	dt := vect.Cross(n, circle.Tc)
 
 	if dt < dtb {
-		return circle2circleQuery(circle.tc, b, circle.Radius, 0.0, &contacts[0])
+		return circle2circleQuery(circle.Tc, b, circle.Radius, 0.0, &contacts[0])
 	} else if dt < dta {
 		contacts[0].Reset(
-			vect.Sub(circle.tc, vect.Mult(n, circle.Radius + min / 2.0)),
+			vect.Sub(circle.Tc, vect.Mult(n, circle.Radius + min / 2.0)),
 			vect.Mult(n, -1),
 			min,
 		)
 		return 1
 	} else {
-		return circle2circleQuery(circle.tc, a, circle.Radius, 0.0, &contacts[0])
+		return circle2circleQuery(circle.Tc, a, circle.Radius, 0.0, &contacts[0])
 	}
 	panic("Never reached")
 }

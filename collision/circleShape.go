@@ -6,11 +6,14 @@ import (
 	"mater/transform"
 )
 
+//If Settings.AutoUpdateShapes is not set, call Update on the shape for changes to take the Position and Radius to take effect.
+//Don't change TC ever.
 type CircleShape struct {
+	
 	Position vect.Vect
 	Radius float64
-	//center in global coordinates
-	tc vect.Vect
+	//Transform center of the circle, exposed for convenience.
+	Tc vect.Vect
 }
 
 func NewCircle(pos vect.Vect, radius float64) *Shape {
@@ -29,7 +32,7 @@ func (circle *CircleShape) ShapeType() ShapeType {
 func (circle *CircleShape) Update(xf transform.Transform) aabb.AABB {
 	//global center of the circle
 	center := xf.TransformVect(circle.Position)
-	circle.tc = center
+	circle.Tc = center
 	rv := vect.Vect{circle.Radius, circle.Radius}
 
 	return aabb.AABB{
