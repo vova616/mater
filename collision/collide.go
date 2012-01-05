@@ -57,6 +57,36 @@ func circle2circle(contacts *[max_points]Contact, sA, sB *Shape) int {
 	return circle2circleQuery(csA.Tc, csB.Tc, csA.Radius, csB.Radius, &contacts[0])
 }
 
+func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
+	circle, ok := sA.ShapeClass.(*CircleShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
+	segment, ok := sB.ShapeClass.(*SegmentShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a SegmentShape!")
+		return 0
+	}
+
+	return circle2segmentFunc(contacts, circle, segment)
+}
+
+func circle2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
+	circle, ok := sA.ShapeClass.(*CircleShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
+	poly, ok := sB.ShapeClass.(*PolygonShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a SegmentShape!")
+		return 0
+	}
+
+	return circle2polyFunc(contacts, circle, poly)
+}
+
 func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 	minDist := r1 + r2
 
@@ -85,9 +115,6 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 
 	con.Reset(pos, norm, dist-minDist)
 
-	//con.R1 = vect.Sub(con.Position, p1)
-	//con.R2 = vect.Sub(con.Position, p2)
-
 	return 1
 }
 
@@ -101,19 +128,7 @@ func segmentEncapQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact, tangent v
 	panic("Never reached")
 }
 
-//circle-segment collision taken from chipmunk-physics
-func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
-	circle, ok := sA.ShapeClass.(*CircleShape)
-	if !ok {
-		log.Printf("Error: ShapeA not a CircleShape!")
-		return 0
-	}
-	segment, ok := sB.ShapeClass.(*SegmentShape)
-	if !ok {
-		log.Printf("Error: ShapeB not a SegmentShape!")
-		return 0
-	}
-
+func circle2segmentFunc(contacts *[max_points]Contact, circle *CircleShape, segment *SegmentShape) int {
 	rsum := circle.Radius + segment.Radius
 
 	//Calculate normal distance from segment
@@ -154,21 +169,6 @@ func circle2segment(contacts *[max_points]Contact, sA, sB *Shape) int {
 		}
 	}
 	panic("Never reached")
-}
-
-func circle2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
-	circle, ok := sA.ShapeClass.(*CircleShape)
-	if !ok {
-		log.Printf("Error: ShapeA not a CircleShape!")
-		return 0
-	}
-	poly, ok := sB.ShapeClass.(*PolygonShape)
-	if !ok {
-		log.Printf("Error: ShapeB not a SegmentShape!")
-		return 0
-	}
-
-	return circle2polyFunc(contacts, circle, poly)
 }
 
 func circle2polyFunc(contacts *[max_points]Contact, circle *CircleShape, poly *PolygonShape) int {
