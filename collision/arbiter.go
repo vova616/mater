@@ -106,6 +106,8 @@ func (arb *Arbiter) PreStep(inv_dt float64) {
 	for i := 0; i < arb.NumContacts; i++ {
 		c := &arb.Contacts[i]
 
+		c.R1 = vect.Sub(c.Position, b1.Transform.Position)
+		c.R2 = vect.Sub(c.Position, b2.Transform.Position)
 		r1 := c.R1
 		r2 := c.R2
 

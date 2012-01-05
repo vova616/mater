@@ -78,8 +78,8 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 
 	con.Reset(pos, norm, dist-minDist)
 
-	con.R1 = vect.Sub(con.Position, p1)
-	con.R2 = vect.Sub(con.Position, p2)
+	//con.R1 = vect.Sub(con.Position, p1)
+	//con.R2 = vect.Sub(con.Position, p2)
 
 	return 1
 }
