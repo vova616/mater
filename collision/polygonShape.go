@@ -9,8 +9,8 @@ import (
 )
 
 type PolygonAxis struct {
-	n vect.Vect
-	d float64
+	N vect.Vect
+	D float64
 }
 
 type PolygonShape struct {
@@ -72,9 +72,21 @@ func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 		n := vect.Normalize(vect.Perp(vect.Sub(b, a)))
 
 		poly.verts[i] = a
-		poly.axes[i].n = n
-		poly.axes[i].d = vect.Dot(n, a)
+		poly.axes[i].N = n
+		poly.axes[i].D = vect.Dot(n, a)
 	}
+}
+
+func (poly *PolygonShape) Verts() Vertices {
+	return poly.verts
+}
+
+func (poly *PolygonShape) GlobalVerts() Vertices {
+	return poly.tVerts
+}
+
+func (poly *PolygonShape) GlobalAxes() []PolygonAxis {
+	return poly.tAxes
 }
 
 func (poly *PolygonShape) ShapeType() ShapeType {
@@ -88,9 +100,9 @@ func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 		dst := poly.tAxes
 
 		for i := 0; i < poly.numVerts; i++ {
-			n := xf.RotateVect(src[i].n)
-			dst[i].n = n
-			dst[i].d = vect.Dot(xf.Position, n) + src[i].d
+			n := xf.RotateVect(src[i].N)
+			dst[i].N = n
+			dst[i].D = vect.Dot(xf.Position, n) + src[i].D
 		}
 	}
 	//transform verts

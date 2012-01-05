@@ -140,10 +140,23 @@ func DrawShape(shape *collision.Shape) {
 				render.DrawPoly(verts[:], 4, false)
 
 			}
-
 			//n := segment.Normal()
 			//render.DrawLine(a, vect.Add(a, n))
 			//render.DrawLine(b, vect.Add(b, n))
+		case collision.ShapeType_Polygon:
+			poly := shape.ShapeClass.(*collision.PolygonShape)
+			verts := poly.GlobalVerts()
+			render.DrawPoly(verts, len(verts), false)
+			axes := poly.GlobalAxes()
+			for i, v := range verts {
+				a := axes[i]
+				v1 := v
+				v2 := verts[(i + 1) % len(verts)]
+				render.DrawLine(v1, vect.Add(v1, a.N))
+				render.DrawLine(v2, vect.Add(v2, a.N))
+			}
+
+			
 			
 		/*case ShapeType_Polygon:
 			poly := shape.ShapeClass.(*PolygonShape)

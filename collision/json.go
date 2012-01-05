@@ -41,6 +41,53 @@ func (f *InfFloat) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+//START VERTICES REGION
+/*func (verts Vertices) MarshalJSON ([]byte, error) {
+	buf := new(bytes.Buffer)
+	encoder := json.NewEncoder(buf)
+
+	buf.WriteByte('[')
+
+	for _, v := range verts {
+		encoder.Encode(v.X)
+		buf.WriteByte(',')
+		encoder.Encode(v.Y)
+		buf.WriteByte(',')
+	}
+
+	if len(verts) > 0 {
+		buf.Truncate(buf.Len() - 1)
+	}
+
+	buf.WriteByte(']')
+	return
+}
+
+func (verts *Vertices) UnmarshalJSON(data []byte) error {
+	vertData := []float64{}
+	err := json.Unmarshal(data, &vertData)
+	if err != nil {
+		log.Printf("Error decoding vertices!")
+		return err
+	}
+
+	if len(vertData) % 2 != 0 {
+		log.Printf("Error: Need at least 2 values for each Vertex")
+		return errors.New("Need at least 2 values for each Vertex")
+	}
+
+	v := make(Vertices, len(vertData) / 2)
+	*verts = v
+
+	for i := 0; i < len(vertData) / 2; i ++ {
+		v[i].X = vertData[i]
+		v[i].Y = vertData[i + 1]
+	}
+
+	return nil
+}*/
+//END VERTICES REGION
+
 //START SPACE REGION
 func (space *Space) MarshalJSON() ([]byte, error) {
 	buf := new(bytes.Buffer)
@@ -299,6 +346,10 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 		segment := new(SegmentShape)
 		shape.ShapeClass = segment
 		return segment.UnmarshalShape(shape, data)
+	case "polygon":
+		poly := new(PolygonShape)
+		shape.ShapeClass = poly
+		return poly.UnmarshalShape(shape, data)
 	}
 
 	log.Printf("Error: unknown shapetype: %v", shapeType.ShapeType)
@@ -421,3 +472,44 @@ func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) error {
 }
 
 //END SEGMENTSHAPE REGION
+
+//BEGIN POLYSHAPE REGION
+func (poly *PolygonShape) MarshalShape(shape *Shape) ([]byte, error) {
+	if shape.ShapeClass != poly {
+		log.Printf("Error: polyshape and shape.ShapeClass don't match")
+		return nil, errors.New("Wrong parent shape")
+	}
+
+	polyData := struct {
+		ShapeType string
+		Vertices Vertices
+	}{
+		ShapeType: "Polygon",
+		Vertices: poly.verts,
+	}
+
+	return json.Marshal(&polyData)
+}
+
+func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
+	if shape.ShapeClass != poly {
+		log.Printf("Error: polyshape and shape.ShapeClass don't match")
+		return errors.New("Wrong parent shape")
+	}
+
+	polyData := struct {
+		Vertices Vertices
+	}{
+		Vertices: poly.verts,
+	}
+
+	err := json.Unmarshal(data, &polyData)
+	if err != nil {
+		log.Printf("Error decoding PolygonShape")
+		return err
+	}
+
+	poly.SetVerts(polyData.Vertices, vect.Vect{})
+	return nil
+}
+//END POLYSHAPE REGION
