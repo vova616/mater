@@ -49,7 +49,7 @@ func (dv *DebugView) DrawDebugData () {
 
 	//Draw aabbs
 	for _, b := range space.Bodies {
-		gl.Color3f(.7, .7, .7)
+		gl.Color3f(.3, .7, .7)
 		for _, s := range b.Shapes {
 			render.DrawQuad(s.AABB.Lower, s.AABB.Upper, false)
 		}
@@ -140,21 +140,23 @@ func DrawShape(shape *collision.Shape) {
 				render.DrawPoly(verts[:], 4, false)
 
 			}
-			//n := segment.Normal()
-			//render.DrawLine(a, vect.Add(a, n))
-			//render.DrawLine(b, vect.Add(b, n))
+			//Normal:
+			/*n := segment.Normal()
+			render.DrawLine(a, vect.Add(a, n))
+			render.DrawLine(b, vect.Add(b, n))*/
 		case collision.ShapeType_Polygon:
 			poly := shape.ShapeClass.(*collision.PolygonShape)
 			verts := poly.TVerts
 			render.DrawPoly(verts, poly.NumVerts, false)
-			axes := poly.TAxes
+			//Normals
+			/*axes := poly.TAxes
 			for i, v := range verts {
 				a := axes[i]
 				v1 := v
 				v2 := verts[(i + 1) % len(verts)]
 				render.DrawLine(v1, vect.Add(v1, a.N))
 				render.DrawLine(v2, vect.Add(v2, a.N))
-			}
+			}*/
 
 			
 			

@@ -110,8 +110,8 @@ func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 	{
 		inf := math.Inf(1)
 		aabb := aabb.AABB{
-			Lower: vect.Vect{-inf, -inf},
-			Upper: vect.Vect{ inf,  inf},
+			Lower: vect.Vect{ inf,  inf},
+			Upper: vect.Vect{-inf, -inf},
 		}
 
 		src := poly.Verts
