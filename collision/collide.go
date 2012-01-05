@@ -43,6 +43,7 @@ func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
 	return handler(contacts, sA, sB)
 }
 
+//START COLLISION HANDLERS
 func circle2circle(contacts *[max_points]Contact, sA, sB *Shape) int {
 	csA, ok := sA.ShapeClass.(*CircleShape)
 	if !ok {
@@ -86,6 +87,7 @@ func circle2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
 
 	return circle2polyFunc(contacts, circle, poly)
 }
+//END COLLISION HANDLERS
 
 func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 	minDist := r1 + r2
