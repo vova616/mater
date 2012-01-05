@@ -181,7 +181,7 @@ func (space *Space) UnmarshalJSON(data []byte) error {
 		log.Printf("Error decoding space")
 		return err
 	}
-
+	space.init()
 	space.Gravity = spaceData.Gravity
 
 	for _, body := range spaceData.DynamicBodies {

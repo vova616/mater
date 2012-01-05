@@ -7,6 +7,10 @@ import (
 
 const max_points = 2
 
+type ArbiterKey struct {
+	ShapeA, ShapeB *Shape
+}
+
 type Arbiter struct {
 	ShapeA, ShapeB *Shape
 	Contacts       [max_points]Contact
@@ -38,16 +42,19 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 }
 
 func (arb *Arbiter) Delete() {
-
+	arb.ShapeA = nil
+	arb.ShapeB = nil
+	arb.NumContacts = 0
+	arb.Friction = 0
 }
 
 func (arb1 *Arbiter) Equals(arb2 *Arbiter) bool {
 	if arb1.ShapeA == arb2.ShapeA && arb1.ShapeB == arb2.ShapeB {
 		return true
 	}
-	if arb1.ShapeA == arb2.ShapeB && arb1.ShapeB == arb1.ShapeA {
+	/*if arb1.ShapeA == arb2.ShapeB && arb1.ShapeB == arb1.ShapeA {
 		return true
-	}
+	}*/
 
 	return false
 }

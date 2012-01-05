@@ -46,4 +46,7 @@ func (shape *Shape) Update() {
 	}
 
 	shape.AABB = shape.ShapeClass.Update(shape.Body.Transform)
+	v := vect.Vect{.1, .1}
+	shape.AABB.Lower.Sub(v)
+	shape.AABB.Upper.Add(v)
 }

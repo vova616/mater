@@ -121,6 +121,7 @@ func (space *Space) Step(dt float64) {
 }
 
 func (space *Space) Broadphase() {
+	space.Arbiters = make([]*Arbiter, 0, 32)
 	for i := 0; i < len(space.Bodies) - 1; i++ {
 		bi := space.Bodies[i]
 
@@ -139,7 +140,11 @@ func (space *Space) Broadphase() {
 					}
 
 					newArb := CreateArbiter(si, sj)
+					if newArb.NumContacts > 0 {
+						space.Arbiters = append(space.Arbiters, newArb)
+					}
 
+/*
 					//search if this arbiter already exists
 					var oldArb *Arbiter
 					index := 0
@@ -155,21 +160,24 @@ func (space *Space) Broadphase() {
 					if newArb.NumContacts > 0 {
 						//insert or update the arbiter
 						if oldArb == nil {
+							println(1)
 							//insert
 							space.Arbiters = append(space.Arbiters, newArb)
 						} else {
+							println(2)
 							//update
 							oldArb.Update(newArb.Contacts, newArb.NumContacts)
 						}
 
 					} else {
 						if oldArb != nil {
+							println(3)
 							//remove the arbiter
 							space.Arbiters = append(space.Arbiters[:index], space.Arbiters[index+1:]...)
 						}
 						newArb.Delete()
 					}
-
+*/
 				}
 			}
 
