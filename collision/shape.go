@@ -10,9 +10,10 @@ import (
 
 //common shape data
 type Shape struct {
-	Body                  *Body
-	Restitution, Friction float64
-	AABB                  aabb.AABB
+	Body        *Body
+	Restitution float64
+	Friction    float64
+	AABB        aabb.AABB
 	//the actual implementation of the shape
 	ShapeClass
 }
@@ -22,6 +23,7 @@ type ShapeType int
 const (
 	ShapeType_Circle  = 0
 	ShapeType_Segment = 1
+	ShapeType_Polygon = 2
 	numShapes         = iota
 )
 
