@@ -134,3 +134,28 @@ func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 func (poly *PolygonShape) TestPoint(xf transform.Transform, point vect.Vect) bool {
 	panic("Not yet implemented!")
 }
+
+func (poly *PolygonShape) ContainsVert(v vect.Vect) bool {
+	for _, axis := range poly.TAxes {
+		dist := vect.Dot(axis.N, v) - axis.D
+		if dist > 0.0 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (poly *PolygonShape) ContainsVertPartial(v, n vect.Vect) bool {
+	for _, axis := range poly.TAxes {
+		if vect.Dot(axis.N, n) < 0.0 {
+			continue
+		}
+		dist := vect.Dot(axis.N, v) - axis.D
+		if dist > 0.0 {
+			return false
+		}
+	}
+
+	return true
+}

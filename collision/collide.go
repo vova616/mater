@@ -17,12 +17,12 @@ var collisionHandlers = [numShapes][numShapes]collisionHandler{
 	ShapeType_Segment: [numShapes]collisionHandler{
 		ShapeType_Circle:  nil,
 		ShapeType_Segment: nil,
-		ShapeType_Polygon: nil,
+		ShapeType_Polygon: segment2polygon,
 	},
 	ShapeType_Polygon: [numShapes]collisionHandler{
 		ShapeType_Circle: nil,
 		ShapeType_Segment: nil,
-		ShapeType_Polygon: nil,
+		ShapeType_Polygon: polygon2polygon,
 	},
 }
 
@@ -81,11 +81,41 @@ func circle2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
 	}
 	poly, ok := sB.ShapeClass.(*PolygonShape)
 	if !ok {
-		log.Printf("Error: ShapeB not a SegmentShape!")
+		log.Printf("Error: ShapeB not a PolygonShape!")
 		return 0
 	}
 
 	return circle2polyFunc(contacts, circle, poly)
+}
+
+func segment2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
+/*	segment, ok := sA.ShapeClass.(*SegmentShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a SegmentShape!")
+		return 0
+	}
+	poly, ok := sB.ShapeClass.(*PolygonShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a PolygonShape!")
+		return 0
+	}*/
+	log.Printf("Not yet implemented!")
+	return 0
+}
+
+func polygon2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
+	poly1, ok := sA.ShapeClass.(*PolygonShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a PolygonShape!")
+		return 0
+	}
+	poly2, ok := sB.ShapeClass.(*PolygonShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a PolygonShape!")
+		return 0
+	}
+	
+	return poly2polyFunc(contacts, poly1, poly2)
 }
 //END COLLISION HANDLERS
 
@@ -209,4 +239,110 @@ func circle2polyFunc(contacts *[max_points]Contact, circle *CircleShape, poly *P
 		return circle2circleQuery(circle.Tc, a, circle.Radius, 0.0, &contacts[0])
 	}
 	panic("Never reached")
+}
+
+func poly2polyFunc(contacts *[max_points]Contact, poly1, poly2 *PolygonShape) int {
+	min1, mini1 := findMSA(poly2, poly1.TAxes, poly1.NumVerts)
+	if mini1 == -1 {
+		return 0
+	}
+
+	min2, mini2 := findMSA(poly1, poly2.TAxes, poly2.NumVerts)
+	if mini2 == -1 {
+		return 0
+	}
+
+	// There is overlap, find the penetrating verts
+	if min1 >  min2 {
+		return findVerts(contacts, poly1, poly2, poly1.TAxes[mini1].N, min1)
+	} else {
+		return findVerts(contacts, poly1, poly2, vect.Mult(poly2.TAxes[mini2].N, -1), min2)
+	}
+
+	panic("Never reached")
+}
+
+func findMSA(poly *PolygonShape, axes []PolygonAxis, num int) (min_out float64, min_index int) {
+	
+	min := poly.valueOnAxis(axes[0].N, axes[0].D)
+	if min > 0.0 {
+		return 0, -1
+	}
+
+	for i := 1; i < num; i++ {
+		dist := poly.valueOnAxis(axes[i].N, axes[i].D)
+		if dist > 0.0 {
+			return 0, -1
+		} else if(dist > min) {
+			min = dist
+			min_index = i
+		}
+	}
+
+	return min, min_index
+}
+
+func (poly *PolygonShape) valueOnAxis(n vect.Vect, d float64) float64 {
+	verts := poly.TVerts
+	min := vect.Dot(n, verts[0])
+
+	for i := 1; i < poly.NumVerts; i++ {
+		min = math.Min(min, vect.Dot(n, verts[i]))
+	}
+
+	return min - d
+}
+
+func nextContact(contacts *[max_points]Contact, numPtr *int) *Contact {
+	index := *numPtr
+
+	if index < max_points {
+		*numPtr = index + 1
+		return &contacts[index]
+	} else {
+		return &contacts[max_points - 1]
+	}
+	panic("Never reached")
+}
+
+func findVerts(contacts *[max_points]Contact, poly1, poly2 *PolygonShape, n vect.Vect, dist float64) int {
+	num := 0
+
+	for _, v := range poly1.TVerts {
+		if poly2.ContainsVert(v) {
+			nextContact(contacts, &num).Reset(v, n, dist)
+		}
+	}
+
+	for _, v := range poly2.TVerts {
+		if poly1.ContainsVert(v) {
+			nextContact(contacts, &num).Reset(v, n, dist)
+		}
+	}
+
+	if num > 0 {
+		return num
+	} else {
+		return findVertsFallback(contacts, poly1, poly2, n, dist)
+	}
+
+	panic("Never reached")
+}
+
+func findVertsFallback(contacts *[max_points]Contact, poly1, poly2 *PolygonShape, n vect.Vect, dist float64) int {
+	num := 0
+
+	for _, v := range poly1.TVerts {
+		if poly2.ContainsVertPartial(v, vect.Mult(n, -1)) {
+			nextContact(contacts, &num).Reset(v, n, dist)
+		}
+	}
+
+	for _, v := range poly2.TVerts {
+		if poly1.ContainsVertPartial(v, n) {
+			nextContact(contacts, &num).Reset(v, n, dist)
+		}
+	}
+
+	return num
 }
