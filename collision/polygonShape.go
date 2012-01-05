@@ -9,18 +9,29 @@ import (
 )
 
 type PolygonAxis struct {
+	//The axis normal.
 	N vect.Vect
+	//Dunno what this is.
 	D float64
 }
 
+//Don't modify directly or you'll fuck shit up.
+//Seriously.
 type PolygonShape struct {
-	verts  Vertices
-	tVerts Vertices
-	axes   []PolygonAxis
-	tAxes  []PolygonAxis
-	numVerts int
+	//The raw vertices of the polygon.
+	Verts  Vertices
+	//The transformed vertices.
+	TVerts Vertices
+	//The axes of the polygon.
+	Axes   []PolygonAxis
+	//The transformed axes of the polygon
+	TAxes  []PolygonAxis
+	//The number of vertices.
+	NumVerts int
 }
 
+//Creates a new PolygonShape with the given vertices offset by offset.
+//Returns nil if the given vertices are not valid
 func NewPolygon(verts Vertices, offset vect.Vect) *Shape {
 	if verts == nil {
 		log.Printf("Error: no vertices passed!")
@@ -36,6 +47,7 @@ func NewPolygon(verts Vertices, offset vect.Vect) *Shape {
 	return shape
 }
 
+//Sets the vertices offset by the offset and calculates the PolygonAxes.
 func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 
 	if verts == nil {
@@ -48,22 +60,22 @@ func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 	}
 
 	numVerts := len(verts)
-	oldnumVerts := len(poly.verts)
-	poly.numVerts = numVerts
+	oldnumVerts := len(poly.Verts)
+	poly.NumVerts = numVerts
 
 	if oldnumVerts < numVerts {
 		//create new slices
-		poly.verts = make(Vertices, numVerts)
-		poly.tVerts = make(Vertices, numVerts)
-		poly.axes = make([]PolygonAxis, numVerts)
-		poly.tAxes = make([]PolygonAxis, numVerts)
+		poly.Verts = make(Vertices, numVerts)
+		poly.TVerts = make(Vertices, numVerts)
+		poly.Axes = make([]PolygonAxis, numVerts)
+		poly.TAxes = make([]PolygonAxis, numVerts)
 
 	} else {
 		//reuse old slices
-		poly.verts = poly.verts[:numVerts]
-		poly.tVerts = poly.tVerts[:numVerts]
-		poly.axes = poly.axes[:numVerts]
-		poly.tAxes = poly.tAxes[:numVerts]
+		poly.Verts = poly.Verts[:numVerts]
+		poly.TVerts = poly.TVerts[:numVerts]
+		poly.Axes = poly.Axes[:numVerts]
+		poly.TAxes = poly.TAxes[:numVerts]
 	}
 
 	for i := 0; i < numVerts; i++ {
@@ -71,35 +83,24 @@ func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 		b := vect.Add(offset, verts[(i + 1) % numVerts])
 		n := vect.Normalize(vect.Perp(vect.Sub(b, a)))
 
-		poly.verts[i] = a
-		poly.axes[i].N = n
-		poly.axes[i].D = vect.Dot(n, a)
+		poly.Verts[i] = a
+		poly.Axes[i].N = n
+		poly.Axes[i].D = vect.Dot(n, a)
 	}
-}
-
-func (poly *PolygonShape) Verts() Vertices {
-	return poly.verts
-}
-
-func (poly *PolygonShape) GlobalVerts() Vertices {
-	return poly.tVerts
-}
-
-func (poly *PolygonShape) GlobalAxes() []PolygonAxis {
-	return poly.tAxes
 }
 
 func (poly *PolygonShape) ShapeType() ShapeType {
 	return ShapeType_Polygon
 }
 
+//Calculates the transformed vertices and axes and the bounding box.
 func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 	//transform axes
 	{
-		src := poly.axes
-		dst := poly.tAxes
+		src := poly.Axes
+		dst := poly.TAxes
 
-		for i := 0; i < poly.numVerts; i++ {
+		for i := 0; i < poly.NumVerts; i++ {
 			n := xf.RotateVect(src[i].N)
 			dst[i].N = n
 			dst[i].D = vect.Dot(xf.Position, n) + src[i].D
@@ -113,10 +114,10 @@ func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 			Upper: vect.Vect{ inf,  inf},
 		}
 
-		src := poly.verts
-		dst := poly.tVerts
+		src := poly.Verts
+		dst := poly.TVerts
 
-		for i := 0; i < poly.numVerts; i++ {
+		for i := 0; i < poly.NumVerts; i++ {
 			v := xf.TransformVect(src[i])
 
 			dst[i] = v

@@ -145,9 +145,9 @@ func DrawShape(shape *collision.Shape) {
 			//render.DrawLine(b, vect.Add(b, n))
 		case collision.ShapeType_Polygon:
 			poly := shape.ShapeClass.(*collision.PolygonShape)
-			verts := poly.GlobalVerts()
-			render.DrawPoly(verts, len(verts), false)
-			axes := poly.GlobalAxes()
+			verts := poly.TVerts
+			render.DrawPoly(verts, poly.NumVerts, false)
+			axes := poly.TAxes
 			for i, v := range verts {
 				a := axes[i]
 				v1 := v

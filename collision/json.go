@@ -485,7 +485,7 @@ func (poly *PolygonShape) MarshalShape(shape *Shape) ([]byte, error) {
 		Vertices Vertices
 	}{
 		ShapeType: "Polygon",
-		Vertices: poly.verts,
+		Vertices: poly.Verts,
 	}
 
 	return json.Marshal(&polyData)
@@ -500,7 +500,7 @@ func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
 	polyData := struct {
 		Vertices Vertices
 	}{
-		Vertices: poly.verts,
+		Vertices: poly.Verts,
 	}
 
 	err := json.Unmarshal(data, &polyData)
