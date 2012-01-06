@@ -468,9 +468,12 @@ func (poly *PolygonShape) MarshalShape(shape *Shape) ([]byte, error) {
 
 	polyData := struct {
 		ShapeType string
+		Friction, Restitution float64
 		Vertices Vertices
 	}{
 		ShapeType: "Polygon",
+		Friction:    shape.Friction,
+		Restitution: shape.Restitution,
 		Vertices: poly.Verts,
 	}
 
@@ -485,7 +488,10 @@ func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
 
 	polyData := struct {
 		Vertices Vertices
+		Friction, Restitution float64
 	}{
+		Friction:    shape.Friction,
+		Restitution: shape.Restitution,
 		Vertices: poly.Verts,
 	}
 
@@ -509,11 +515,14 @@ func (box *BoxShape) MarshalShape(shape *Shape) ([]byte, error) {
 
 	boxData := struct {
 		ShapeType string
+		Friction, Restitution float64
 		Width float64
 		Height float64
 		Position vect.Vect
 	}{
 		ShapeType: "Box",
+		Friction:    shape.Friction,
+		Restitution: shape.Restitution,
 		Width: box.Width,
 		Height: box.Height,
 		Position: box.Position,
@@ -529,10 +538,13 @@ func (box *BoxShape) UnmarshalShape(shape *Shape, data []byte) error {
 	}
 
 	boxData := struct {
+		Friction, Restitution float64
 		Width float64
 		Height float64
 		Position vect.Vect
 	}{
+		Friction:    shape.Friction,
+		Restitution: shape.Restitution,
 		Width: box.Width,
 		Height: box.Height,
 		Position: box.Position,

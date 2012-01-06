@@ -20,7 +20,7 @@ type BoxShape struct {
 	Position vect.Vect
 }
 
-func NewBoxShape(pos vect.Vect, w, h float64) *Shape {
+func NewBox(pos vect.Vect, w, h float64) *Shape {
 	shape := new(Shape)
 	box := &BoxShape{
 		Polygon: &PolygonShape{},

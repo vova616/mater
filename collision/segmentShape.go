@@ -24,7 +24,7 @@ type SegmentShape struct {
 	A_tangent, B_tangent vect.Vect
 }
 
-func NewSegmentShape(a, b vect.Vect, r float64) *Shape {
+func NewSegment(a, b vect.Vect, r float64) *Shape {
 	shape := new(Shape)
 	shape.ShapeClass = &SegmentShape{
 		A: a,
