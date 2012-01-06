@@ -200,7 +200,6 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 
 	dist := math.Sqrt(distSqr)
 
-	con.Separation = dist - minDist
 	pDist := dist
 	if dist == 0.0 {
 		pDist = math.Inf(1)

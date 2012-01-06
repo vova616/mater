@@ -48,10 +48,13 @@ func (dv *DebugView) DrawDebugData () {
 	}
 
 	//Draw aabbs
-	for _, b := range space.Bodies {
-		gl.Color3f(.3, .7, .7)
-		for _, s := range b.Shapes {
-			render.DrawQuad(s.AABB.Lower, s.AABB.Upper, false)
+	const drawAABBs = false
+	if drawAABBs {
+		for _, b := range space.Bodies {
+			gl.Color3f(.3, .7, .7)
+			for _, s := range b.Shapes {
+				render.DrawQuad(s.AABB.Lower, s.AABB.Upper, false)
+			}
 		}
 	}
 
@@ -64,6 +67,7 @@ func (dv *DebugView) DrawDebugData () {
 			gl.Color3f(0, 0, 1)
 			p1 := con.Position
 			p2 := vect.Add(p1, vect.Mult(con.Normal, contactNormalScale))
+			//p2 := vect.Add(p1, vect.Mult(con.Normal, con.Separation))
 			render.DrawLine(p1, p2)
 			gl.Color3f(0, 1, 0)
 			render.DrawCircle(con.Position, contactRadius, false)

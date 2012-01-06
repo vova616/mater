@@ -102,20 +102,16 @@ func (space *Space) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	buf.WriteString(`,"StaticBodies":`)
+	buf.WriteString(`,"Bodies":`)
 	buf.WriteByte('[')
 
-	staticBodyNum := 0
+	bodyNum := 0
 	for _, body := range space.Bodies {
 		if body.UserData != nil {
 			continue
 		}
 
-		if body.IsStatic() == false {
-			continue
-		}
-
-		staticBodyNum++
+		bodyNum++
 
 		err := encoder.Encode(body)
 		if err != nil {
@@ -126,41 +122,10 @@ func (space *Space) MarshalJSON() ([]byte, error) {
 	}
 
 	//check if we serialized any bodies
-	if staticBodyNum != 0 {
+	if bodyNum != 0 {
 		//cut trailing comma
 		buf.Truncate(buf.Len() - 1)
 	}
-	buf.WriteByte(']')
-
-	buf.WriteString(`,"DynamicBodies":`)
-	buf.WriteByte('[')
-
-	dynamicBodyNum := 0
-	for _, body := range space.Bodies {
-		if body.UserData != nil {
-			continue
-		}
-
-		if body.IsStatic() == true {
-			continue
-		}
-
-		dynamicBodyNum++
-
-		err := encoder.Encode(body)
-		if err != nil {
-			log.Printf("Error encoding body: %v", body)
-			return nil, err
-		}
-		buf.WriteByte(',')
-	}
-
-	//check if we serialized any bodies
-	if dynamicBodyNum != 0 {
-		//cut trailing comma
-		buf.Truncate(buf.Len() - 1)
-	}
-
 	buf.WriteByte(']')
 
 	buf.WriteByte('}')
@@ -171,7 +136,7 @@ func (space *Space) MarshalJSON() ([]byte, error) {
 func (space *Space) UnmarshalJSON(data []byte) error {
 	spaceData := struct {
 		Gravity                     vect.Vect
-		DynamicBodies, StaticBodies []*Body
+		Bodies []json.RawMessage
 	}{
 		Gravity: space.Gravity,
 	}
@@ -184,15 +149,27 @@ func (space *Space) UnmarshalJSON(data []byte) error {
 	space.init()
 	space.Gravity = spaceData.Gravity
 
-	for _, body := range spaceData.DynamicBodies {
-		body.SetBodyType(BodyType_Dynamic)
-		body.bodyType = BodyType_Dynamic
-		space.AddBody(body)
-	}
+	for _, bodyData := range spaceData.Bodies {
+		bodyTypeData := struct {
+			Type string
+		}{
+			Type: "Static",
+		}
+		err := json.Unmarshal(bodyData, &bodyTypeData)
+		if err != nil {
+			log.Printf("Error decoding bodytype")
+			return err
+		}
 
-	for _, body := range spaceData.StaticBodies {
-		body.bodyType = BodyType_Static
-		body.SetBodyType(BodyType_Static)
+		var bodyType BodyType
+		bodyType.FromString(bodyTypeData.Type)
+		body := new(Body)
+		err = body.UnmarshalJSON(bodyData)
+		if err != nil {
+			log.Printf("Error decoding body")
+			return err
+		}
+		body.SetBodyType(bodyType)
 		space.AddBody(body)
 	}
 
@@ -205,10 +182,12 @@ func (space *Space) UnmarshalJSON(data []byte) error {
 func (body *Body) MarshalJSON() ([]byte, error) {
 	if body.IsStatic() {
 		bodyData := struct {
+			Type      string
 			Transform *transform.Transform
 			Shapes    []*Shape
 			Enabled   bool
 		}{
+			Type:      body.BodyType().ToString(),
 			Transform: &body.Transform,
 			Shapes:    body.Shapes,
 			Enabled:   body.Enabled,
@@ -216,6 +195,7 @@ func (body *Body) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&bodyData)
 	} else {
 		bodyData := struct {
+			Type            string
 			Transform       *transform.Transform
 			Shapes          []*Shape
 			Enabled         bool
@@ -227,6 +207,7 @@ func (body *Body) MarshalJSON() ([]byte, error) {
 			Torque          float64
 			IgnoreGravity   bool
 		}{
+			Type:            body.BodyType().ToString(),
 			Transform:       &body.Transform,
 			Shapes:          body.Shapes,
 			Enabled:         body.Enabled,
@@ -258,7 +239,7 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		AngularVelocity float64
 		Force           vect.Vect
 		Torque          float64
-		IgnoreGravity bool
+		IgnoreGravity   bool
 	}{ //initializing everything to the bodies default values
 		Transform:       &body.Transform,
 		Shapes:          body.Shapes,

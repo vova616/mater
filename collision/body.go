@@ -5,6 +5,7 @@ import (
 	"mater/vect"
 	"log"
 	"math"
+	"strings"
 )
 
 type UserData interface{}
@@ -14,6 +15,27 @@ const (
 	BodyType_Static = iota
 	BodyType_Dynamic
 )
+
+func (bt BodyType) ToString() string {
+	switch bt {
+		case BodyType_Static:
+			return "Static"
+		case BodyType_Dynamic:
+			return "Dynamic"
+	}
+	return "unknown"
+}
+
+func (bt *BodyType) FromString(bodyType string) {
+	switch strings.ToLower(bodyType) {
+		case "static":
+			*bt = BodyType_Static
+		case "dynamic":
+			*bt = BodyType_Dynamic
+		default:
+			log.Printf("Error: Unknown BodyType \"%v\", BodyType not changed", bodyType)
+	}
+}
 
 //represents a rigid body
 type Body struct {
