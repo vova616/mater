@@ -43,9 +43,8 @@ func (circle *CircleShape) Update(xf transform.Transform) aabb.AABB {
 	}
 }
 
-func (circle *CircleShape) TestPoint(xf transform.Transform, point vect.Vect) bool {
-	center := xf.TransformVect(circle.Position)
-	d := vect.Sub(point, center)
+func (circle *CircleShape) TestPoint(point vect.Vect) bool {
+	d := vect.Sub(point, circle.Tc)
 
 	return vect.Dot(d, d) <= circle.Radius * circle.Radius
 }

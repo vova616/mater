@@ -7,11 +7,16 @@ import (
 )
 
 //Convenience wrapper around PolygonShape.
+//After modifying With, Height or Position call UpdatePoly for the changes to take effect.
 type BoxShape struct {
+	//The polygon that represents this box. Do not touch!
 	Polygon *PolygonShape
 	verts [4]vect.Vect
+	//The width of the box.
 	Width float64
+	//The height of the box.
 	Height float64
+	//The center of the box.
 	Position vect.Vect
 }
 
@@ -64,6 +69,6 @@ func (box *BoxShape) Update(xf transform.Transform) aabb.AABB {
 	return box.Polygon.Update(xf)
 }
 
-func (box *BoxShape) TestPoint(xf transform.Transform, point vect.Vect) bool {
-	return box.Polygon.TestPoint(xf, point)
+func (box *BoxShape) TestPoint(point vect.Vect) bool {
+	return box.Polygon.TestPoint(point)
 }

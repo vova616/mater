@@ -32,8 +32,8 @@ type ShapeClass interface {
 	ShapeType() ShapeType
 	//update the shape with the new transform and compute the AABB
 	Update(xf transform.Transform) aabb.AABB
-	//return if the given point is located inside the shape
-	TestPoint(xf transform.Transform, point vect.Vect) bool
+	//returns if the given point is located inside the shape
+	TestPoint(point vect.Vect) bool
 
 	//
 	MarshalShape(shape *Shape) ([]byte, error)

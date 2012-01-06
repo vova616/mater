@@ -61,7 +61,7 @@ func (segment *SegmentShape) Update(xf transform.Transform) aabb.AABB {
 	}
 }
 
-func (segment *SegmentShape) TestPoint(xf transform.Transform, point vect.Vect) bool {
+func (segment *SegmentShape) TestPoint(point vect.Vect) bool {
 	panic("Not yet implemented!")
 	return false
 }

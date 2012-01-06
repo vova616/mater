@@ -18,15 +18,15 @@ type PolygonAxis struct {
 //Don't modify directly or you'll fuck shit up.
 //Seriously.
 type PolygonShape struct {
-	//The raw vertices of the polygon.
+	//The raw vertices of the polygon. Do not touch!
 	Verts  Vertices
-	//The transformed vertices.
+	//The transformed vertices. Do not touch!
 	TVerts Vertices
-	//The axes of the polygon.
+	//The axes of the polygon. Do not touch!
 	Axes   []PolygonAxis
-	//The transformed axes of the polygon
+	//The transformed axes of the polygon Do not touch!
 	TAxes  []PolygonAxis
-	//The number of vertices.
+	//The number of vertices. Do not touch!
 	NumVerts int
 }
 
@@ -131,8 +131,8 @@ func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 	}
 }
 
-func (poly *PolygonShape) TestPoint(xf transform.Transform, point vect.Vect) bool {
-	panic("Not yet implemented!")
+func (poly *PolygonShape) TestPoint(point vect.Vect) bool {
+	return poly.ContainsVert(point)
 }
 
 func (poly *PolygonShape) ContainsVert(v vect.Vect) bool {
