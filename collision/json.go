@@ -350,6 +350,11 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 		poly := new(PolygonShape)
 		shape.ShapeClass = poly
 		return poly.UnmarshalShape(shape, data)
+	case "box":
+		box := new(BoxShape)
+		shape.ShapeClass = box
+		return box.UnmarshalShape(shape, data)
+
 	}
 
 	log.Printf("Error: unknown shapetype: %v", shapeType.ShapeType)
@@ -513,3 +518,58 @@ func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
 	return nil
 }
 //END POLYSHAPE REGION
+
+//START BOXSHAPE REGION
+func (box *BoxShape) MarshalShape(shape *Shape) ([]byte, error) {
+	if shape.ShapeClass != box {
+		log.Printf("Error: boxshape and shape.ShapeClass don't match")
+		return nil, errors.New("Wrong parent shape")
+	}
+
+	boxData := struct {
+		ShapeType string
+		Width float64
+		Height float64
+		Position vect.Vect
+	}{
+		ShapeType: "Box",
+		Width: box.Width,
+		Height: box.Height,
+		Position: box.Position,
+	}
+
+	return json.Marshal(&boxData)
+}
+
+func (box *BoxShape) UnmarshalShape(shape *Shape, data []byte) error {
+	if shape.ShapeClass != box {
+		log.Printf("Error: boxshape and shape.ShapeClass don't match")
+		return errors.New("Wrong parent shape")
+	}
+
+	boxData := struct {
+		Width float64
+		Height float64
+		Position vect.Vect
+	}{
+		Width: box.Width,
+		Height: box.Height,
+		Position: box.Position,
+	}
+
+	err := json.Unmarshal(data, &boxData)
+	if err != nil {
+		log.Printf("Error decoding BoxShape")
+		return err
+	}
+
+	box.Width = boxData.Width
+	box.Height = boxData.Height
+	box.Position = boxData.Position
+	if box.Polygon == nil {
+		box.Polygon = new(PolygonShape)
+	}
+	box.UpdatePoly()
+	return nil
+}
+//END BOXSHAPE REGION

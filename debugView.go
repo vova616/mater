@@ -158,16 +158,9 @@ func DrawShape(shape *collision.Shape) {
 				render.DrawLine(v2, vect.Add(v2, a.N))
 			}*/
 
-			
-			
-		/*case ShapeType_Polygon:
-			poly := shape.ShapeClass.(*PolygonShape)
-			vertCount := len(poly.Vertices)
-
-			for i := 0; i < vertCount; i++ {
-				_tmpVertices[i] = MultiplyTransformVect(xf, &poly.Vertices[i])
-			}
-			render.DrawPoly(_tmpVertices, vertCount, false)
-			break*/
+		case collision.ShapeType_Box:
+			poly := shape.ShapeClass.(*collision.BoxShape).Polygon
+			verts := poly.TVerts
+			render.DrawPoly(verts, poly.NumVerts, false)
 	}
 }

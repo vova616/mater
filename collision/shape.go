@@ -24,6 +24,7 @@ const (
 	ShapeType_Circle  = 0
 	ShapeType_Segment = 1
 	ShapeType_Polygon = 2
+	ShapeType_Box     = 3
 	numShapes         = iota
 )
 

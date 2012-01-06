@@ -13,16 +13,25 @@ var collisionHandlers = [numShapes][numShapes]collisionHandler{
 		ShapeType_Circle:  circle2circle,
 		ShapeType_Segment: circle2segment,
 		ShapeType_Polygon: circle2polygon,
+		ShapeType_Box:	   circle2box,
 	},
 	ShapeType_Segment: [numShapes]collisionHandler{
 		ShapeType_Circle:  nil,
 		ShapeType_Segment: nil,
 		ShapeType_Polygon: segment2polygon,
+		ShapeType_Box:     segment2box,
 	},
 	ShapeType_Polygon: [numShapes]collisionHandler{
-		ShapeType_Circle: nil,
+		ShapeType_Circle:  nil,
 		ShapeType_Segment: nil,
 		ShapeType_Polygon: polygon2polygon,
+		ShapeType_Box:     polygon2box,
+	},
+	ShapeType_Box: [numShapes]collisionHandler{
+		ShapeType_Circle:  nil,
+		ShapeType_Segment: nil,
+		ShapeType_Polygon: nil,
+		ShapeType_Box:     box2box,
 	},
 }
 
@@ -31,6 +40,7 @@ func collide(contacts *[max_points]Contact, sA, sB *Shape) int {
 	stB := sB.ShapeType()
 
 	if stA > stB {
+		log.Printf("sta: %v, stb: %v", stA, stB)
 		log.Printf("Error: shapes not ordered")
 		return 0
 	}
@@ -89,7 +99,7 @@ func circle2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
 }
 
 func segment2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
-/*	segment, ok := sA.ShapeClass.(*SegmentShape)
+	segment, ok := sA.ShapeClass.(*SegmentShape)
 	if !ok {
 		log.Printf("Error: ShapeA not a SegmentShape!")
 		return 0
@@ -98,9 +108,8 @@ func segment2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
 	if !ok {
 		log.Printf("Error: ShapeB not a PolygonShape!")
 		return 0
-	}*/
-	log.Printf("Not yet implemented!")
-	return 0
+	}
+	return seg2polyFunc(contacts, segment, poly)
 }
 
 func polygon2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
@@ -116,6 +125,66 @@ func polygon2polygon(contacts *[max_points]Contact, sA, sB *Shape) int {
 	}
 	
 	return poly2polyFunc(contacts, poly1, poly2)
+}
+
+func circle2box(contacts *[max_points]Contact, sA, sB *Shape) int {
+	circle, ok := sA.ShapeClass.(*CircleShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a CircleShape!")
+		return 0
+	}
+	box, ok := sB.ShapeClass.(*BoxShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a BoxShape!")
+		return 0
+	}
+
+	return circle2polyFunc(contacts, circle, box.Polygon)
+}
+
+func segment2box(contacts *[max_points]Contact, sA, sB *Shape) int {
+	seg, ok := sA.ShapeClass.(*SegmentShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a SegmentShape!")
+		return 0
+	}
+	box, ok := sB.ShapeClass.(*BoxShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a BoxShape!")
+		return 0
+	}
+
+	return seg2polyFunc(contacts, seg, box.Polygon)
+}
+
+func polygon2box(contacts *[max_points]Contact, sA, sB *Shape) int {
+	poly, ok := sA.ShapeClass.(*PolygonShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a PolygonShape!")
+		return 0
+	}
+	box, ok := sB.ShapeClass.(*BoxShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a BoxShape!")
+		return 0
+	}
+
+	return poly2polyFunc(contacts, poly, box.Polygon)
+}
+
+func box2box(contacts *[max_points]Contact, sA, sB *Shape) int {
+	box1, ok := sA.ShapeClass.(*BoxShape)
+	if !ok {
+		log.Printf("Error: ShapeA not a BoxShape!")
+		return 0
+	}
+	box2, ok := sB.ShapeClass.(*BoxShape)
+	if !ok {
+		log.Printf("Error: ShapeB not a BoxShape!")
+		return 0
+	}
+
+	return poly2polyFunc(contacts, box1.Polygon, box2.Polygon)
 }
 //END COLLISION HANDLERS
 
@@ -345,4 +414,9 @@ func findVertsFallback(contacts *[max_points]Contact, poly1, poly2 *PolygonShape
 	}
 
 	return num
+}
+
+func seg2polyFunc(contacts *[max_points]Contact, seg *SegmentShape, poly *PolygonShape) int {
+	log.Printf("Segment2Poly collision not yet implemented!")
+	return 0
 }
