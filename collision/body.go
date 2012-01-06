@@ -73,6 +73,10 @@ func (body *Body) init() {
 func NewBody(bodyType BodyType) *Body {
 	body := new(Body)
 	body.init()
+	body.mass = 1
+	body.invMass = 1
+	body.i = 1
+	body.invI = 1
 	body.SetBodyType(bodyType)
 
 	return body
