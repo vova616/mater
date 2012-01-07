@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"mater/collision"
 	"os"
+	"mater/transform"
 )
 
 var saveDirectory = "saves/"
@@ -91,9 +92,6 @@ func (scene *Scene) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`{"Camera":`)
 	encoder.Encode(scene.Camera)
 
-	buf.WriteString(`,"LastEntityId":`)
-	encoder.Encode(lastEntityId)
-
 	buf.WriteString(`,"Entities":`)
 	entities, err := scene.MarshalEntities()
 	if err != nil {
@@ -138,7 +136,6 @@ func (scene *Scene) MarshalEntities() ([]byte, error) {
 
 func (scene *Scene) UnmarshalJSON(data []byte) error {
 	sceneData := struct {
-		LastEntityId int
 		Camera       *Camera
 		Space        *collision.Space
 		Entities     []json.RawMessage
@@ -150,8 +147,6 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 	}
 
 	sd := &sceneData
-
-	lastEntityId = sd.LastEntityId
 
 	scene.Camera = sd.Camera
 	scene.Space = sd.Space
@@ -174,6 +169,7 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 	entityData := struct {
 		ID         int
 		Enabled    bool
+		Transform  *transform.Transform
 		Components map[string]json.RawMessage
 	}{}
 	ed := &entityData
@@ -187,7 +183,12 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 	entity.Scene = scene
 
 	entity.id = ed.ID
+	if ed.ID > lastEntityId {
+		lastEntityId = ed.ID
+	}
+
 	entity.Enabled = ed.Enabled
+	entity.Transform = ed.Transform
 
 	entity.Components = make(map[string]Component, len(ed.Components))
 
@@ -219,6 +220,9 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 
 	buf.WriteString(`,"Enabled":`)
 	encoder.Encode(entity.Enabled)
+
+	buf.WriteString(`,"Transform":`)
+	encoder.Encode(entity.Transform)
 
 	buf.WriteString(`,"Components":`)
 	buf.WriteByte('{')

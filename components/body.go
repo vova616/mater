@@ -21,6 +21,12 @@ func (body *Body) Init(owner *Entity) {
 		return
 	}
 
+	if owner.Transform != nil {
+		body.Transform = *owner.Transform
+	}
+
+	owner.Transform = &body.Transform
+
 	body.Body.UserData = owner
 }
 

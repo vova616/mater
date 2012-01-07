@@ -1,6 +1,7 @@
 package mater
 
 import (
+	"mater/transform"
 )
 
 type Entity struct {
@@ -8,6 +9,7 @@ type Entity struct {
 	Enabled bool
 	Scene *Scene `json:"-,omitempty"`
 	Components map[string]Component
+	Transform *transform.Transform
 }
 
 var lastEntityId = 0
