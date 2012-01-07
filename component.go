@@ -11,6 +11,8 @@ type Component interface {
 	Update(owner *Entity, dt float64)
 	//Called when removed from an Entity or before the entity is destroyed
 	Destroy(owner *Entity)
+	//Called when a new component is added to the owner
+	OnNewComponent(owner *Entity, other Component)
 
 	//
 	Marshal(owner *Entity) ([]byte, error)
@@ -26,6 +28,12 @@ func (entity *Entity) AddComponent(component Component) {
 	}
 	entity.Components[name] = component
 	component.Init(entity)
+	for _, comp := range entity.Components {
+		if comp == component {
+			continue
+		}
+		comp.OnNewComponent(entity, component)
+	}
 }
 
 func (entity *Entity) RemoveComponent(component Component) {

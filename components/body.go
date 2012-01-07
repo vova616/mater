@@ -22,17 +22,6 @@ func (body *Body) Init(owner *Entity) {
 	}
 
 	body.Body.UserData = owner
-
-	if tcomp, ok := owner.Components["Transform"]; ok {
-		//the owner already has a transform attached, change this bodies transform to it
-		xf := tcomp.(*Transform)
-
-		body.Transform = *xf.Transform
-
-		//set the transform to point to this one
-		xf.Transform = &body.Transform
-	}
-	owner.Scene.Space.AddBody(body.Body)
 }
 
 func (body *Body) Update(owner *Entity, dt float64) {
@@ -70,6 +59,10 @@ func (body *Body) Unmarshal(owner *Entity, data []byte) error {
 	owner.Scene.Space.AddBody(body.Body)
 
 	return nil
+}
+
+func (body *Body) OnNewComponent(owner *Entity, other Component) {
+
 }
 
 func init() {

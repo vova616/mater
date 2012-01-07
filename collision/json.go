@@ -136,7 +136,7 @@ func (space *Space) MarshalJSON() ([]byte, error) {
 func (space *Space) UnmarshalJSON(data []byte) error {
 	spaceData := struct {
 		Gravity                     vect.Vect
-		Bodies []json.RawMessage
+		Bodies []*Body
 	}{
 		Gravity: space.Gravity,
 	}
@@ -149,27 +149,7 @@ func (space *Space) UnmarshalJSON(data []byte) error {
 	space.init()
 	space.Gravity = spaceData.Gravity
 
-	for _, bodyData := range spaceData.Bodies {
-		bodyTypeData := struct {
-			Type string
-		}{
-			Type: "Static",
-		}
-		err := json.Unmarshal(bodyData, &bodyTypeData)
-		if err != nil {
-			log.Printf("Error decoding bodytype")
-			return err
-		}
-
-		var bodyType BodyType
-		bodyType.FromString(bodyTypeData.Type)
-		body := new(Body)
-		err = body.UnmarshalJSON(bodyData)
-		if err != nil {
-			log.Printf("Error decoding body")
-			return err
-		}
-		body.SetBodyType(bodyType)
+	for _, body := range spaceData.Bodies {
 		space.AddBody(body)
 	}
 
@@ -230,6 +210,7 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		body.init()
 	}
 	bodyData := struct {
+		Type            string
 		Transform       *transform.Transform
 		Shapes          []*Shape
 		Enabled         bool
@@ -241,6 +222,7 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		Torque          float64
 		IgnoreGravity   bool
 	}{ //initializing everything to the bodies default values
+		Type:            body.BodyType().ToString(),
 		Transform:       &body.Transform,
 		Shapes:          body.Shapes,
 		Enabled:         body.Enabled,
@@ -259,13 +241,6 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	body.Transform = *bodyData.Transform
-	body.Velocity = bodyData.Velocity
-	body.AngularVelocity = bodyData.AngularVelocity
-
-	body.Force = bodyData.Force
-	body.Torque = bodyData.Torque
-	body.IgnoreGravity = bodyData.IgnoreGravity
 
 	m := float64(bodyData.Mass)
 	i := float64(bodyData.Inertia)
@@ -285,6 +260,18 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		body.i = i
 		body.invI = 1.0 / i
 	}
+
+	var bodyType BodyType
+	bodyType.FromString(bodyData.Type)
+	body.SetBodyType(bodyType)
+
+	body.Transform = *bodyData.Transform
+	body.Velocity = bodyData.Velocity
+	body.AngularVelocity = bodyData.AngularVelocity
+
+	body.Force = bodyData.Force
+	body.Torque = bodyData.Torque
+	body.IgnoreGravity = bodyData.IgnoreGravity	
 
 	body.Enabled = bodyData.Enabled
 

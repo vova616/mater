@@ -24,25 +24,18 @@ import (
 )
 
 type Camera struct {
-	ScreenSize, Position, Scale, PrevPosition vect.Vect
+	ScreenSize, Position, Scale vect.Vect
 	Rotation float64
-	Target *vect.Vect
 }
 
 func (cam Camera) PreDraw() {
 	gl.PushMatrix()
 	gl.Translated(cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2, 0)
-	if nil != cam.Target {
-		newPosition := vect.Lerp(cam.PrevPosition, *cam.Target, 1)
-		gl.Translated(newPosition.X * cam.Scale.X, newPosition.Y * cam.Scale.Y, 0)
-		cam.PrevPosition = newPosition
-		cam.Position = newPosition
-	} else {
-		gl.Translated(cam.Position.X, cam.Position.Y, 0)
-	}
-	
+
 	gl.Rotated(360 - cam.Rotation, 0, 0, 1)
 	gl.Scaled(cam.Scale.X, cam.Scale.Y, 1)
+
+	gl.Translated(-cam.Position.X, -cam.Position.Y, 0)
 }
 
 func (cam Camera) PostDraw() {

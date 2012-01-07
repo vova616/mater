@@ -37,6 +37,8 @@ func (xf *Transform) Init(owner *Entity) {
 			body.Transform = *xf.Transform
 			//take the address of the bodies transform
 			xf.Transform = &body.Transform
+
+			body.UpdateShapes()
 		}
 	}
 }
@@ -46,7 +48,7 @@ func (xf *Transform) Update(owner *Entity, dt float64) {
 }
 
 func (xf *Transform) Destroy(owner *Entity) {
-
+	xf.Transform = nil
 }
 
 func (xf *Transform) Marshal(owner *Entity) ([]byte, error) {
@@ -58,6 +60,18 @@ func (xf *Transform) Unmarshal(owner *Entity, data []byte) error {
 		xf.Transform = new(transform.Transform)
 	}
 	return json.Unmarshal(data, xf.Transform)
+}
+
+func (xf *Transform) OnNewComponent(owner *Entity, other Component) {
+	if other.Name() == "Body" {
+		body := other.(*Body)
+		//set its transform
+		body.Transform = *xf.Transform
+		//take the address of the bodies transform
+		xf.Transform = &body.Transform
+
+		body.UpdateShapes()
+	}
 }
 
 func init() {

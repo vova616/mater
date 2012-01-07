@@ -55,6 +55,8 @@ func (mater *Mater) LoadScene(path string) error {
 	defer file.Close()
 
 	scene = new(Scene)
+	cam := mater.DefaultCamera
+	scene.Camera = &cam
 	decoder := json.NewDecoder(file)
 
 	err = decoder.Decode(scene)
@@ -198,7 +200,7 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 		if err != nil {
 			return err
 		}
-		entity.Components[name] = component
+		entity.AddComponent(component)
 		component.Init(entity)
 	}
 
