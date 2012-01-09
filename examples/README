@@ -1,0 +1,10 @@
+Controls:
+ 'P': un/pause
+ 'S': advance by a single frame when paused
+'F5': save to ./saves/quicksave.json
+'F9': load from ./saves/quicksave.json
+
+Console commands:
+"save <file>" saves the scene to "./saves/<file>"
+"load <file>" loads from "./saves/<file>"
+"help" lists all available commands

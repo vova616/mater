@@ -15,6 +15,7 @@ var commands = map[string]func(*Mater, []string) {
 	"pause": command_pause,
 	"unpause": command_unpause,
 	"resume": command_unpause,
+	"help": command_help,
 }
 var commandNames []string
 
@@ -80,4 +81,12 @@ func command_pause (mater *Mater, params []string) {
 
 func command_unpause (mater *Mater, params []string) {
 	mater.Paused = false
+}
+
+func command_help (mater *Mater, params []string) {
+	fmt.Printf("Possible commands are:")
+	for _, cmdName := range commandNames {
+		fmt.Printf(cmdName)
+	}
+	fmt.Printf("")
 }
