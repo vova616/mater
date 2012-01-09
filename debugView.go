@@ -48,7 +48,7 @@ func (dv *DebugView) DrawDebugData () {
 	}
 
 	//Draw aabbs
-	const drawAABBs = false
+	const drawAABBs = true
 	if drawAABBs {
 		for _, b := range space.Bodies {
 			gl.Color3f(.3, .7, .7)
@@ -127,8 +127,8 @@ func DrawShape(shape *collision.Shape) {
 			break
 		case collision.ShapeType_Segment:
 			segment := shape.ShapeClass.(*collision.SegmentShape)
-			a := xf.TransformVect(segment.A)
-			b := xf.TransformVect(segment.B)
+			a := segment.Ta
+			b := segment.Tb
 			r := segment.Radius
 			render.DrawLine(a, b)
 			if segment.Radius > 0.0 {

@@ -44,7 +44,7 @@ func (segment *SegmentShape) Update(xf transform.Transform) aabb.AABB {
 	b := xf.TransformVect(segment.B)
 	segment.Ta = a
 	segment.Tb = b
-	segment.B = vect.Perp(vect.Normalize(vect.Sub(segment.B, segment.A)))
+	segment.N = vect.Perp(vect.Normalize(vect.Sub(segment.B, segment.A)))
 	segment.Tn = xf.RotateVect(segment.N)
 
 	rv := vect.Vect{segment.Radius, segment.Radius}
