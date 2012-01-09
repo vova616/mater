@@ -92,7 +92,7 @@ func (poly *PolygonShape) ShapeType() ShapeType {
 }
 
 // Calculates the transformed vertices and axes and the bounding box.
-func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
+func (poly *PolygonShape) update(xf transform.Transform) aabb.AABB {
 	//transform axes
 	{
 		src := poly.Axes

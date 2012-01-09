@@ -95,13 +95,13 @@ func (space *Space) Step(dt float64) {
 
 	//Perform pre-steps
 	for _, arb := range space.Arbiters {
-		arb.PreStep(inv_dt)
+		arb.preStep(inv_dt)
 	}
 
 	//Perform Iterations
 	for i := 0; i < Settings.Iterations; i++ {
 		for _, arb := range space.Arbiters {
-			arb.ApplyImpulse()
+			arb.applyImpulse()
 		}
 	}
 
@@ -120,8 +120,10 @@ func (space *Space) Step(dt float64) {
 	}
 }
 
+// O(n^2) broad-phase.
+// Tries to collide everything with everything else.
 func (space *Space) Broadphase() {
-	space.Arbiters = make([]*Arbiter, 0, 32)
+	space.Arbiters = make([]*Arbiter, 0, len(space.Arbiters))
 	for i := 0; i < len(space.Bodies) - 1; i++ {
 		bi := space.Bodies[i]
 

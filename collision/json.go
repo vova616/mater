@@ -298,7 +298,7 @@ func (shape *Shape) MarshalJSON() ([]byte, error) {
 		return nil, errors.New("shape.ShapeClass not set")
 	}
 
-	return shape.ShapeClass.MarshalShape(shape)
+	return shape.ShapeClass.marshalShape(shape)
 }
 
 func (shape *Shape) UnmarshalJSON(data []byte) error {
@@ -316,19 +316,19 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 	case "circle":
 		circle := new(CircleShape)
 		shape.ShapeClass = circle
-		return circle.UnmarshalShape(shape, data)
+		return circle.unmarshalShape(shape, data)
 	case "segment":
 		segment := new(SegmentShape)
 		shape.ShapeClass = segment
-		return segment.UnmarshalShape(shape, data)
+		return segment.unmarshalShape(shape, data)
 	case "polygon":
 		poly := new(PolygonShape)
 		shape.ShapeClass = poly
-		return poly.UnmarshalShape(shape, data)
+		return poly.unmarshalShape(shape, data)
 	case "box":
 		box := new(BoxShape)
 		shape.ShapeClass = box
-		return box.UnmarshalShape(shape, data)
+		return box.unmarshalShape(shape, data)
 
 	}
 
@@ -340,7 +340,7 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 
 //START CIRCLESHAPE REGION
 
-func (circle *CircleShape) MarshalShape(shape *Shape) ([]byte, error) {
+func (circle *CircleShape) marshalShape(shape *Shape) ([]byte, error) {
 
 	if shape.ShapeClass != circle {
 		log.Printf("Error: circleshape and shape.ShapeClass don't match")
@@ -363,7 +363,7 @@ func (circle *CircleShape) MarshalShape(shape *Shape) ([]byte, error) {
 	return json.Marshal(&circleData)
 }
 
-func (circle *CircleShape) UnmarshalShape(shape *Shape, data []byte) error {
+func (circle *CircleShape) unmarshalShape(shape *Shape, data []byte) error {
 	if shape.ShapeClass != circle {
 		log.Printf("Error: circleshape and shape.ShapeClass don't match")
 		return errors.New("Wrong parent shape")
@@ -398,7 +398,7 @@ func (circle *CircleShape) UnmarshalShape(shape *Shape, data []byte) error {
 
 //START SEGMENTSHAPE REGION
 
-func (segment *SegmentShape) MarshalShape(shape *Shape) ([]byte, error) {
+func (segment *SegmentShape) marshalShape(shape *Shape) ([]byte, error) {
 	if shape.ShapeClass != segment {
 		log.Printf("Error: segmentshape and shape.ShapeClass don't match")
 		return nil, errors.New("Wrong parent shape")
@@ -421,7 +421,7 @@ func (segment *SegmentShape) MarshalShape(shape *Shape) ([]byte, error) {
 	return json.Marshal(&segmentData)
 }
 
-func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) error {
+func (segment *SegmentShape) unmarshalShape(shape *Shape, data []byte) error {
 	if shape.ShapeClass != segment {
 		log.Printf("Error: segmentshape and shape.ShapeClass don't match")
 		return errors.New("Wrong parent shape")
@@ -457,7 +457,7 @@ func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) error {
 
 //BEGIN POLYSHAPE REGION
 
-func (poly *PolygonShape) MarshalShape(shape *Shape) ([]byte, error) {
+func (poly *PolygonShape) marshalShape(shape *Shape) ([]byte, error) {
 	if shape.ShapeClass != poly {
 		log.Printf("Error: polyshape and shape.ShapeClass don't match")
 		return nil, errors.New("Wrong parent shape")
@@ -477,7 +477,7 @@ func (poly *PolygonShape) MarshalShape(shape *Shape) ([]byte, error) {
 	return json.Marshal(&polyData)
 }
 
-func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
+func (poly *PolygonShape) unmarshalShape(shape *Shape, data []byte) error {
 	if shape.ShapeClass != poly {
 		log.Printf("Error: polyshape and shape.ShapeClass don't match")
 		return errors.New("Wrong parent shape")
@@ -506,7 +506,7 @@ func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
 
 //START BOXSHAPE REGION
 
-func (box *BoxShape) MarshalShape(shape *Shape) ([]byte, error) {
+func (box *BoxShape) marshalShape(shape *Shape) ([]byte, error) {
 	if shape.ShapeClass != box {
 		log.Printf("Error: boxshape and shape.ShapeClass don't match")
 		return nil, errors.New("Wrong parent shape")
@@ -530,7 +530,7 @@ func (box *BoxShape) MarshalShape(shape *Shape) ([]byte, error) {
 	return json.Marshal(&boxData)
 }
 
-func (box *BoxShape) UnmarshalShape(shape *Shape, data []byte) error {
+func (box *BoxShape) unmarshalShape(shape *Shape, data []byte) error {
 	if shape.ShapeClass != box {
 		log.Printf("Error: boxshape and shape.ShapeClass don't match")
 		return errors.New("Wrong parent shape")

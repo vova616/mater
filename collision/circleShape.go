@@ -29,7 +29,7 @@ func (circle *CircleShape) ShapeType() ShapeType {
 }
 
 // Recalculates the global center of the circle and the the bounding box.
-func (circle *CircleShape) Update(xf transform.Transform) aabb.AABB {
+func (circle *CircleShape) update(xf transform.Transform) aabb.AABB {
 	//global center of the circle
 	center := xf.TransformVect(circle.Position)
 	circle.Tc = center

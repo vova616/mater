@@ -41,14 +41,14 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 	return arb
 }
 
-func (arb *Arbiter) Delete() {
+func (arb *Arbiter) delete() {
 	arb.ShapeA = nil
 	arb.ShapeB = nil
 	arb.NumContacts = 0
 	arb.Friction = 0
 }
 
-func (arb1 *Arbiter) Equals(arb2 *Arbiter) bool {
+func (arb1 *Arbiter) equals(arb2 *Arbiter) bool {
 	if arb1.ShapeA == arb2.ShapeA && arb1.ShapeB == arb2.ShapeB {
 		return true
 	}
@@ -101,7 +101,7 @@ func (arb *Arbiter) Update(newContacts [MaxPoints]Contact, numNewContacts int) {
 	arb.NumContacts = numNewContacts
 }*/
 
-func (arb *Arbiter) PreStep(inv_dt float64) {
+func (arb *Arbiter) preStep(inv_dt float64) {
 	const allowedPenetration = 0.01
 	biasFactor := 0.0
 	if Settings.PositionCorrection {
@@ -151,7 +151,7 @@ func (arb *Arbiter) PreStep(inv_dt float64) {
 	}
 }
 
-func (arb *Arbiter) ApplyImpulse() {
+func (arb *Arbiter) applyImpulse() {
 	sA := arb.ShapeA
 	sB := arb.ShapeB
 

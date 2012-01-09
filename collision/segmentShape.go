@@ -39,7 +39,7 @@ func (segment *SegmentShape) ShapeType() ShapeType {
 }
 
 //Called to update N, Tn, Ta and Tb the the bounding box.
-func (segment *SegmentShape) Update(xf transform.Transform) aabb.AABB {
+func (segment *SegmentShape) update(xf transform.Transform) aabb.AABB {
 	a := xf.TransformVect(segment.A)
 	b := xf.TransformVect(segment.B)
 	segment.Ta = a

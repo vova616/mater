@@ -33,12 +33,12 @@ const (
 type ShapeClass interface {
 	ShapeType() ShapeType
 	// Update the shape with the new transform and compute the AABB.
-	Update(xf transform.Transform) aabb.AABB
+	update(xf transform.Transform) aabb.AABB
 	// Returns if the given point is located inside the shape.
 	TestPoint(point vect.Vect) bool
 
-	MarshalShape(shape *Shape) ([]byte, error)
-	UnmarshalShape(shape *Shape, data []byte) error
+	marshalShape(shape *Shape) ([]byte, error)
+	unmarshalShape(shape *Shape, data []byte) error
 }
 
 // Calls ShapeClass.Update and sets the new AABB.
@@ -48,5 +48,5 @@ func (shape *Shape) Update() {
 		return
 	}
 
-	shape.AABB = shape.ShapeClass.Update(shape.Body.Transform)
+	shape.AABB = shape.ShapeClass.update(shape.Body.Transform)
 }

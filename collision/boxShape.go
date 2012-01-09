@@ -64,8 +64,8 @@ func (box *BoxShape) ShapeType() ShapeType {
 }
 
 // Recalculates the transformed vertices and axes and the bounding box.
-func (box *BoxShape) Update(xf transform.Transform) aabb.AABB {
-	return box.Polygon.Update(xf)
+func (box *BoxShape) update(xf transform.Transform) aabb.AABB {
+	return box.Polygon.update(xf)
 }
 
 func (box *BoxShape) TestPoint(point vect.Vect) bool {
