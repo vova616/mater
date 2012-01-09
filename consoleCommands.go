@@ -20,7 +20,7 @@ var commands = map[string]func(*Mater, []string) {
 var commandNames []string
 
 func init () {
-	commandNames := make([]string, 0, len(commands))
+	commandNames = make([]string, 0, len(commands))
 	for key, _ := range commands {
 		commandNames = append(commandNames, key)
 	}
@@ -84,9 +84,9 @@ func command_unpause (mater *Mater, params []string) {
 }
 
 func command_help (mater *Mater, params []string) {
-	fmt.Printf("Possible commands are:")
+	fmt.Printf("Possible commands are:\n")
 	for _, cmdName := range commandNames {
-		fmt.Printf(cmdName)
+		fmt.Printf("%v\n", cmdName)
 	}
-	fmt.Printf("")
+	fmt.Printf("\n")
 }
