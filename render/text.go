@@ -3,10 +3,8 @@ package render
 import (
 	"ftgl-go"
 	"gl"
-	"mater/log"
+	"log"
 )
-
-var dbg = &log.Dbg
 
 var Font *ftgl.Font
 
@@ -14,7 +12,7 @@ func init() {
 	var err error
 	Font, err = ftgl.CreatePixmapFont("fonts/ttf-bitstream-vera-1.10/VeraMono.ttf")
 	if err != nil {
-		dbg.Printf("Error loading main font:, %v", err)
+		log.Printf("Error loading main font:, %v", err)
 		return
 	}
 	Font.SetFontFaceSize(20, 20)

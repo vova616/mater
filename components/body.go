@@ -5,6 +5,7 @@ import (
 	"errors"
 	. "mater"
 	"mater/collision"
+	"log"
 )
 
 type Body struct {
@@ -17,7 +18,7 @@ func (body *Body) Name() string {
 
 func (body *Body) Init(owner *Entity) {
 	if body.Body == nil {
-		dbg.Printf("Error: Body component is not initialized correctly!")
+		log.Printf("Error: Body component is not initialized correctly!")
 		return
 	}
 
@@ -36,7 +37,7 @@ func (body *Body) Update(owner *Entity, dt float64) {
 
 func (body *Body) Destroy(owner *Entity) {
 	if body.Body == nil {
-		dbg.Printf("Error: Body component is not initialized correctly!")
+		log.Printf("Error: Body component is not initialized correctly!")
 		return
 	}
 	body.Body.Enabled = false

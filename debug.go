@@ -4,10 +4,7 @@ import (
 	"mater/vect"
 	"gl"
 	"mater/render"
-	"mater/log"
 )
-
-var dbg = &log.Dbg
 
 type DebugData struct {
 	SingleStep bool

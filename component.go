@@ -1,6 +1,9 @@
 package mater
 
-import "reflect"
+import (
+	"log"
+	"reflect"
+)
 
 type Component interface {
 	//used to identify the component
@@ -57,7 +60,7 @@ func RegisterComponent(component Component) {
 func NewComponent(name string) Component {
 	compType, ok := components[name]
 	if ok == false {
-		dbg.Printf("Error loading component \"%v\", not registered!", name)
+		log.Printf("Error loading component \"%v\", not registered!", name)
 		return nil
 	}
 

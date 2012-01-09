@@ -1,6 +1,7 @@
 package mater
 
 import (
+	"log"
 	"github.com/jteeuwen/glfw"
 )
 
@@ -35,10 +36,10 @@ func DefaultKeyCallback (mater *Mater, key, state int) OnKeyCallbackFunc {
 		case glfw.KeyEsc:
 			mater.Running = false
 		case glfw.KeyF5:
-			dbg.Printf("QuickSave\n")
+			log.Printf("QuickSave\n")
 			mater.SaveScene(QuickSavePath)
 		case glfw.KeyF9:
-			dbg.Printf("QuickLoad\n")
+			log.Printf("QuickLoad\n")
 			mater.LoadScene(QuickSavePath)
 			mater.Paused = true
 		}
