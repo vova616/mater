@@ -1,0 +1,128 @@
+{
+	"Camera": {
+		"ScreenSize": {
+			"X": 800,
+			"Y": 600
+		},
+		"Position": {
+			"X": 0,
+			"Y": 0
+		},
+		"Scale": {
+			"X": 32,
+			"Y": 32
+		},
+		"Rotation": 0
+	},
+	"Entities": [],
+	"Space": {
+		"Gravity": {
+			"X": 0,
+			"Y": 5
+		},
+		"Bodies": [
+			{
+				"Type": "Dynamic",
+				"Transform": {
+					"X": 6,
+					"Y": -8,
+					"Rotation": 0
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Circle",
+						"Friction": 0,
+						"Restitution": 0,
+						"Position": {
+							"X": 0,
+							"Y": 0
+						},
+						"Radius": 1
+					}
+				],
+				"Enabled": true,
+				"Mass": 1,
+				"Inertia": 0,
+				"Velocity": {
+					"X": 0,
+					"Y": 0
+				},
+				"AngularVelocity": 0,
+				"Force": {
+					"X": 0,
+					"Y": 0
+				},
+				"Torque": 0,
+				"IgnoreGravity": false
+			},
+			{
+				"Type": "Static",
+				"Transform": {
+					"X": -3,
+					"Y": 0,
+					"Rotation": 0.5
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Vertices": [
+							{
+								"X": -5,
+								"Y": -1
+							},
+							{
+								"X": -5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": -1
+							}
+						]
+					}
+				],
+				"Enabled": true
+			},
+			{
+				"Type": "Static",
+				"Transform": {
+					"X": 3,
+					"Y": 0,
+					"Rotation": -0.5
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Vertices": [
+							{
+								"X": -5,
+								"Y": -1
+							},
+							{
+								"X": -5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": -1
+							}
+						]
+					}
+				],
+				"Enabled": true
+			}
+		]
+	}
+}

@@ -1,0 +1,162 @@
+{
+	"Camera": {
+		"ScreenSize": {
+			"X": 800,
+			"Y": 600
+		},
+		"Position": {
+			"X": 1,
+			"Y": -5
+		},
+		"Scale": {
+			"X": 50,
+			"Y": 50
+		},
+		"Rotation": 0
+	},
+	"Entities": [
+		{
+			"ID": 0,
+			"Enabled": true,
+			"Transform": {
+				"X": 1,
+				"Y": -5,
+				"Rotation": 0
+			},
+			"Components": {
+				"Body": {
+					"Type": "Dynamic",
+					"Transform": {
+						"X": 1,
+						"Y": -5,
+						"Rotation": 0
+					},
+					"Shapes": [
+						{
+							"ShapeType": "Circle",
+							"Friction": 0,
+							"Restitution": 0,
+							"Position": {
+								"X": 0,
+								"Y": -0.35
+							},
+							"Radius": 0.4
+						},
+						{
+							"ShapeType": "Box",
+							"Friction": 0,
+							"Restitution": 0,
+							"Width": 0.8,
+							"Height": 0.7,
+							"Position": {
+								"X": 0,
+								"Y": 0
+							}
+						},
+						{
+							"ShapeType": "Circle",
+							"Friction": 0,
+							"Restitution": 0,
+							"Position": {
+								"X": 0,
+								"Y": 0.35
+							},
+							"Radius": 0.4
+						}
+					],
+					"Enabled": true,
+					"Mass": 1,
+					"Inertia": 0,
+					"Velocity": {
+						"X": 0,
+						"Y": 0
+					},
+					"AngularVelocity": 0,
+					"Force": {
+						"X": 0,
+						"Y": 0
+					},
+					"Torque": 0,
+					"IgnoreGravity": false
+				},
+				"CamTarget": {}
+			}
+		}
+	],
+	"Space": {
+		"Gravity": {
+			"X": 0,
+			"Y": 5
+		},
+		"Bodies": [
+			{
+				"Type": "Static",
+				"Transform": {
+					"X": 0,
+					"Y": 0,
+					"Rotation": 0.49999999999999994
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Vertices": [
+							{
+								"X": -5,
+								"Y": -1
+							},
+							{
+								"X": -5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": -1
+							}
+						]
+					}
+				],
+				"Enabled": true
+			},
+			{
+				"Type": "Static",
+				"Transform": {
+					"X": 6,
+					"Y": 0,
+					"Rotation": -0.49999999999999994
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Vertices": [
+							{
+								"X": -5,
+								"Y": -1
+							},
+							{
+								"X": -5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": 1
+							},
+							{
+								"X": 5,
+								"Y": -1
+							}
+						]
+					}
+				],
+				"Enabled": true
+			}
+		]
+	}
+}

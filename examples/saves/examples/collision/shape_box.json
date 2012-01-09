@@ -1,0 +1,11 @@
+{
+	"ShapeType": "Box",
+	"Friction": 0,
+	"Restitution": 0,
+	"Width": 1,
+	"Height": 1,
+	"Position": {
+		"X": 0,
+		"Y": 0
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"ShapeType": "Polygon",
+	"Friction": 0,
+	"Restitution": 0,
+	"Vertices": [
+		{
+			"X": -1,
+			"Y": -1
+		},
+		{
+			"X": -1,
+			"Y": 1
+		},
+		{
+			"X": 1,
+			"Y": 1
+		},
+		{
+			"X": 1,
+			"Y": -1
+		}
+	]
+}

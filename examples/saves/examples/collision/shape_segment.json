@@ -1,0 +1,14 @@
+{
+	"ShapeType": "Segment",
+	"Friction": 0,
+	"Restitution": 0,
+	"A": {
+		"X": 1,
+		"Y": 1
+	},
+	"B": {
+		"X": -1,
+		"Y": -1
+	},
+	"Radius": 0
+}
