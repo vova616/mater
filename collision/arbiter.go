@@ -13,7 +13,7 @@ const MaxPoints = 2
 
 type Arbiter struct {
 	ShapeA, ShapeB *Shape
-	Contacts       [max_points]Contact
+	Contacts       [MaxPoints]Contact
 	NumContacts    int
 
 	Friction float64
@@ -59,8 +59,9 @@ func (arb1 *Arbiter) Equals(arb2 *Arbiter) bool {
 	return false
 }
 
-func (arb *Arbiter) Update(newContacts [max_points]Contact, numNewContacts int) {
-	var mergedContacts [max_points]Contact
+/*
+func (arb *Arbiter) Update(newContacts [MaxPoints]Contact, numNewContacts int) {
+	var mergedContacts [MaxPoints]Contact
 
 	for i := 0; i < numNewContacts; i++ {
 		cNew := newContacts[i]
@@ -98,7 +99,7 @@ func (arb *Arbiter) Update(newContacts [max_points]Contact, numNewContacts int) 
 	}
 
 	arb.NumContacts = numNewContacts
-}
+}*/
 
 func (arb *Arbiter) PreStep(inv_dt float64) {
 	const allowedPenetration = 0.01
