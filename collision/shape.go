@@ -50,3 +50,39 @@ func (shape *Shape) Update() {
 
 	shape.AABB = shape.ShapeClass.update(shape.Body.Transform)
 }
+
+// Returns shape.ShapeClass as CircleShape or nil.
+func (shape *Shape) GetAsCircle() *CircleShape {
+	if circle, ok := shape.ShapeClass.(*CircleShape); ok {
+		return circle
+	}
+
+	return nil
+}
+
+// Returns shape.ShapeClass as PolygonShape or nil.
+func (shape *Shape) GetAsPolygon() *PolygonShape {
+	if poly, ok := shape.ShapeClass.(*PolygonShape); ok {
+		return poly
+	}
+	
+	return nil
+}
+
+// Returns shape.ShapeClass as SegmentShape or nil.
+func (shape *Shape) GetAsSegment() *SegmentShape {
+	if seg, ok := shape.ShapeClass.(*SegmentShape); ok {
+		return seg
+	}
+	
+	return nil
+}
+
+// Returns shape.ShapeClass as BoxShape or nil.
+func (shape *Shape) GetAsBox() *BoxShape {
+	if box, ok := shape.ShapeClass.(*BoxShape); ok {
+		return box
+	}
+	
+	return nil
+}

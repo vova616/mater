@@ -1,0 +1,12 @@
+main/main
+/bin/
+/_bin/
+/_obj/
+/pkg/
+*.8
+*/*.8
+*/_obj/
+*.6
+*/*.6
+_test/
+*/_test/
