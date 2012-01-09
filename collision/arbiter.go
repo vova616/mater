@@ -1,3 +1,6 @@
+// Package mater/collision procies a basic 2d collision library,
+// based on box2d-lite and chipmunk-physics.
+
 package collision
 
 import (
@@ -5,11 +8,8 @@ import (
 	"math"
 )
 
-const max_points = 2
-
-type ArbiterKey struct {
-	ShapeA, ShapeB *Shape
-}
+// The maximum number of ContactPoints a single Arbiter can have.
+const MaxPoints = 2
 
 type Arbiter struct {
 	ShapeA, ShapeB *Shape
