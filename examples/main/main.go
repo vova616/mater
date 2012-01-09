@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jteeuwen/glfw"
-	gl "github.com/banthar/Go-OpenGL/gl.a"
+	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/teomat/mater/vect"
 	. "github.com/teomat/mater"
 	"log"
@@ -68,8 +68,6 @@ func main () {
 	mater.Init()
 
 	mater.Paused = flags.startPaused
-
-	Test(mater)
 
 	if flags.file != "" {
 		err := mater.LoadScene(flags.file)
