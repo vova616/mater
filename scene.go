@@ -1,7 +1,7 @@
 package mater
 
 import (
-	"mater/collision"
+	"github.com/teomat/mater/collision"
 )
 
 type Scene struct {

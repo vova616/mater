@@ -1,8 +1,8 @@
 package mater
 
 import (
-	"mater/vect"
-	"gl"
+	"github.com/teomat/mater/vect"
+	"github.com/banthar/Go-OpenGL/gl"
 )
 
 type Mater struct {

@@ -1,7 +1,7 @@
 package components
 
 import (
-	. "mater"
+	. "github.com/teomat/mater"
 )
 
 type CamTarget struct {}

@@ -2,8 +2,8 @@ package mater
 
 import (
 	"math"
-	"gl"
-	"mater/vect"
+	"github.com/banthar/Go-OpenGL/gl"
+	"github.com/teomat/mater/vect"
 )
 
 type Camera struct {

@@ -1,10 +1,10 @@
 package mater
 
 import (
-	"mater/render"
-	"mater/collision"
-	"mater/vect"
-	"gl"
+	"github.com/teomat/mater/render"
+	"github.com/teomat/mater/collision"
+	"github.com/teomat/mater/vect"
+	"github.com/banthar/Go-OpenGL/gl"
 )
 
 var _tmpVertices []vect.Vect

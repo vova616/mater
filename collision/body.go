@@ -1,8 +1,8 @@
 package collision
 
 import (
-	"mater/transform"
-	"mater/vect"
+	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 	"log"
 	"math"
 	"strings"

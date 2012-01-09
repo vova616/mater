@@ -1,7 +1,7 @@
 package aabb
 
 import (
-	"mater/vect"
+	"github.com/teomat/mater/vect"
 )
 
 //axis aligned bounding box.

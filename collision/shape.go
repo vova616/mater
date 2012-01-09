@@ -2,10 +2,10 @@ package collision
 
 import (
 	"log"
-	"mater/aabb"
-	"mater/transform"
+	"github.com/teomat/mater/aabb"
+	"github.com/teomat/mater/transform"
 
-	"mater/vect"
+	"github.com/teomat/mater/vect"
 )
 
 //common shape data

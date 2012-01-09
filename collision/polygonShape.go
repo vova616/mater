@@ -1,9 +1,9 @@
 package collision
 
 import (
-	"mater/vect"
-	"mater/aabb"
-	"mater/transform"
+	"github.com/teomat/mater/vect"
+	"github.com/teomat/mater/aabb"
+	"github.com/teomat/mater/transform"
 	"log"
 	"math"
 )

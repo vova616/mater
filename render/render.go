@@ -1,9 +1,9 @@
 package render
 
 import (
-	"mater/vect"
-	"gl"
-	. "mater/texutil"
+	"github.com/teomat/mater/vect"
+	gl "github.com/banthar/Go-OpenGL/gl"
+	. "github.com/teomat/mater/texutil"
 	"math"
 )
 

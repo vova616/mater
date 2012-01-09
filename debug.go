@@ -1,9 +1,9 @@
 package mater
 
 import (
-	"mater/vect"
-	"gl"
-	"mater/render"
+	"github.com/teomat/mater/vect"
+	"github.com/banthar/Go-OpenGL/gl"
+	"github.com/teomat/mater/render"
 )
 
 type DebugData struct {

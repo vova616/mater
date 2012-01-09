@@ -2,7 +2,7 @@ package render
 
 import (
 	"github.com/teomat/ftgl-go"
-	"gl"
+	"github.com/banthar/Go-OpenGL/gl"
 	"log"
 )
 

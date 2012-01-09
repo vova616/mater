@@ -1,7 +1,7 @@
 package mater
 
 import (
-	"mater/transform"
+	"github.com/teomat/mater/transform"
 )
 
 type Entity struct {

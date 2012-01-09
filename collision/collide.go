@@ -2,7 +2,7 @@ package collision
 
 import (
 	"log"
-	"mater/vect"
+	"github.com/teomat/mater/vect"
 	"math"
 )
 

@@ -1,7 +1,7 @@
 package transform
 
 import (
-	"mater/vect"
+	"github.com/teomat/mater/vect"
 	"math"
 )
 

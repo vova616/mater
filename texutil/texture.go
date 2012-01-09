@@ -1,7 +1,7 @@
 package texutil
 
 import (
-	"gl"
+	"github.com/banthar/Go-OpenGL/gl"
 )
 
 type Texture struct {

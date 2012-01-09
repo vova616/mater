@@ -1,9 +1,9 @@
 package collision
 
 import (
-	"mater/vect"
-	"mater/transform"
-	"mater/aabb"
+	"github.com/teomat/mater/vect"
+	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/aabb"
 )
 
 //If Settings.AutoUpdateShapes is not set, call Update on the shape for changes to the A, B and Radius to take effect.

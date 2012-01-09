@@ -3,8 +3,7 @@ package transform
 import (
 	"encoding/json"
 	"log"
-
-	"mater/vect"
+	"github.com/teomat/mater/vect"
 )
 
 func (xf *Transform) MarshalJSON() ([]byte, error) {

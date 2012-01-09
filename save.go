@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"mater/collision"
+	"github.com/teomat/mater/collision"
 	"os"
-	"mater/transform"
+	"github.com/teomat/mater/transform"
 )
 
 var saveDirectory = "saves/"

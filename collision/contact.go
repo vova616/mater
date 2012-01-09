@@ -1,7 +1,7 @@
 package collision
 
 import (
-	"mater/vect"
+	"github.com/teomat/mater/vect"
 	"unsafe"
 )
 

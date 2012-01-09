@@ -3,7 +3,7 @@ package texutil
 import (
 	"errors"
 	"fmt"
-	"gl"
+	"github.com/banthar/Go-OpenGL/gl"
 	"image"
 	"image/color"
 	"image/png"
