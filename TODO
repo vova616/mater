@@ -1,0 +1,33 @@
+RIGHT NOW:
+	- cleanup & add documentation
+	- mater/collision stuff
+	- start work on editor
+
+OTHER:
+
+-entities:
+	-entity templates, saving, loading, etc.
+
+- scene:
+	- input handling
+
+- mater/collision
+	- poly collision
+		- poly-segment collision
+	- vertices nicer serialization
+	- collision filtering
+	- collision callbacks
+	- fix buggy angular velocity / rotation bug
+	- improve broadphase
+		- use box2d-go broadphase?
+	
+- editor:
+	- tilemap editor
+	- collision/shape editor
+	- scene editor
+
+- basic editor gui
+
+- texture loading & displaying
+
+- texture manager?
