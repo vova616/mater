@@ -12,11 +12,12 @@ type FeaturePair struct {
 	OutEdge2 uint8
 }
 
-//unsafe pointer magic because go doesn't have unions
+// unsafe pointer magic because go doesn't have unions
 func (fp *FeaturePair) Value() int32 {
 	return *(*int32)(unsafe.Pointer(fp))
 }
 
+// Contact point between 2 shapes.
 type Contact struct {
 	Position vect.Vect
 	Normal vect.Vect
@@ -28,7 +29,6 @@ type Contact struct {
 	Pnb float64	// accumulated normal impulse for position bias
 	MassNormal, MassTangent float64
 	Bias float64
-	Feature FeaturePair
 }
 
 func (con *Contact) Reset (pos, norm vect.Vect, sep float64) {

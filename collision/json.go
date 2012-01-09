@@ -12,7 +12,9 @@ import (
 	"math"
 )
 
+// float64 wrapper that can be used to marshal +/-Inf and NaN to json
 type InfFloat float64
+
 func (f InfFloat) MarshalJSON() ([]byte, error) {
 	str := strconv.FormatFloat(float64(f), 'g', -1, 64)
 	if math.IsInf(float64(f), 0) || math.IsNaN(float64(f)) {
@@ -89,6 +91,9 @@ func (verts *Vertices) UnmarshalJSON(data []byte) error {
 //END VERTICES REGION
 
 //START SPACE REGION
+
+// Serializes gravity and bodies to json.
+// Bodies with UserData != nil are not serialized.
 func (space *Space) MarshalJSON() ([]byte, error) {
 	buf := new(bytes.Buffer)
 	encoder := json.NewEncoder(buf)
@@ -159,6 +164,7 @@ func (space *Space) UnmarshalJSON(data []byte) error {
 //END SPACE REGION
 
 //START BODY REGION
+
 func (body *Body) MarshalJSON() ([]byte, error) {
 	if body.IsStatic() {
 		bodyData := struct {
@@ -285,6 +291,7 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 //END BODY REGION
 
 //START SHAPE REGION
+
 func (shape *Shape) MarshalJSON() ([]byte, error) {
 	if shape.ShapeClass == nil {
 		log.Printf("Error: shape.ShapeClass not set")
@@ -332,6 +339,7 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 //END SHAPE REGION
 
 //START CIRCLESHAPE REGION
+
 func (circle *CircleShape) MarshalShape(shape *Shape) ([]byte, error) {
 
 	if shape.ShapeClass != circle {
@@ -389,6 +397,7 @@ func (circle *CircleShape) UnmarshalShape(shape *Shape, data []byte) error {
 //END CIRCLESHAPE REGION
 
 //START SEGMENTSHAPE REGION
+
 func (segment *SegmentShape) MarshalShape(shape *Shape) ([]byte, error) {
 	if shape.ShapeClass != segment {
 		log.Printf("Error: segmentshape and shape.ShapeClass don't match")
@@ -447,6 +456,7 @@ func (segment *SegmentShape) UnmarshalShape(shape *Shape, data []byte) error {
 //END SEGMENTSHAPE REGION
 
 //BEGIN POLYSHAPE REGION
+
 func (poly *PolygonShape) MarshalShape(shape *Shape) ([]byte, error) {
 	if shape.ShapeClass != poly {
 		log.Printf("Error: polyshape and shape.ShapeClass don't match")
@@ -491,9 +501,11 @@ func (poly *PolygonShape) UnmarshalShape(shape *Shape, data []byte) error {
 	poly.SetVerts(polyData.Vertices, vect.Vect{})
 	return nil
 }
+
 //END POLYSHAPE REGION
 
 //START BOXSHAPE REGION
+
 func (box *BoxShape) MarshalShape(shape *Shape) ([]byte, error) {
 	if shape.ShapeClass != box {
 		log.Printf("Error: boxshape and shape.ShapeClass don't match")
@@ -552,4 +564,5 @@ func (box *BoxShape) UnmarshalShape(shape *Shape, data []byte) error {
 	box.UpdatePoly()
 	return nil
 }
+
 //END BOXSHAPE REGION

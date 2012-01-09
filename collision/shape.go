@@ -8,13 +8,15 @@ import (
 	"github.com/teomat/mater/vect"
 )
 
-//common shape data
+// Base shape data.
+// Holds data all shapetypes have in common.
 type Shape struct {
+	// The body this shape belongs to.
 	Body        *Body
 	Restitution float64
 	Friction    float64
 	AABB        aabb.AABB
-	//the actual implementation of the shape
+	// The actual implementation of the shape.
 	ShapeClass
 }
 
@@ -30,16 +32,16 @@ const (
 
 type ShapeClass interface {
 	ShapeType() ShapeType
-	//update the shape with the new transform and compute the AABB
+	// Update the shape with the new transform and compute the AABB.
 	Update(xf transform.Transform) aabb.AABB
-	//returns if the given point is located inside the shape
+	// Returns if the given point is located inside the shape.
 	TestPoint(point vect.Vect) bool
 
-	//
 	MarshalShape(shape *Shape) ([]byte, error)
 	UnmarshalShape(shape *Shape, data []byte) error
 }
 
+// Calls ShapeClass.Update and sets the new AABB.
 func (shape *Shape) Update() {
 	if shape.Body == nil {
 		log.Printf("Error: uninitialized shape")
@@ -47,7 +49,4 @@ func (shape *Shape) Update() {
 	}
 
 	shape.AABB = shape.ShapeClass.Update(shape.Body.Transform)
-	v := vect.Vect{.1, .1}
-	shape.AABB.Lower.Sub(v)
-	shape.AABB.Upper.Add(v)
 }

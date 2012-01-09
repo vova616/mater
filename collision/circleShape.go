@@ -6,14 +6,12 @@ import (
 	"github.com/teomat/mater/transform"
 )
 
-//If Settings.AutoUpdateShapes is not set, call Update on the shape for changes to the Position and Radius to take effect.
-//Don't change TC ever.
 type CircleShape struct {
-	//Center of the circle.
+	// Center of the circle. Call Update() if changed.
 	Position vect.Vect
-	//Radius of the circle.
+	// Radius of the circle. Call Update() if changed.
 	Radius float64
-	//Transform center of the circle. Do not touch!
+	// Global center of the circle. Do not touch!
 	Tc vect.Vect
 }
 
@@ -30,7 +28,7 @@ func (circle *CircleShape) ShapeType() ShapeType {
 	return ShapeType_Circle
 }
 
-//Called to update Tc and the the bounding box,
+// Recalculates the global center of the circle and the the bounding box.
 func (circle *CircleShape) Update(xf transform.Transform) aabb.AABB {
 	//global center of the circle
 	center := xf.TransformVect(circle.Position)

@@ -6,17 +6,16 @@ import (
 	"github.com/teomat/mater/transform"
 )
 
-//Convenience wrapper around PolygonShape.
-//After modifying With, Height or Position call UpdatePoly for the changes to take effect.
+// Convenience wrapper around PolygonShape.
 type BoxShape struct {
-	//The polygon that represents this box. Do not touch!
+	// The polygon that represents this box. Do not touch!
 	Polygon *PolygonShape
 	verts [4]vect.Vect
-	//The width of the box.
+	// The width of the box. Call UpdatePoly() if changed.
 	Width float64
-	//The height of the box.
+	// The height of the box. Call UpdatePoly() if changed.
 	Height float64
-	//The center of the box.
+	// The center of the box. Call UpdatePoly() if changed.
 	Position vect.Vect
 }
 
@@ -45,7 +44,7 @@ func NewBox(pos vect.Vect, w, h float64) *Shape {
 	return shape
 }
 
-//Recalculates the internal Polygon with new Width, Height and Position.
+// Recalculates the internal Polygon with new Width, Height and Position.
 func (box *BoxShape) UpdatePoly() {
 	hw := box.Width / 2.0
 	hh := box.Height / 2.0
@@ -64,7 +63,7 @@ func (box *BoxShape) ShapeType() ShapeType {
 	return ShapeType_Box
 }
 
-//Recalculates the transformed vertices and axes and the bounding box.
+// Recalculates the transformed vertices and axes and the bounding box.
 func (box *BoxShape) Update(xf transform.Transform) aabb.AABB {
 	return box.Polygon.Update(xf)
 }

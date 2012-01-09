@@ -9,29 +9,27 @@ import (
 )
 
 type PolygonAxis struct {
-	//The axis normal.
+	// The axis normal.
 	N vect.Vect
-	//Dunno what this is.
 	D float64
 }
 
-//Don't modify directly or you'll fuck shit up.
-//Seriously.
 type PolygonShape struct {
-	//The raw vertices of the polygon. Do not touch!
+	// The raw vertices of the polygon. Do not touch!
+	// Use polygon.SetVerts() to change this.
 	Verts  Vertices
-	//The transformed vertices. Do not touch!
+	// The transformed vertices. Do not touch!
 	TVerts Vertices
-	//The axes of the polygon. Do not touch!
+	// The axes of the polygon. Do not touch!
 	Axes   []PolygonAxis
-	//The transformed axes of the polygon Do not touch!
+	// The transformed axes of the polygon Do not touch!
 	TAxes  []PolygonAxis
-	//The number of vertices. Do not touch!
+	// The number of vertices. Do not touch!
 	NumVerts int
 }
 
-//Creates a new PolygonShape with the given vertices offset by offset.
-//Returns nil if the given vertices are not valid
+// Creates a new PolygonShape with the given vertices offset by offset.
+// Returns nil if the given vertices are not valid.
 func NewPolygon(verts Vertices, offset vect.Vect) *Shape {
 	if verts == nil {
 		log.Printf("Error: no vertices passed!")
@@ -47,7 +45,7 @@ func NewPolygon(verts Vertices, offset vect.Vect) *Shape {
 	return shape
 }
 
-//Sets the vertices offset by the offset and calculates the PolygonAxes.
+// Sets the vertices offset by the offset and calculates the PolygonAxes.
 func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 
 	if verts == nil {
@@ -93,7 +91,7 @@ func (poly *PolygonShape) ShapeType() ShapeType {
 	return ShapeType_Polygon
 }
 
-//Calculates the transformed vertices and axes and the bounding box.
+// Calculates the transformed vertices and axes and the bounding box.
 func (poly *PolygonShape) Update(xf transform.Transform) aabb.AABB {
 	//transform axes
 	{
