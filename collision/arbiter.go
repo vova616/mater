@@ -1,5 +1,3 @@
-// Package mater/collision procies a basic 2d collision library,
-// based on box2d-lite and chipmunk-physics.
 
 package collision
 
