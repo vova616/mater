@@ -1,33 +1,33 @@
 package collision
 
 import (
-	"github.com/teomat/mater/vect"
 	"github.com/teomat/mater/aabb"
+	"github.com/teomat/mater/vect"
 	"log"
 )
 
 type settings struct {
 	AccumulateImpulses bool
 	PositionCorrection bool
-	Iterations int
-	AutoUpdateShapes bool
+	Iterations         int
+	AutoUpdateShapes   bool
 }
 
 var Settings settings = settings{
 	AccumulateImpulses: true,
 	PositionCorrection: true,
-	Iterations: 1,
-	AutoUpdateShapes: true,
+	Iterations:         1,
+	AutoUpdateShapes:   true,
 }
 
 type Space struct {
-	Enabled bool
-	Gravity vect.Vect
-	Bodies []*Body
-	Arbiters []*Arbiter
+	Enabled    bool
+	Gravity    vect.Vect
+	Bodies     []*Body
+	Arbiters   []*Arbiter
 	Iterations int
-	Callbacks struct {
-		OnCollision func(arb *Arbiter)
+	Callbacks  struct {
+		OnCollision   func(arb *Arbiter)
 		ShouldCollide func(sA, sB *Shape) bool
 	}
 }
@@ -41,7 +41,7 @@ func (space *Space) init() {
 func NewSpace() *Space {
 	space := new(Space)
 	space.init()
-	
+
 	return space
 }
 
@@ -67,7 +67,7 @@ func (space *Space) RemoveBody(body *Body) {
 }
 
 func (space *Space) Step(dt float64) {
-	
+
 	if dt <= 0.0 {
 		return
 	}
@@ -88,7 +88,7 @@ func (space *Space) Step(dt float64) {
 
 		//b.Velocity += dt * (gravity + b.invMass * b.Force)
 		newVel := vect.Mult(body.Force, body.invMass)
-		if ! body.IgnoreGravity {
+		if !body.IgnoreGravity {
 			newVel.Add(space.Gravity)
 		}
 		newVel.Mult(dt)
@@ -121,7 +121,7 @@ func (space *Space) Step(dt float64) {
 		body.Transform.Position.Add(vect.Mult(body.Velocity, dt))
 
 		rot := body.Transform.Angle()
-		body.Transform.SetAngle(rot + dt * body.AngularVelocity)
+		body.Transform.SetAngle(rot + dt*body.AngularVelocity)
 
 		body.UpdateShapes()
 	}
@@ -131,7 +131,7 @@ func (space *Space) Step(dt float64) {
 // Tries to collide everything with everything else.
 func (space *Space) Broadphase() {
 	space.Arbiters = make([]*Arbiter, 0, len(space.Arbiters))
-	for i := 0; i < len(space.Bodies) - 1; i++ {
+	for i := 0; i < len(space.Bodies)-1; i++ {
 		bi := space.Bodies[i]
 
 		for j := i + 1; j < len(space.Bodies); j++ {
@@ -149,7 +149,6 @@ func (space *Space) Broadphase() {
 						continue
 					}
 
-
 					//check aabbs for overlap
 					if !aabb.TestOverlap(si.AABB, sj.AABB) {
 						continue
@@ -164,43 +163,42 @@ func (space *Space) Broadphase() {
 						space.Arbiters = append(space.Arbiters, arb)
 					}
 
-/*
-					//search if this arbiter already exists
-					var oldArb *Arbiter
-					index := 0
-					
-					for i , arb := range space.Arbiters {
-						if arb.Equals(newArb) {
-							oldArb = arb
-							index = i
-							break
-						}
-					}
+					/*
+						//search if this arbiter already exists
+						var oldArb *Arbiter
+						index := 0
 
-					if newArb.NumContacts > 0 {
-						//insert or update the arbiter
-						if oldArb == nil {
-							println(1)
-							//insert
-							space.Arbiters = append(space.Arbiters, newArb)
+						for i , arb := range space.Arbiters {
+							if arb.Equals(newArb) {
+								oldArb = arb
+								index = i
+								break
+							}
+						}
+
+						if newArb.NumContacts > 0 {
+							//insert or update the arbiter
+							if oldArb == nil {
+								println(1)
+								//insert
+								space.Arbiters = append(space.Arbiters, newArb)
+							} else {
+								println(2)
+								//update
+								oldArb.Update(newArb.Contacts, newArb.NumContacts)
+							}
+
 						} else {
-							println(2)
-							//update
-							oldArb.Update(newArb.Contacts, newArb.NumContacts)
+							if oldArb != nil {
+								println(3)
+								//remove the arbiter
+								space.Arbiters = append(space.Arbiters[:index], space.Arbiters[index+1:]...)
+							}
+							newArb.Delete()
 						}
-
-					} else {
-						if oldArb != nil {
-							println(3)
-							//remove the arbiter
-							space.Arbiters = append(space.Arbiters[:index], space.Arbiters[index+1:]...)
-						}
-						newArb.Delete()
-					}
-*/
+					*/
 				}
 			}
-
 
 		}
 	}

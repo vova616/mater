@@ -1,8 +1,8 @@
 package render
 
 import (
-	"github.com/teomat/ftgl-go"
 	"github.com/banthar/Go-OpenGL/gl"
+	"github.com/teomat/ftgl-go"
 	"log"
 )
 

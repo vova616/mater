@@ -1,16 +1,16 @@
 package collision
 
 import (
-	"github.com/teomat/mater/vect"
 	"github.com/teomat/mater/aabb"
 	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 )
 
 // Convenience wrapper around PolygonShape.
 type BoxShape struct {
 	// The polygon that represents this box. Do not touch!
 	Polygon *PolygonShape
-	verts [4]vect.Vect
+	verts   [4]vect.Vect
 	// The width of the box. Call UpdatePoly() if changed.
 	Width float64
 	// The height of the box. Call UpdatePoly() if changed.
@@ -22,9 +22,9 @@ type BoxShape struct {
 func NewBox(pos vect.Vect, w, h float64) *Shape {
 	shape := new(Shape)
 	box := &BoxShape{
-		Polygon: &PolygonShape{},
-		Width: w,
-		Height: h,
+		Polygon:  &PolygonShape{},
+		Width:    w,
+		Height:   h,
 		Position: pos,
 	}
 
@@ -32,9 +32,9 @@ func NewBox(pos vect.Vect, w, h float64) *Shape {
 	hh := h / 2.0
 	box.verts = [4]vect.Vect{
 		{-hw, -hh},
-		{-hw,  hh},
-		{ hw,  hh},
-		{ hw, -hh},
+		{-hw, hh},
+		{hw, hh},
+		{hw, -hh},
 	}
 
 	poly := box.Polygon
@@ -50,9 +50,9 @@ func (box *BoxShape) UpdatePoly() {
 	hh := box.Height / 2.0
 	box.verts = [4]vect.Vect{
 		{-hw, -hh},
-		{-hw,  hh},
-		{ hw,  hh},
-		{ hw, -hh},
+		{-hw, hh},
+		{hw, hh},
+		{hw, -hh},
 	}
 
 	poly := box.Polygon

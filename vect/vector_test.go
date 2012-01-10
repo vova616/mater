@@ -1,14 +1,15 @@
 package vect
 
 import (
-	"testing"
 	"math"
+	"testing"
 )
 
 type addTest struct {
 	in1, in2 Vect
-	out Vect
+	out      Vect
 }
+
 var addTests = []addTest{
 	{Vect{0, 0}, Vect{0, 0}, Vect{0, 0}},
 	{Vect{0, 1}, Vect{0, 0}, Vect{0, 1}},
@@ -23,7 +24,7 @@ var addTests = []addTest{
 	{Vect{5, 5}, Vect{2, 2}, Vect{7, 7}},
 }
 
-func TestAdd (t *testing.T) {
+func TestAdd(t *testing.T) {
 	for _, at := range addTests {
 		v := Add(at.in1, at.in2)
 		if !Equals(at.out, v) {
@@ -34,8 +35,9 @@ func TestAdd (t *testing.T) {
 
 type minTest struct {
 	in1, in2 Vect
-	out Vect
+	out      Vect
 }
+
 var minTests = []minTest{
 	{Vect{0, 0}, Vect{0, 0}, Vect{0, 0}},
 	{Vect{1, 2}, Vect{9, 9}, Vect{1, 2}},
@@ -44,7 +46,7 @@ var minTests = []minTest{
 	{Vect{9, 6}, Vect{7, 8}, Vect{7, 6}},
 }
 
-func TestMin (t *testing.T) {
+func TestMin(t *testing.T) {
 	for _, at := range minTests {
 		v := Min(at.in1, at.in2)
 		if !Equals(at.out, v) {
@@ -55,8 +57,9 @@ func TestMin (t *testing.T) {
 
 type maxTest struct {
 	in1, in2 Vect
-	out Vect
+	out      Vect
 }
+
 var maxTests = []maxTest{
 	{Vect{0, 0}, Vect{0, 0}, Vect{0, 0}},
 	{Vect{1, 2}, Vect{9, 9}, Vect{9, 9}},
@@ -65,7 +68,7 @@ var maxTests = []maxTest{
 	{Vect{9, 6}, Vect{7, 8}, Vect{9, 8}},
 }
 
-func TestMax (t *testing.T) {
+func TestMax(t *testing.T) {
 	for _, at := range maxTests {
 		v := Max(at.in1, at.in2)
 		if !Equals(at.out, v) {
@@ -76,8 +79,9 @@ func TestMax (t *testing.T) {
 
 type distTest struct {
 	in1, in2 Vect
-	out float64
+	out      float64
 }
+
 var distTests = []distTest{
 	{Vect{0, 0}, Vect{0, 0}, 0},
 	{Vect{0, 2}, Vect{0, 0}, 2},
@@ -88,7 +92,7 @@ var distTests = []distTest{
 	{Vect{1, 1}, Vect{2, 2}, math.Sqrt(2)},
 }
 
-func TestDist (t *testing.T) {
+func TestDist(t *testing.T) {
 	for _, at := range distTests {
 		v := Dist(at.in1, at.in2)
 		if at.out != v {

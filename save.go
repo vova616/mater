@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/teomat/mater/collision"
-	"os"
 	"github.com/teomat/mater/transform"
+	"os"
 )
 
 var saveDirectory = "saves/"
@@ -136,9 +136,9 @@ func (scene *Scene) MarshalEntities() ([]byte, error) {
 
 func (scene *Scene) UnmarshalJSON(data []byte) error {
 	sceneData := struct {
-		Camera       *Camera
-		Space        *collision.Space
-		Entities     []json.RawMessage
+		Camera   *Camera
+		Space    *collision.Space
+		Entities []json.RawMessage
 	}{}
 
 	err := json.Unmarshal(data, &sceneData)

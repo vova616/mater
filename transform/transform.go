@@ -26,9 +26,9 @@ func (rot *Rotation) Angle() float64 {
 
 //rotates the input vector.
 func (rot *Rotation) RotateVect(v vect.Vect) vect.Vect {
-	return vect.Vect {
-		X: v.X * rot.C - v.Y * rot.S,
-		Y: v.X * rot.S + v.Y * rot.C,
+	return vect.Vect{
+		X: v.X*rot.C - v.Y*rot.S,
+		Y: v.X*rot.S + v.Y*rot.C,
 	}
 }
 

@@ -1,31 +1,31 @@
 package mater
 
 import (
-	"log"
 	"github.com/jteeuwen/glfw"
+	"log"
 )
 
 var QuickSavePath = "quicksave.json"
 
-type OnKeyCallbackFunc func (mater *Mater, key, state int) OnKeyCallbackFunc
+type OnKeyCallbackFunc func(mater *Mater, key, state int) OnKeyCallbackFunc
 
-func (mater *Mater) OnKey (key, state int) {
+func (mater *Mater) OnKey(key, state int) {
 	//first global key bindings
 	if state == 1 {
 		switch key {
-			case glfw.KeyF1:
-				println("Editmode!")
-				return
+		case glfw.KeyF1:
+			println("Editmode!")
+			return
 		}
 	}
 
 	//
-	mater.OnKeyCallback = mater.OnKeyCallback(mater,key, state)
-	
+	mater.OnKeyCallback = mater.OnKeyCallback(mater, key, state)
+
 }
 
-func DefaultKeyCallback (mater *Mater, key, state int) OnKeyCallbackFunc {
-	
+func DefaultKeyCallback(mater *Mater, key, state int) OnKeyCallbackFunc {
+
 	if state == 1 {
 		switch key {
 		case 'P':

@@ -1,20 +1,20 @@
 package mater
 
 import (
-	"github.com/teomat/mater/vect"
 	"github.com/banthar/Go-OpenGL/gl"
+	"github.com/teomat/mater/vect"
 )
 
 type Mater struct {
-	DefaultCamera Camera
-	ScreenSize vect.Vect
+	DefaultCamera   Camera
+	ScreenSize      vect.Vect
 	Running, Paused bool
-	Dbg DebugData
-	Scene *Scene
-	OnKeyCallback OnKeyCallbackFunc
+	Dbg             DebugData
+	Scene           *Scene
+	OnKeyCallback   OnKeyCallbackFunc
 }
 
-func (mater *Mater) Init () {
+func (mater *Mater) Init() {
 	dbg := &(mater.Dbg)
 	dbg.Init(mater)
 	mater.Scene = new(Scene)
@@ -29,7 +29,7 @@ func (mater *Mater) Init () {
 	mater.OnKeyCallback = DefaultKeyCallback
 }
 
-func (mater *Mater) OnResize (width, height int) {
+func (mater *Mater) OnResize(width, height int) {
 	if height == 0 {
 		height = 1
 	}
@@ -40,7 +40,7 @@ func (mater *Mater) OnResize (width, height int) {
 	if mater.Scene != nil {
 		mater.Scene.Camera.ScreenSize = mater.ScreenSize
 	}
-	
+
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
 	//camera centered at (0,0)
@@ -49,12 +49,12 @@ func (mater *Mater) OnResize (width, height int) {
 	gl.Translated(.375, .375, 0)
 }
 
-func (mater *Mater) Update (dt float64) {
-	
+func (mater *Mater) Update(dt float64) {
+
 	mater.Scene.Update(dt)
 }
 
-func (mater *Mater) Draw () {
+func (mater *Mater) Draw() {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	mater.Scene.Camera.PreDraw()
 	{

@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teomat/mater/collision"
 	"github.com/teomat/mater/vect"
-	"encoding/json"
 	"os"
-	"fmt"
 )
 
 var basePath = "saves/examples/"
@@ -53,9 +53,9 @@ func collisionExamples() {
 	{
 		verts := collision.Vertices{
 			{-1, -1},
-			{-1,  1},
-			{ 1,  1},
-			{ 1, -1},
+			{-1, 1},
+			{1, 1},
+			{1, -1},
 		}
 
 		poly := collision.NewPolygon(verts, vect.Vect{})

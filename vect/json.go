@@ -16,10 +16,10 @@ func (v *Vect) UnmarshalJSON(data []byte) error {
 	err := json.Unmarshal(data, &vectData)
 	if err != nil {
 		//try other form
-		vectData := struct{
+		vectData := struct {
 			X, Y float64
 		}{}
-		
+
 		err := json.Unmarshal(data, &vectData)
 
 		if err != nil {

@@ -1,9 +1,9 @@
 package collision
 
 import (
-	"github.com/teomat/mater/vect"
 	"github.com/teomat/mater/aabb"
 	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 )
 
 type CircleShape struct {
@@ -18,8 +18,8 @@ type CircleShape struct {
 func NewCircle(pos vect.Vect, radius float64) *Shape {
 	shape := new(Shape)
 	shape.ShapeClass = &CircleShape{
-		Position: pos, 
-		Radius: radius,
+		Position: pos,
+		Radius:   radius,
 	}
 	return shape
 }
@@ -44,5 +44,5 @@ func (circle *CircleShape) update(xf transform.Transform) aabb.AABB {
 func (circle *CircleShape) TestPoint(point vect.Vect) bool {
 	d := vect.Sub(point, circle.Tc)
 
-	return vect.Dot(d, d) <= circle.Radius * circle.Radius
+	return vect.Dot(d, d) <= circle.Radius*circle.Radius
 }

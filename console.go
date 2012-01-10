@@ -1,21 +1,21 @@
 package mater
 
 import (
-	"fmt"
 	"bufio"
-	"os"
 	"bytes"
+	"fmt"
+	"os"
 	"strings"
 )
 
 type Console struct {
-	Mater *Mater
-	Reader *bufio.Reader
+	Mater   *Mater
+	Reader  *bufio.Reader
 	Command chan string
-	Buffer *bytes.Buffer
+	Buffer  *bytes.Buffer
 }
 
-func (console *Console) Init (mater *Mater) {
+func (console *Console) Init(mater *Mater) {
 	if console.Mater != nil {
 		return
 	}
@@ -28,18 +28,18 @@ func (console *Console) Init (mater *Mater) {
 	go console.ProcessInput()
 }
 
-func (console *Console) ProcessInput () {
+func (console *Console) ProcessInput() {
 	for {
 		console.Command <- console.Read()
 	}
 }
 
-func (console *Console) Read () string {
+func (console *Console) Read() string {
 	command := ""
 	var char byte
 	console.Buffer.Truncate(0)
 	for char != '\n' {
-		char,_ = console.Reader.ReadByte()
+		char, _ = console.Reader.ReadByte()
 		console.Buffer.WriteByte(char)
 	}
 	console.Buffer.Truncate(console.Buffer.Len() - 1)
@@ -47,7 +47,7 @@ func (console *Console) Read () string {
 	return command
 }
 
-func (console *Console) ExecuteCommand (param string) {
+func (console *Console) ExecuteCommand(param string) {
 	params := strings.Split(param, " ")
 	command := params[0]
 	params = params[1:]

@@ -4,7 +4,7 @@ import (
 	. "github.com/teomat/mater"
 )
 
-type CamTarget struct {}
+type CamTarget struct{}
 
 func (ct *CamTarget) Name() string {
 	return "CamTarget"
@@ -19,7 +19,7 @@ func (ct *CamTarget) Update(owner *Entity, dt float64) {
 }
 
 func (ct *CamTarget) Destroy(owner *Entity) {
-	
+
 }
 
 func (ct *CamTarget) Marshal(owner *Entity) ([]byte, error) {

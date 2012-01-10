@@ -48,16 +48,20 @@ func Expand(a AABB, v vect.Vect) AABB {
 
 //returns the area of the bounding box.
 func (aabb *AABB) Area() float64 {
-	return (aabb.Upper.X - aabb.Lower.X)*(aabb.Upper.Y - aabb.Lower.Y)
+	return (aabb.Upper.X - aabb.Lower.X) * (aabb.Upper.Y - aabb.Lower.Y)
 }
 
-func TestOverlap (a, b AABB) bool {
+func TestOverlap(a, b AABB) bool {
 	d1 := vect.Sub(b.Lower, a.Upper)
 	d2 := vect.Sub(a.Lower, b.Upper)
 
-	if d1.X > 0.0 || d1.Y > 0.0 {return false}
-	
-	if d2.X > 0.0 || d2.Y > 0.0 {return false}
-	
+	if d1.X > 0.0 || d1.Y > 0.0 {
+		return false
+	}
+
+	if d2.X > 0.0 || d2.Y > 0.0 {
+		return false
+	}
+
 	return true
 }

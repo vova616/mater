@@ -6,9 +6,9 @@ import (
 )
 
 type FeaturePair struct {
-	InEdge1 uint8
+	InEdge1  uint8
 	OutEdge1 uint8
-	InEdge2 uint8
+	InEdge2  uint8
 	OutEdge2 uint8
 }
 
@@ -20,18 +20,18 @@ func (fp *FeaturePair) Value() int32 {
 // Contact point between 2 shapes.
 type Contact struct {
 	Position vect.Vect
-	Normal vect.Vect
-	R1, R2 vect.Vect
+	Normal   vect.Vect
+	R1, R2   vect.Vect
 
-	Separation float64
-	Pn float64	// accumulated normal impulse
-	Pt float64	// accumulated tangent impulse
-	Pnb float64	// accumulated normal impulse for position bias
+	Separation              float64
+	Pn                      float64 // accumulated normal impulse
+	Pt                      float64 // accumulated tangent impulse
+	Pnb                     float64 // accumulated normal impulse for position bias
 	MassNormal, MassTangent float64
-	Bias float64
+	Bias                    float64
 }
 
-func (con *Contact) Reset (pos, norm vect.Vect, sep float64) {
+func (con *Contact) Reset(pos, norm vect.Vect, sep float64) {
 	con.Position = pos
 	con.Normal = norm
 	con.Separation = sep

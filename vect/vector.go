@@ -68,7 +68,7 @@ func Mult(v1 Vect, s float64) Vect {
 
 //returns the square distance between two vectors.
 func DistSqr(v1, v2 Vect) float64 {
-	return (v1.X - v2.X)*(v1.X - v2.X) + (v1.Y - v2.Y)*(v1.Y - v2.Y)
+	return (v1.X-v2.X)*(v1.X-v2.X) + (v1.Y-v2.Y)*(v1.Y-v2.Y)
 }
 
 //returns the distance between two vectors.
@@ -136,7 +136,7 @@ func Normalize(v Vect) Vect {
 
 //dot product between two vectors.
 func Dot(v1, v2 Vect) float64 {
-	return v1.X * v2.X + v1.Y * v2.Y
+	return v1.X*v2.X + v1.Y*v2.Y
 }
 
 //same as CrossVV.
@@ -146,7 +146,7 @@ func Cross(a, b Vect) float64 {
 
 //cross product of two vectors.
 func CrossVV(a, b Vect) float64 {
-	return a.X * b.Y - a.Y * b.X
+	return a.X*b.Y - a.Y*b.X
 }
 
 //cross product between a vector and a float64.
@@ -165,8 +165,8 @@ func CrossFV(s float64, a Vect) Vect {
 //linear interpolation between two vectors by the given scalar
 func Lerp(v1, v2 Vect, s float64) Vect {
 	return Vect{
-		v1.X + (v1.X - v2.X) * s,
-		v1.Y + (v1.Y - v2.Y) * s,
+		v1.X + (v1.X-v2.X)*s,
+		v1.Y + (v1.Y-v2.Y)*s,
 	}
 }
 

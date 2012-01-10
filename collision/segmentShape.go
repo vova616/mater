@@ -1,9 +1,9 @@
 package collision
 
 import (
-	"github.com/teomat/mater/vect"
-	"github.com/teomat/mater/transform"
 	"github.com/teomat/mater/aabb"
+	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 )
 
 //If Settings.AutoUpdateShapes is not set, call Update on the shape for changes to the A, B and Radius to take effect.
@@ -19,7 +19,7 @@ type SegmentShape struct {
 	Tn vect.Vect
 	//transformed start/end points. Do not touch!
 	Ta, Tb vect.Vect
-	
+
 	//tangents at the start/end when chained with other segments. Do not touch!
 	A_tangent, B_tangent vect.Vect
 }
@@ -27,8 +27,8 @@ type SegmentShape struct {
 func NewSegment(a, b vect.Vect, r float64) *Shape {
 	shape := new(Shape)
 	shape.ShapeClass = &SegmentShape{
-		A: a,
-		B: b,
+		A:      a,
+		B:      b,
 		Radius: r,
 	}
 	return shape

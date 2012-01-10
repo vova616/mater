@@ -1,9 +1,9 @@
 package collision
 
 import (
-	"github.com/teomat/mater/vect"
 	"github.com/teomat/mater/aabb"
 	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 	"log"
 	"math"
 )
@@ -17,13 +17,13 @@ type PolygonAxis struct {
 type PolygonShape struct {
 	// The raw vertices of the polygon. Do not touch!
 	// Use polygon.SetVerts() to change this.
-	Verts  Vertices
+	Verts Vertices
 	// The transformed vertices. Do not touch!
 	TVerts Vertices
 	// The axes of the polygon. Do not touch!
-	Axes   []PolygonAxis
+	Axes []PolygonAxis
 	// The transformed axes of the polygon Do not touch!
-	TAxes  []PolygonAxis
+	TAxes []PolygonAxis
 	// The number of vertices. Do not touch!
 	NumVerts int
 }
@@ -78,7 +78,7 @@ func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 
 	for i := 0; i < numVerts; i++ {
 		a := vect.Add(offset, verts[i])
-		b := vect.Add(offset, verts[(i + 1) % numVerts])
+		b := vect.Add(offset, verts[(i+1)%numVerts])
 		n := vect.Normalize(vect.Perp(vect.Sub(b, a)))
 
 		poly.Verts[i] = a
@@ -108,7 +108,7 @@ func (poly *PolygonShape) update(xf transform.Transform) aabb.AABB {
 	{
 		inf := math.Inf(1)
 		aabb := aabb.AABB{
-			Lower: vect.Vect{ inf,  inf},
+			Lower: vect.Vect{inf, inf},
 			Upper: vect.Vect{-inf, -inf},
 		}
 

@@ -1,8 +1,8 @@
 package collision
 
 import (
-	"log"
 	"github.com/teomat/mater/vect"
+	"log"
 	"math"
 )
 
@@ -13,7 +13,7 @@ var collisionHandlers = [numShapes][numShapes]collisionHandler{
 		ShapeType_Circle:  circle2circle,
 		ShapeType_Segment: circle2segment,
 		ShapeType_Polygon: circle2polygon,
-		ShapeType_Box:	   circle2box,
+		ShapeType_Box:     circle2box,
 	},
 	ShapeType_Segment: [numShapes]collisionHandler{
 		ShapeType_Circle:  nil,
@@ -123,7 +123,7 @@ func polygon2polygon(contacts *[MaxPoints]Contact, sA, sB *Shape) int {
 		log.Printf("Error: ShapeB not a PolygonShape!")
 		return 0
 	}
-	
+
 	return poly2polyFunc(contacts, poly1, poly2)
 }
 
@@ -186,6 +186,7 @@ func box2box(contacts *[MaxPoints]Contact, sA, sB *Shape) int {
 
 	return poly2polyFunc(contacts, box1.Polygon, box2.Polygon)
 }
+
 //END COLLISION HANDLERS
 
 func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
@@ -272,7 +273,7 @@ func circle2segmentFunc(contacts *[MaxPoints]Contact, circle *CircleShape, segme
 }
 
 func circle2polyFunc(contacts *[MaxPoints]Contact, circle *CircleShape, poly *PolygonShape) int {
-	
+
 	axes := poly.TAxes
 
 	mini := 0
@@ -289,7 +290,7 @@ func circle2polyFunc(contacts *[MaxPoints]Contact, circle *CircleShape, poly *Po
 
 	n := axes[mini].N
 	a := poly.TVerts[mini]
-	b := poly.TVerts[(mini + 1) % poly.NumVerts]
+	b := poly.TVerts[(mini+1)%poly.NumVerts]
 	dta := vect.Cross(n, a)
 	dtb := vect.Cross(n, b)
 	dt := vect.Cross(n, circle.Tc)
@@ -298,7 +299,7 @@ func circle2polyFunc(contacts *[MaxPoints]Contact, circle *CircleShape, poly *Po
 		return circle2circleQuery(circle.Tc, b, circle.Radius, 0.0, &contacts[0])
 	} else if dt < dta {
 		contacts[0].Reset(
-			vect.Sub(circle.Tc, vect.Mult(n, circle.Radius + min / 2.0)),
+			vect.Sub(circle.Tc, vect.Mult(n, circle.Radius+min/2.0)),
 			vect.Mult(n, -1),
 			min,
 		)
@@ -321,7 +322,7 @@ func poly2polyFunc(contacts *[MaxPoints]Contact, poly1, poly2 *PolygonShape) int
 	}
 
 	// There is overlap, find the penetrating verts
-	if min1 >  min2 {
+	if min1 > min2 {
 		return findVerts(contacts, poly1, poly2, poly1.TAxes[mini1].N, min1)
 	} else {
 		return findVerts(contacts, poly1, poly2, vect.Mult(poly2.TAxes[mini2].N, -1), min2)
@@ -331,7 +332,7 @@ func poly2polyFunc(contacts *[MaxPoints]Contact, poly1, poly2 *PolygonShape) int
 }
 
 func findMSA(poly *PolygonShape, axes []PolygonAxis, num int) (min_out float64, min_index int) {
-	
+
 	min := poly.valueOnAxis(axes[0].N, axes[0].D)
 	if min > 0.0 {
 		return 0, -1
@@ -341,7 +342,7 @@ func findMSA(poly *PolygonShape, axes []PolygonAxis, num int) (min_out float64, 
 		dist := poly.valueOnAxis(axes[i].N, axes[i].D)
 		if dist > 0.0 {
 			return 0, -1
-		} else if(dist > min) {
+		} else if dist > min {
 			min = dist
 			min_index = i
 		}
@@ -368,7 +369,7 @@ func nextContact(contacts *[MaxPoints]Contact, numPtr *int) *Contact {
 		*numPtr = index + 1
 		return &contacts[index]
 	} else {
-		return &contacts[MaxPoints - 1]
+		return &contacts[MaxPoints-1]
 	}
 	panic("Never reached")
 }

@@ -1,9 +1,9 @@
 package collision
 
 import (
-	"log"
 	"github.com/teomat/mater/aabb"
 	"github.com/teomat/mater/transform"
+	"log"
 
 	"github.com/teomat/mater/vect"
 )
@@ -68,7 +68,7 @@ func (shape *Shape) GetAsPolygon() *PolygonShape {
 	if poly, ok := shape.ShapeClass.(*PolygonShape); ok {
 		return poly
 	}
-	
+
 	return nil
 }
 
@@ -77,7 +77,7 @@ func (shape *Shape) GetAsSegment() *SegmentShape {
 	if seg, ok := shape.ShapeClass.(*SegmentShape); ok {
 		return seg
 	}
-	
+
 	return nil
 }
 
@@ -86,6 +86,6 @@ func (shape *Shape) GetAsBox() *BoxShape {
 	if box, ok := shape.ShapeClass.(*BoxShape); ok {
 		return box
 	}
-	
+
 	return nil
 }

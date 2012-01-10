@@ -11,6 +11,7 @@ import (
 type UserData interface{}
 
 type BodyType uint8
+
 const (
 	BodyType_Static = iota
 	BodyType_Dynamic
@@ -18,22 +19,22 @@ const (
 
 func (bt BodyType) ToString() string {
 	switch bt {
-		case BodyType_Static:
-			return "Static"
-		case BodyType_Dynamic:
-			return "Dynamic"
+	case BodyType_Static:
+		return "Static"
+	case BodyType_Dynamic:
+		return "Dynamic"
 	}
 	return "unknown"
 }
 
 func (bt *BodyType) FromString(bodyType string) {
 	switch strings.ToLower(bodyType) {
-		case "static":
-			*bt = BodyType_Static
-		case "dynamic":
-			*bt = BodyType_Dynamic
-		default:
-			log.Printf("Error: Unknown BodyType \"%v\", BodyType not changed", bodyType)
+	case "static":
+		*bt = BodyType_Static
+	case "dynamic":
+		*bt = BodyType_Dynamic
+	default:
+		log.Printf("Error: Unknown BodyType \"%v\", BodyType not changed", bodyType)
 	}
 }
 
@@ -43,14 +44,14 @@ type Body struct {
 	//If Settings.AutoUpdateShapes is et to false, you have to call body.UpdateShapes() for the changes to take effect.
 	Transform transform.Transform
 
-	Velocity vect.Vect
+	Velocity        vect.Vect
 	AngularVelocity float64
 
-	Force vect.Vect
+	Force  vect.Vect
 	Torque float64
 
 	mass, invMass float64
-	i, invI float64
+	i, invI       float64
 
 	//List of shapes that make up this body.
 	//Use body.Add/RemoveShape() instead of changing this directly.
@@ -59,7 +60,7 @@ type Body struct {
 	//The space this body is part of. Don't change!
 	Space *Space
 
-	Enabled bool
+	Enabled  bool
 	bodyType BodyType
 
 	IgnoreGravity bool
@@ -112,7 +113,7 @@ func (body *Body) RemoveShape(shape *Shape) {
 	shapes := body.Shapes
 	for i, s := range shapes {
 		if s == shape {
-			body.Shapes = append(shapes[:i],shapes[i+1:]...)
+			body.Shapes = append(shapes[:i], shapes[i+1:]...)
 			return
 		}
 	}
@@ -136,7 +137,7 @@ func (body *Body) SetMass(mass float64) {
 	} else {
 		body.mass = mass
 		body.invMass = 1.0 / mass
-	}	
+	}
 }
 
 func (body *Body) Mass() float64 {
@@ -157,7 +158,7 @@ func (body *Body) SetInertia(i float64) {
 		body.invI = 0
 	} else {
 		body.invI = 1.0 / i
-	}	
+	}
 }
 
 func (body *Body) Inertia() float64 {
