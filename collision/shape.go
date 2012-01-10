@@ -18,6 +18,9 @@ type Shape struct {
 	AABB        aabb.AABB
 	// The actual implementation of the shape.
 	ShapeClass
+
+	// If the shape is a sensor, collisions are reported but not resolved.
+	IsSensor bool
 }
 
 type ShapeType int

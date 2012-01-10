@@ -26,6 +26,10 @@ type Space struct {
 	Bodies []*Body
 	Arbiters []*Arbiter
 	Iterations int
+	Callbacks struct {
+		OnCollision func(arb *Arbiter)
+		ShouldCollide func(sA, sB *Shape) bool
+	}
 }
 
 func (space *Space) init() {
@@ -101,6 +105,9 @@ func (space *Space) Step(dt float64) {
 	//Perform Iterations
 	for i := 0; i < Settings.Iterations; i++ {
 		for _, arb := range space.Arbiters {
+			if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
+				continue
+			}
 			arb.applyImpulse()
 		}
 	}
@@ -136,14 +143,25 @@ func (space *Space) Broadphase() {
 
 			for _, si := range bi.Shapes {
 				for _, sj := range bj.Shapes {
+
+					shouldCollide := space.Callbacks.ShouldCollide
+					if shouldCollide != nil && shouldCollide(si, sj) == false {
+						continue
+					}
+
+
 					//check aabbs for overlap
 					if !aabb.TestOverlap(si.AABB, sj.AABB) {
 						continue
 					}
 
-					newArb := CreateArbiter(si, sj)
-					if newArb.NumContacts > 0 {
-						space.Arbiters = append(space.Arbiters, newArb)
+					arb := CreateArbiter(si, sj)
+					if arb.NumContacts > 0 {
+						onCollisionCallback := space.Callbacks.OnCollision
+						if onCollisionCallback != nil {
+							onCollisionCallback(arb)
+						}
+						space.Arbiters = append(space.Arbiters, arb)
 					}
 
 /*
