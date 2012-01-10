@@ -6,13 +6,12 @@ import (
 	"github.com/teomat/mater/vect"
 )
 
-func (xf *Transform) MarshalJSON() ([]byte, error) {
+func (xf Transform) MarshalJSON() ([]byte, error) {
 	xfData := struct {
-		X, Y     float64
+		Position vect.Vect
 		Rotation float64
 	}{
-		X:        xf.Position.X,
-		Y:        xf.Position.Y,
+		Position: xf.Position,
 		Rotation: xf.Angle(),
 	}
 
@@ -23,11 +22,10 @@ func (xf *Transform) UnmarshalJSON(data []byte) error {
 	xf.SetIdentity()
 
 	xfData := struct {
-		X, Y     float64
+		Position *vect.Vect
 		Rotation float64
 	}{
-		X:        xf.Position.X,
-		Y:        xf.Position.Y,
+		Position: &xf.Position,
 		Rotation: xf.Angle(),
 	}
 
@@ -37,7 +35,7 @@ func (xf *Transform) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	xf.Position = vect.Vect{xfData.X, xfData.Y}
+	xf.Position = *xfData.Position
 	xf.SetAngle(xfData.Rotation)
 
 	return nil

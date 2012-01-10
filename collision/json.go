@@ -64,30 +64,24 @@ func (f *InfFloat) UnmarshalJSON(data []byte) error {
 	buf.WriteByte(']')
 	return
 }
-
+*/
 func (verts *Vertices) UnmarshalJSON(data []byte) error {
-	vertData := []float64{}
+	vertData := []*vect.Vect{}
 	err := json.Unmarshal(data, &vertData)
 	if err != nil {
 		log.Printf("Error decoding vertices!")
 		return err
 	}
 
-	if len(vertData) % 2 != 0 {
-		log.Printf("Error: Need at least 2 values for each Vertex")
-		return errors.New("Need at least 2 values for each Vertex")
-	}
-
-	v := make(Vertices, len(vertData) / 2)
+	v := make(Vertices, len(vertData))
 	*verts = v
 
-	for i := 0; i < len(vertData) / 2; i ++ {
-		v[i].X = vertData[i]
-		v[i].Y = vertData[i + 1]
+	for i := 0; i < len(vertData); i++ {
+		v[i] = *vertData[i]
 	}
 
 	return nil
-}*/
+}
 //END VERTICES REGION
 
 //START SPACE REGION
@@ -140,10 +134,10 @@ func (space *Space) MarshalJSON() ([]byte, error) {
 
 func (space *Space) UnmarshalJSON(data []byte) error {
 	spaceData := struct {
-		Gravity                     vect.Vect
+		Gravity *vect.Vect
 		Bodies []*Body
 	}{
-		Gravity: space.Gravity,
+		Gravity: &space.Gravity,
 	}
 
 	err := json.Unmarshal(data, &spaceData)
@@ -152,7 +146,7 @@ func (space *Space) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	space.init()
-	space.Gravity = spaceData.Gravity
+	//space.Gravity = spaceData.Gravity
 
 	for _, body := range spaceData.Bodies {
 		space.AddBody(body)
@@ -222,9 +216,9 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		Enabled         bool
 		Mass            InfFloat
 		Inertia         InfFloat
-		Velocity        vect.Vect
+		Velocity        *vect.Vect
 		AngularVelocity float64
-		Force           vect.Vect
+		Force           *vect.Vect
 		Torque          float64
 		IgnoreGravity   bool
 	}{ //initializing everything to the bodies default values
@@ -234,9 +228,9 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 		Enabled:         body.Enabled,
 		Mass:            InfFloat(body.mass),
 		Inertia:         InfFloat(body.i),
-		Velocity:        body.Velocity,
+		Velocity:        &body.Velocity,
 		AngularVelocity: body.AngularVelocity,
-		Force:           body.Force,
+		Force:           &body.Force,
 		Torque:          body.Torque,
 		IgnoreGravity:   body.IgnoreGravity,
 	}
@@ -272,10 +266,10 @@ func (body *Body) UnmarshalJSON(data []byte) error {
 	body.SetBodyType(bodyType)
 
 	body.Transform = *bodyData.Transform
-	body.Velocity = bodyData.Velocity
+	//body.Velocity = bodyData.Velocity
 	body.AngularVelocity = bodyData.AngularVelocity
 
-	body.Force = bodyData.Force
+	//body.Force = bodyData.Force
 	body.Torque = bodyData.Torque
 	body.IgnoreGravity = bodyData.IgnoreGravity	
 
@@ -371,12 +365,12 @@ func (circle *CircleShape) unmarshalShape(shape *Shape, data []byte) error {
 
 	circleData := struct {
 		Friction, Restitution float64
-		Position              vect.Vect
+		Position              *vect.Vect
 		Radius                float64
 	}{
 		Friction:    shape.Friction,
 		Restitution: shape.Restitution,
-		Position:    circle.Position,
+		Position:    &circle.Position,
 		Radius:      circle.Radius,
 	}
 
@@ -388,7 +382,7 @@ func (circle *CircleShape) unmarshalShape(shape *Shape, data []byte) error {
 
 	shape.Friction = circleData.Friction
 	shape.Restitution = circleData.Restitution
-	circle.Position = circleData.Position
+	//circle.Position = circleData.Position
 	circle.Radius = circleData.Radius
 
 	return nil
@@ -428,13 +422,13 @@ func (segment *SegmentShape) unmarshalShape(shape *Shape, data []byte) error {
 	}
 	segmentData := struct {
 		Friction, Restitution float64
-		A, B                  vect.Vect
+		A, B                  *vect.Vect
 		Radius                float64
 	}{
 		Friction:    shape.Friction,
 		Restitution: shape.Restitution,
-		A:           segment.A,
-		B:           segment.B,
+		A:           &segment.A,
+		B:           &segment.B,
 		Radius:      segment.Radius,
 	}
 
@@ -446,8 +440,8 @@ func (segment *SegmentShape) unmarshalShape(shape *Shape, data []byte) error {
 
 	shape.Friction = segmentData.Friction
 	shape.Restitution = segmentData.Restitution
-	segment.A = segmentData.A
-	segment.B = segmentData.B
+	//segment.A = segmentData.A
+	//segment.B = segmentData.B
 	segment.Radius = segmentData.Radius
 
 	return nil
@@ -484,12 +478,11 @@ func (poly *PolygonShape) unmarshalShape(shape *Shape, data []byte) error {
 	}
 
 	polyData := struct {
-		Vertices Vertices
+		Vertices *Vertices
 		Friction, Restitution float64
 	}{
 		Friction:    shape.Friction,
 		Restitution: shape.Restitution,
-		Vertices: poly.Verts,
 	}
 
 	err := json.Unmarshal(data, &polyData)
@@ -498,7 +491,7 @@ func (poly *PolygonShape) unmarshalShape(shape *Shape, data []byte) error {
 		return err
 	}
 
-	poly.SetVerts(polyData.Vertices, vect.Vect{})
+	poly.SetVerts(*polyData.Vertices, vect.Vect{})
 	return nil
 }
 
@@ -540,13 +533,13 @@ func (box *BoxShape) unmarshalShape(shape *Shape, data []byte) error {
 		Friction, Restitution float64
 		Width float64
 		Height float64
-		Position vect.Vect
+		Position *vect.Vect
 	}{
 		Friction:    shape.Friction,
 		Restitution: shape.Restitution,
 		Width: box.Width,
 		Height: box.Height,
-		Position: box.Position,
+		Position: &box.Position,
 	}
 
 	err := json.Unmarshal(data, &boxData)
@@ -557,7 +550,7 @@ func (box *BoxShape) unmarshalShape(shape *Shape, data []byte) error {
 
 	box.Width = boxData.Width
 	box.Height = boxData.Height
-	box.Position = boxData.Position
+	//box.Position = boxData.Position
 	if box.Polygon == nil {
 		box.Polygon = new(PolygonShape)
 	}
