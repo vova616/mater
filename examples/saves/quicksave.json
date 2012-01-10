@@ -16,7 +16,7 @@
 	},
 	"Entities": [
 		{
-			"ID": 0,
+			"ID": 1,
 			"Enabled": true,
 			"Transform": {
 				"Position": [
@@ -46,6 +46,7 @@
 								"ShapeType": "Circle",
 								"Friction": 0,
 								"Restitution": 0,
+								"Sensor": false,
 								"Position": [
 									0,
 									-0.35
@@ -56,6 +57,7 @@
 								"ShapeType": "Box",
 								"Friction": 0,
 								"Restitution": 0,
+								"Sensor": false,
 								"Width": 0.8,
 								"Height": 0.7,
 								"Position": [
@@ -67,6 +69,7 @@
 								"ShapeType": "Circle",
 								"Friction": 0,
 								"Restitution": 0,
+								"Sensor": false,
 								"Position": [
 									0,
 									0.35
@@ -113,6 +116,7 @@
 						"ShapeType": "Polygon",
 						"Friction": 0,
 						"Restitution": 0,
+						"Sensor": false,
 						"Vertices": [
 							[
 								-5,
@@ -149,6 +153,7 @@
 						"ShapeType": "Polygon",
 						"Friction": 0,
 						"Restitution": 0,
+						"Sensor": false,
 						"Vertices": [
 							[
 								-5,

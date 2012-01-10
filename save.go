@@ -3,10 +3,10 @@ package mater
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/teomat/mater/collision"
 	"github.com/teomat/mater/transform"
 	"os"
+	"log"
 )
 
 var saveDirectory = "saves/"
@@ -18,7 +18,7 @@ func (mater *Mater) SaveScene(path string) error {
 
 	file, err := os.Create(path)
 	if err != nil {
-		fmt.Printf("Error opening File: %v", err)
+		log.Printf("Error opening File: %v", err)
 		return err
 	}
 	defer file.Close()
@@ -28,14 +28,14 @@ func (mater *Mater) SaveScene(path string) error {
 
 	dataString, err := json.MarshalIndent(scene, "", "\t")
 	if err != nil {
-		fmt.Printf("Error encoding Scene: %v", err)
+		log.Printf("Error encoding Scene: %v", err)
 		return err
 	}
 
 	buf := bytes.NewBuffer(dataString)
 	n, err := buf.WriteTo(file)
 	if err != nil {
-		fmt.Printf("Error after writing %v characters to File: %v", n, err)
+		log.Printf("Error after writing %v characters to File: %v", n, err)
 		return err
 	}
 
@@ -50,7 +50,7 @@ func (mater *Mater) LoadScene(path string) error {
 
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Printf("Error opening File: %v", err)
+		log.Printf("Error opening File: %v", err)
 		return err
 	}
 	defer file.Close()
@@ -62,7 +62,7 @@ func (mater *Mater) LoadScene(path string) error {
 
 	err = decoder.Decode(scene)
 	if err != nil {
-		fmt.Printf("Error decoding Scene: %v", err)
+		log.Printf("Error decoding Scene: %v", err)
 		return err
 	}
 
@@ -102,6 +102,7 @@ func (scene *Scene) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`,"Space":`)
 	err = encoder.Encode(scene.Space)
 	if err != nil {
+		log.Printf("Error encoding scene")
 		return nil, err
 	}
 
@@ -119,6 +120,7 @@ func (scene *Scene) MarshalEntities() ([]byte, error) {
 
 		err := encoder.Encode(entity)
 		if err != nil {
+			log.Printf("Error encoding entity")
 			return nil, err
 		}
 
@@ -143,6 +145,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 
 	err := json.Unmarshal(data, &sceneData)
 	if err != nil {
+		log.Printf("Error decoding scene")
 		return err
 	}
 
@@ -158,6 +161,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 	for _, rawEntity := range sd.Entities {
 		err := scene.UnmarshalEntity(rawEntity)
 		if err != nil {
+			log.Printf("Error decoding entity")
 			return err
 		}
 	}
@@ -209,6 +213,7 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 		}
 		err := component.Unmarshal(entity, componentData.Data)
 		if err != nil {
+			log.Printf("Error decoding entity")
 			return err
 		}
 		entity.AddComponent(component)
@@ -241,22 +246,26 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 		name := component.Name()
 		data, err := component.Marshal(entity)
 		if err != nil {
+			log.Printf("Error encoding entity")
 			return nil, err
 		}
 		//Don't write anything if the component returns nil
 		if data == nil {
 			continue
 		}
-
 		ccount++
-		compData := struct {
-			Name string
-			Data json.RawMessage
-		}{
-			Name: name,
-			Data: data,
-		}
-		encoder.Encode(&compData)
+
+		buf.WriteByte('{')
+
+		buf.WriteString(`"Name":`)
+		encoder.Encode(name)
+
+		buf.WriteString(`,"Data":`)
+		buf.Write(data)
+		
+		buf.WriteByte('}')
+
+		buf.WriteByte(',')
 	}
 
 	if ccount > 0 {
