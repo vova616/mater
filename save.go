@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/teomat/mater/collision"
 	"github.com/teomat/mater/transform"
-	"os"
 	"log"
+	"os"
 )
 
 var saveDirectory = "saves/"
@@ -262,7 +262,7 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 
 		buf.WriteString(`,"Data":`)
 		buf.Write(data)
-		
+
 		buf.WriteByte('}')
 
 		buf.WriteByte(',')

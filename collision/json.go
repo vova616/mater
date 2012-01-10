@@ -292,21 +292,59 @@ func (shape *Shape) MarshalJSON() ([]byte, error) {
 		return nil, errors.New("shape.ShapeClass not set")
 	}
 
-	return shape.ShapeClass.marshalShape(shape)
+	shapeData := struct {
+		ShapeType   string
+		Friction    float64
+		Restitution float64
+		Sensor      bool
+	}{
+		ShapeType:   shape.ShapeType().ToString(),
+		Friction:    shape.Friction,
+		Restitution: shape.Restitution,
+		Sensor:      shape.IsSensor,
+	}
+
+	data, err := json.Marshal(&shapeData)
+	if err != nil {
+		log.Printf("Error encoding shape")
+		return nil, err
+	}
+
+	scData, err := shape.ShapeClass.marshalShape(shape)
+	if err != nil {
+		log.Printf("Error encoding shape")
+		return nil, err
+	}
+
+	//TODO: find an nicer solution for this
+	data[len(data)-1] = ','
+
+	return append(data, scData[1:]...), nil
 }
 
 func (shape *Shape) UnmarshalJSON(data []byte) error {
-	shapeType := struct {
-		ShapeType string
-	}{}
+	shapeData := struct {
+		ShapeType   string
+		Friction    float64
+		Restitution float64
+		Sensor      bool
+	}{
+		Friction:    shape.Friction,
+		Restitution: shape.Restitution,
+		Sensor:      shape.IsSensor,
+	}
 
-	err := json.Unmarshal(data, &shapeType)
+	err := json.Unmarshal(data, &shapeData)
 	if err != nil {
 		log.Printf("Error: could not find shapetype")
 		return err
 	}
 
-	switch strings.ToLower(shapeType.ShapeType) {
+	shape.Friction = shapeData.Friction
+	shape.Restitution = shapeData.Restitution
+	shape.IsSensor = shapeData.Sensor
+
+	switch strings.ToLower(shapeData.ShapeType) {
 	case "circle":
 		circle := new(CircleShape)
 		shape.ShapeClass = circle
@@ -326,7 +364,7 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 
 	}
 
-	log.Printf("Error: unknown shapetype: %v", shapeType.ShapeType)
+	log.Printf("Error: unknown shapetype: %v", shapeData.ShapeType)
 	return errors.New("Unknown shapetype")
 }
 
@@ -342,19 +380,11 @@ func (circle *CircleShape) marshalShape(shape *Shape) ([]byte, error) {
 	}
 
 	circleData := struct {
-		ShapeType   string
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		Position    vect.Vect
-		Radius      float64
+		Position vect.Vect
+		Radius   float64
 	}{
-		ShapeType:   "Circle",
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		Position:    circle.Position,
-		Radius:      circle.Radius,
+		Position: circle.Position,
+		Radius:   circle.Radius,
 	}
 
 	return json.Marshal(&circleData)
@@ -367,17 +397,11 @@ func (circle *CircleShape) unmarshalShape(shape *Shape, data []byte) error {
 	}
 
 	circleData := struct {
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		Position    *vect.Vect
-		Radius      float64
+		Position *vect.Vect
+		Radius   float64
 	}{
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		Position:    &circle.Position,
-		Radius:      circle.Radius,
+		Position: &circle.Position,
+		Radius:   circle.Radius,
 	}
 
 	err := json.Unmarshal(data, &circleData)
@@ -386,8 +410,6 @@ func (circle *CircleShape) unmarshalShape(shape *Shape, data []byte) error {
 		return err
 	}
 
-	shape.Friction = circleData.Friction
-	shape.Restitution = circleData.Restitution
 	//circle.Position = circleData.Position
 	circle.Radius = circleData.Radius
 
@@ -405,20 +427,12 @@ func (segment *SegmentShape) marshalShape(shape *Shape) ([]byte, error) {
 	}
 
 	segmentData := struct {
-		ShapeType   string
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		A, B        vect.Vect
-		Radius      float64
+		A, B   vect.Vect
+		Radius float64
 	}{
-		ShapeType:   "Segment",
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		A:           segment.A,
-		B:           segment.B,
-		Radius:      segment.Radius,
+		A:      segment.A,
+		B:      segment.B,
+		Radius: segment.Radius,
 	}
 
 	return json.Marshal(&segmentData)
@@ -430,18 +444,12 @@ func (segment *SegmentShape) unmarshalShape(shape *Shape, data []byte) error {
 		return errors.New("Wrong parent shape")
 	}
 	segmentData := struct {
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		A, B        *vect.Vect
-		Radius      float64
+		A, B   *vect.Vect
+		Radius float64
 	}{
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		A:           &segment.A,
-		B:           &segment.B,
-		Radius:      segment.Radius,
+		A:      &segment.A,
+		B:      &segment.B,
+		Radius: segment.Radius,
 	}
 
 	err := json.Unmarshal(data, &segmentData)
@@ -450,8 +458,6 @@ func (segment *SegmentShape) unmarshalShape(shape *Shape, data []byte) error {
 		return err
 	}
 
-	shape.Friction = segmentData.Friction
-	shape.Restitution = segmentData.Restitution
 	//segment.A = segmentData.A
 	//segment.B = segmentData.B
 	segment.Radius = segmentData.Radius
@@ -470,17 +476,9 @@ func (poly *PolygonShape) marshalShape(shape *Shape) ([]byte, error) {
 	}
 
 	polyData := struct {
-		ShapeType   string
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		Vertices    Vertices
+		Vertices Vertices
 	}{
-		ShapeType:   "Polygon",
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		Vertices:    poly.Verts,
+		Vertices: poly.Verts,
 	}
 
 	return json.Marshal(&polyData)
@@ -493,15 +491,8 @@ func (poly *PolygonShape) unmarshalShape(shape *Shape, data []byte) error {
 	}
 
 	polyData := struct {
-		Vertices    *Vertices
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-	}{
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-	}
+		Vertices *Vertices
+	}{}
 
 	err := json.Unmarshal(data, &polyData)
 	if err != nil {
@@ -524,21 +515,13 @@ func (box *BoxShape) marshalShape(shape *Shape) ([]byte, error) {
 	}
 
 	boxData := struct {
-		ShapeType   string
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		Width       float64
-		Height      float64
-		Position    vect.Vect
+		Width    float64
+		Height   float64
+		Position vect.Vect
 	}{
-		ShapeType:   "Box",
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		Width:       box.Width,
-		Height:      box.Height,
-		Position:    box.Position,
+		Width:    box.Width,
+		Height:   box.Height,
+		Position: box.Position,
 	}
 
 	return json.Marshal(&boxData)
@@ -551,19 +534,13 @@ func (box *BoxShape) unmarshalShape(shape *Shape, data []byte) error {
 	}
 
 	boxData := struct {
-		Friction    float64
-		Restitution float64
-		Sensor      bool
-		Width       float64
-		Height      float64
-		Position    *vect.Vect
+		Width    float64
+		Height   float64
+		Position *vect.Vect
 	}{
-		Friction:    shape.Friction,
-		Restitution: shape.Restitution,
-		Sensor:      shape.IsSensor,
-		Width:       box.Width,
-		Height:      box.Height,
-		Position:    &box.Position,
+		Width:    box.Width,
+		Height:   box.Height,
+		Position: &box.Position,
 	}
 
 	err := json.Unmarshal(data, &boxData)

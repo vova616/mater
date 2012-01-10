@@ -99,6 +99,9 @@ func (space *Space) Step(dt float64) {
 
 	//Perform pre-steps
 	for _, arb := range space.Arbiters {
+		if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
+			continue
+		}
 		arb.preStep(inv_dt)
 	}
 

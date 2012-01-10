@@ -27,10 +27,6 @@
 			},
 			"Components": [
 				{
-					"Name": "CamTarget",
-					"Data": {}
-				},
-				{
 					"Name": "Body",
 					"Data": {
 						"Type": "Dynamic",
@@ -69,7 +65,7 @@
 								"ShapeType": "Circle",
 								"Friction": 0,
 								"Restitution": 0,
-								"Sensor": false,
+								"Sensor": true,
 								"Position": [
 									0,
 									0.35
@@ -92,6 +88,10 @@
 						"Torque": 0,
 						"IgnoreGravity": false
 					}
+				},
+				{
+					"Name": "CamTarget",
+					"Data": {}
 				}
 			]
 		}

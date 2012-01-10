@@ -33,6 +33,22 @@ const (
 	numShapes         = iota
 )
 
+func (st ShapeType) ToString() string {
+	switch st {
+	case ShapeType_Circle:
+		return "Circle"
+	case ShapeType_Segment:
+		return "Segment"
+	case ShapeType_Polygon:
+		return "Polygon"
+	case ShapeType_Box:
+		return "Box"
+	default:
+		return "Unknown"
+	}
+	panic("never reached")
+}
+
 type ShapeClass interface {
 	ShapeType() ShapeType
 	// Update the shape with the new transform and compute the AABB.
