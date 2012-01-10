@@ -25,66 +25,72 @@
 				],
 				"Rotation": 0
 			},
-			"Components": {
-				"CamTarget": {},
-				"Body": {
-					"Type": "Dynamic",
-					"Transform": {
-						"Position": [
-							1,
-							-5
+			"Components": [
+				{
+					"Name": "CamTarget",
+					"Data": {}
+				},
+				{
+					"Name": "Body",
+					"Data": {
+						"Type": "Dynamic",
+						"Transform": {
+							"Position": [
+								1,
+								-5
+							],
+							"Rotation": 0
+						},
+						"Shapes": [
+							{
+								"ShapeType": "Circle",
+								"Friction": 0,
+								"Restitution": 0,
+								"Position": [
+									0,
+									-0.35
+								],
+								"Radius": 0.4
+							},
+							{
+								"ShapeType": "Box",
+								"Friction": 0,
+								"Restitution": 0,
+								"Width": 0.8,
+								"Height": 0.7,
+								"Position": [
+									0,
+									0
+								]
+							},
+							{
+								"ShapeType": "Circle",
+								"Friction": 0,
+								"Restitution": 0,
+								"Position": [
+									0,
+									0.35
+								],
+								"Radius": 0.4
+							}
 						],
-						"Rotation": 0
-					},
-					"Shapes": [
-						{
-							"ShapeType": "Circle",
-							"Friction": 0,
-							"Restitution": 0,
-							"Position": [
-								0,
-								-0.35
-							],
-							"Radius": 0.4
-						},
-						{
-							"ShapeType": "Box",
-							"Friction": 0,
-							"Restitution": 0,
-							"Width": 0.8,
-							"Height": 0.7,
-							"Position": [
-								0,
-								0
-							]
-						},
-						{
-							"ShapeType": "Circle",
-							"Friction": 0,
-							"Restitution": 0,
-							"Position": [
-								0,
-								0.35
-							],
-							"Radius": 0.4
-						}
-					],
-					"Enabled": true,
-					"Mass": 1,
-					"Inertia": 0,
-					"Velocity": [
-						0,
-						0
-					],
-					"AngularVelocity": 0,
-					"Force": [
-						0,
-						0
-					],
-					"Torque": 0,
-					"IgnoreGravity": false
+						"Enabled": true,
+						"Mass": 1,
+						"Inertia": 0,
+						"Velocity": [
+							0,
+							0
+						],
+						"AngularVelocity": 0,
+						"Force": [
+							0,
+							0
+						],
+						"Torque": 0,
+						"IgnoreGravity": false
+					}
 				}
-			}
+			]
 		}
 	],
 	"Space": {

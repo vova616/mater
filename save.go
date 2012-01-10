@@ -166,11 +166,16 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 }
 
 func (scene *Scene) UnmarshalEntity(data []byte) error {
+	type compData struct {
+		Name string
+		Data json.RawMessage
+	}
+
 	entityData := struct {
 		ID         int
 		Enabled    bool
 		Transform  *transform.Transform
-		Components map[string]json.RawMessage
+		Components []compData
 	}{}
 	ed := &entityData
 
@@ -182,9 +187,13 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 	entity := new(Entity)
 	entity.Scene = scene
 
-	entity.id = ed.ID
 	if ed.ID > lastEntityId {
 		lastEntityId = ed.ID
+	}
+
+	entity.id = ed.ID
+	if entity.id <= 0 {
+		entity.id = nextId()
 	}
 
 	entity.Enabled = ed.Enabled
@@ -192,12 +201,13 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 
 	entity.Components = make(map[string]Component, len(ed.Components))
 
-	for name, componentData := range ed.Components {
+	for _, componentData := range ed.Components {
+		name := componentData.Name
 		component := NewComponent(name)
 		if component == nil {
 			continue
 		}
-		err := component.Unmarshal(entity, componentData)
+		err := component.Unmarshal(entity, componentData.Data)
 		if err != nil {
 			return err
 		}
@@ -225,7 +235,7 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 	encoder.Encode(entity.Transform)
 
 	buf.WriteString(`,"Components":`)
-	buf.WriteByte('{')
+	buf.WriteByte('[')
 	ccount := 0
 	for _, component := range entity.Components {
 		name := component.Name()
@@ -239,11 +249,14 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 		}
 
 		ccount++
-		buf.WriteByte('"')
-		buf.WriteString(name)
-		buf.WriteString(`":`)
-		buf.Write(data)
-		buf.WriteByte(',')
+		compData := struct {
+			Name string
+			Data json.RawMessage
+		}{
+			Name: name,
+			Data: data,
+		}
+		encoder.Encode(&compData)
 	}
 
 	if ccount > 0 {
@@ -251,7 +264,7 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 		buf.Truncate(buf.Len() - 1)
 	}
 
-	buf.WriteByte('}')
+	buf.WriteByte(']')
 	buf.WriteByte('}')
 
 	return buf.Bytes(), nil

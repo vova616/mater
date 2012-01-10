@@ -1,5 +1,4 @@
 RIGHT NOW:
-	- change component serialization
 	- add collision callbacks to mater/collision
 	- cleanup & add documentation
 	- other mater/collision stuff
