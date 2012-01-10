@@ -1,23 +1,25 @@
 {
 	"Type": "Dynamic",
 	"Transform": {
-		"X": 0,
-		"Y": 0,
+		"Position": [
+			0,
+			0
+		],
 		"Rotation": 0
 	},
 	"Shapes": [],
 	"Enabled": true,
 	"Mass": 1,
 	"Inertia": 1,
-	"Velocity": {
-		"X": 0,
-		"Y": 0
-	},
+	"Velocity": [
+		0,
+		0
+	],
 	"AngularVelocity": 0,
-	"Force": {
-		"X": 0,
-		"Y": 0
-	},
+	"Force": [
+		0,
+		0
+	],
 	"Torque": 0,
 	"IgnoreGravity": false
 }

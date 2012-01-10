@@ -2,9 +2,9 @@
 	"ShapeType": "Circle",
 	"Friction": 0,
 	"Restitution": 0,
-	"Position": {
-		"X": 0,
-		"Y": 0
-	},
+	"Position": [
+		0,
+		0
+	],
 	"Radius": 1
 }
