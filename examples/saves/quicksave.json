@@ -14,9 +14,15 @@
 		],
 		"Rotation": 0
 	},
+	"StaticEntity": {
+		"ID": 1,
+		"Enabled": true,
+		"Transform": null,
+		"Components": []
+	},
 	"Entities": [
 		{
-			"ID": 1,
+			"ID": 2,
 			"Enabled": true,
 			"Transform": {
 				"Position": [
@@ -26,6 +32,10 @@
 				"Rotation": 0
 			},
 			"Components": [
+				{
+					"Name": "CamTarget",
+					"Data": {}
+				},
 				{
 					"Name": "Body",
 					"Data": {
@@ -88,10 +98,6 @@
 						"Torque": 0,
 						"IgnoreGravity": false
 					}
-				},
-				{
-					"Name": "CamTarget",
-					"Data": {}
 				}
 			]
 		}

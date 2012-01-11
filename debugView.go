@@ -49,7 +49,7 @@ func (dv *DebugView) DrawDebugData() {
 	}
 
 	//Draw aabbs
-	const drawAABBs = true
+	const drawAABBs = false
 	if drawAABBs {
 		for _, b := range space.Bodies {
 			gl.Color3f(.3, .7, .7)

@@ -5,20 +5,23 @@ import (
 )
 
 type Scene struct {
-	Space    *collision.Space
-	Camera   *Camera
-	Entities map[int]*Entity
+	Space        *collision.Space
+	Camera       *Camera
+	StaticEntity Entity
+	Entities     map[int]*Entity
 }
 
 func (scene *Scene) Init(mater *Mater) {
 	scene.Space = collision.NewSpace()
 	cam := mater.DefaultCamera
 	scene.Camera = &cam
+	scene.StaticEntity.Init()
 	scene.Entities = make(map[int]*Entity, 32)
 }
 
 func (scene *Scene) Update(dt float64) {
 	scene.Space.Step(dt)
+	scene.StaticEntity.Update(dt)
 	for _, entity := range scene.Entities {
 		if entity.Enabled {
 			entity.Update(dt)

@@ -2,6 +2,7 @@ package mater
 
 import (
 	"github.com/teomat/mater/transform"
+	"log"
 )
 
 type Entity struct {
@@ -21,9 +22,17 @@ func nextId() int {
 
 func NewEntity() *Entity {
 	entity := new(Entity)
+	entity.Init()
+	return entity
+}
+
+func (entity *Entity) Init() {
+	if entity.id > 0 {
+		log.Printf("Error: Entity already initialized")
+		return
+	}
 	entity.id = nextId()
 	entity.Components = make(map[string]Component)
-	return entity
 }
 
 func (entity *Entity) Update(dt float64) {

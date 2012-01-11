@@ -92,6 +92,9 @@ func (scene *Scene) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`{"Camera":`)
 	encoder.Encode(scene.Camera)
 
+	buf.WriteString(`,"StaticEntity":`)
+	encoder.Encode(&scene.StaticEntity)
+
 	buf.WriteString(`,"Entities":`)
 	entities, err := scene.MarshalEntities()
 	if err != nil {
@@ -138,9 +141,10 @@ func (scene *Scene) MarshalEntities() ([]byte, error) {
 
 func (scene *Scene) UnmarshalJSON(data []byte) error {
 	sceneData := struct {
-		Camera   *Camera
-		Space    *collision.Space
-		Entities []json.RawMessage
+		Camera       *Camera
+		Space        *collision.Space
+		StaticEntity json.RawMessage
+		Entities     []json.RawMessage
 	}{}
 
 	err := json.Unmarshal(data, &sceneData)
@@ -151,6 +155,13 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 
 	sd := &sceneData
 
+	staticEntity, err := scene.UnmarshalEntity(sd.StaticEntity)
+	if err != nil {
+		log.Printf("Error decoding static entity")
+		return err
+	}
+	scene.StaticEntity = *staticEntity
+
 	scene.Camera = sd.Camera
 	scene.Space = sd.Space
 
@@ -159,17 +170,18 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 	}
 
 	for _, rawEntity := range sd.Entities {
-		err := scene.UnmarshalEntity(rawEntity)
+		entity, err := scene.UnmarshalEntity(rawEntity)
 		if err != nil {
 			log.Printf("Error decoding entity")
 			return err
 		}
+		scene.AddEntity(entity)
 	}
 
 	return nil
 }
 
-func (scene *Scene) UnmarshalEntity(data []byte) error {
+func (scene *Scene) UnmarshalEntity(data []byte) (*Entity, error) {
 	type compData struct {
 		Name string
 		Data json.RawMessage
@@ -185,7 +197,8 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 
 	err := json.Unmarshal(data, ed)
 	if err != nil {
-		return err
+		log.Printf("Error decoding entity")
+		return nil, err
 	}
 
 	entity := new(Entity)
@@ -214,15 +227,13 @@ func (scene *Scene) UnmarshalEntity(data []byte) error {
 		err := component.Unmarshal(entity, componentData.Data)
 		if err != nil {
 			log.Printf("Error decoding entity")
-			return err
+			return nil, err
 		}
 		entity.AddComponent(component)
 		component.Init(entity)
 	}
 
-	scene.AddEntity(entity)
-
-	return nil
+	return entity, nil
 }
 
 func (entity *Entity) MarshalJSON() ([]byte, error) {
