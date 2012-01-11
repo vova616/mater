@@ -155,15 +155,15 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 
 	sd := &sceneData
 
+	scene.Space = sd.Space
+	scene.Camera = sd.Camera
+
 	staticEntity, err := scene.UnmarshalEntity(sd.StaticEntity)
 	if err != nil {
 		log.Printf("Error decoding static entity")
 		return err
 	}
-	scene.StaticEntity = *staticEntity
-
-	scene.Camera = sd.Camera
-	scene.Space = sd.Space
+	scene.StaticEntity = *staticEntity	
 
 	if scene.Entities == nil {
 		scene.Entities = make(map[int]*Entity, 32)
