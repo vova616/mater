@@ -18,7 +18,12 @@
 		"ID": 1,
 		"Enabled": true,
 		"Transform": null,
-		"Components": []
+		"Components": [
+			{
+				"Name": "CollisionCallback",
+				"Data": {}
+			}
+		]
 	},
 	"Entities": [
 		{
@@ -75,7 +80,7 @@
 								"ShapeType": "Circle",
 								"Friction": 0,
 								"Restitution": 0,
-								"Sensor": true,
+								"Sensor": false,
 								"Position": [
 									0,
 									0.35
