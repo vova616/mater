@@ -7,8 +7,10 @@ import (
 )
 
 type Camera struct {
-	ScreenSize, Position, Scale vect.Vect
-	Rotation                    float64
+	ScreenSize vect.Vect `json:"-"`
+	Position   vect.Vect
+	Scale      vect.Vect
+	Rotation   float64
 }
 
 func (cam Camera) PreDraw() {

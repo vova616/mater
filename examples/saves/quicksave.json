@@ -1,9 +1,5 @@
 {
 	"Camera": {
-		"ScreenSize": [
-			800,
-			600
-		],
 		"Position": [
 			1,
 			-5
@@ -37,10 +33,6 @@
 				"Rotation": 0
 			},
 			"Components": [
-				{
-					"Name": "CamTarget",
-					"Data": {}
-				},
 				{
 					"Name": "Body",
 					"Data": {
@@ -103,6 +95,10 @@
 						"Torque": 0,
 						"IgnoreGravity": false
 					}
+				},
+				{
+					"Name": "CamTarget",
+					"Data": {}
 				}
 			]
 		}
