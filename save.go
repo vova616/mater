@@ -230,7 +230,6 @@ func (scene *Scene) UnmarshalEntity(data []byte) (*Entity, error) {
 			return nil, err
 		}
 		entity.AddComponent(component)
-		component.Init(entity)
 	}
 
 	return entity, nil
