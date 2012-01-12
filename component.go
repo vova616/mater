@@ -23,34 +23,6 @@ type Component interface {
 	Unmarshal(owner *Entity, data []byte) error
 }
 
-func (entity *Entity) AddComponent(component Component) {
-	name := component.Name()
-	//destroy the old component if there is one
-	if c2, ok := entity.Components[name]; ok {
-		c2.Destroy(entity)
-	}
-	entity.Components[name] = component
-	component.Init(entity)
-	for _, comp := range entity.Components {
-		if comp == component {
-			continue
-		}
-		comp.OnNewComponent(entity, component)
-	}
-}
-
-func (entity *Entity) RemoveComponent(component Component) {
-	component.Destroy(entity)
-	delete(entity.Components, component.Name())
-}
-
-func (entity *Entity) RemoveComponentName(name string) {
-	if component, ok := entity.Components[name]; ok {
-		component.Destroy(entity)
-	}
-	delete(entity.Components, name)
-}
-
 var components = make(map[string]reflect.Type)
 
 func RegisterComponent(component Component) {

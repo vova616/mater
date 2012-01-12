@@ -217,6 +217,7 @@ func (scene *Scene) UnmarshalEntity(data []byte) (*Entity, error) {
 	entity.Transform = ed.Transform
 
 	entity.Components = make(map[string]Component, len(ed.Components))
+	entity.ComponentList = make([]Component, 0, len(ed.Components))
 
 	for _, componentData := range ed.Components {
 		name := componentData.Name
@@ -252,7 +253,7 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 	buf.WriteString(`,"Components":`)
 	buf.WriteByte('[')
 	ccount := 0
-	for _, component := range entity.Components {
+	for _, component := range entity.ComponentList {
 		name := component.Name()
 		data, err := component.Marshal(entity)
 		if err != nil {

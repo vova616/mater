@@ -34,6 +34,10 @@
 			},
 			"Components": [
 				{
+					"Name": "CamTarget",
+					"Data": {}
+				},
+				{
 					"Name": "Body",
 					"Data": {
 						"Type": "Dynamic",
@@ -95,10 +99,6 @@
 						"Torque": 0,
 						"IgnoreGravity": false
 					}
-				},
-				{
-					"Name": "CamTarget",
-					"Data": {}
 				}
 			]
 		}
