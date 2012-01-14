@@ -21,6 +21,8 @@ type Shape struct {
 
 	// If the shape is a sensor, collisions are reported but not resolved.
 	IsSensor bool
+
+	UserData UserData
 }
 
 type ShapeType int
