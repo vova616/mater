@@ -16,7 +16,7 @@
 		"Transform": null,
 		"Components": [
 			{
-				"Name": "CollisionCallback",
+				"Name": "CollisionHandler",
 				"Data": {}
 			}
 		]
@@ -99,6 +99,10 @@
 						"Torque": 0,
 						"IgnoreGravity": false
 					}
+				},
+				{
+					"Name": "CollisionCallbackTest",
+					"Data": {}
 				}
 			]
 		}

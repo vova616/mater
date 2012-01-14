@@ -10,6 +10,9 @@ import (
 	"log"
 	//importing so the components can register themselves
 	_ "github.com/teomat/mater/components"
+
+	"os"
+	"runtime/pprof"
 )
 
 var flags = struct {
@@ -18,6 +21,8 @@ var flags = struct {
 	file              string
 	buildExamples     bool
 }{}
+
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func init() {
 	flag.BoolVar(&flags.help,
@@ -33,7 +38,6 @@ func init() {
 }
 
 func main() {
-
 	log.SetFlags(log.Lshortfile)
 
 	//parse flags
@@ -42,6 +46,15 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
+
+	if *cpuprofile != "" {
+        f, err := os.Create(*cpuprofile)
+        if err != nil {
+            log.Fatal(err)
+        }
+        pprof.StartCPUProfile(f)
+        defer pprof.StopCPUProfile()
+    }
 
 	if flags.buildExamples {
 		allExamples()
