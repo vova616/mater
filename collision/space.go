@@ -11,6 +11,7 @@ type settings struct {
 	PositionCorrection bool
 	Iterations         int
 	AutoUpdateShapes   bool
+	AutoClearForces    bool
 }
 
 var Settings settings = settings{
@@ -95,6 +96,11 @@ func (space *Space) Step(dt float64) {
 		body.Velocity.Add(newVel)
 
 		body.AngularVelocity += dt * body.invI * body.Torque
+
+		if Settings.AutoClearForces {
+			body.Force = vect.Vect{}
+			body.Torque = 0.0
+		}
 	}
 
 	//Perform pre-steps

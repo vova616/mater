@@ -9,6 +9,7 @@ import (
 )
 
 type Body struct {
+	Empty
 	*collision.Body
 }
 
@@ -29,10 +30,6 @@ func (body *Body) Init(owner *Entity) {
 	owner.Transform = &body.Transform
 
 	body.Body.UserData = owner
-}
-
-func (body *Body) Update(owner *Entity, dt float64) {
-
 }
 
 func (body *Body) Destroy(owner *Entity) {
@@ -66,10 +63,6 @@ func (body *Body) Unmarshal(owner *Entity, data []byte) error {
 	owner.Scene.Space.AddBody(body.Body)
 
 	return nil
-}
-
-func (body *Body) OnNewComponent(owner *Entity, other Component) {
-
 }
 
 func init() {

@@ -14,9 +14,6 @@ OTHER:
 - mater/collision
 	- poly collision
 		- poly-segment collision
-	- vertices nicer serialization
-	- collision filtering
-	- collision callbacks
 	- fix buggy angular velocity / rotation bug
 	- improve broadphase
 		- use box2d-go broadphase?

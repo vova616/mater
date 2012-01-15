@@ -9,12 +9,12 @@ import (
 	"os"
 )
 
-var saveDirectory = "saves/"
+var SaveDirectory = "saves/"
 
 func (mater *Mater) SaveScene(path string) error {
 	scene := mater.Scene
 
-	path = saveDirectory + path
+	path = SaveDirectory + path
 
 	file, err := os.Create(path)
 	if err != nil {
@@ -46,7 +46,7 @@ func (mater *Mater) LoadScene(path string) error {
 
 	var scene *Scene
 
-	path = saveDirectory + path
+	path = SaveDirectory + path
 
 	file, err := os.Open(path)
 	if err != nil {

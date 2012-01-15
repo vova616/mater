@@ -16,10 +16,11 @@ import (
 )
 
 var flags = struct {
-	startPaused, help bool
-	dbg               bool
-	file              string
-	buildExamples     bool
+	startPaused   bool
+	help          bool
+	dbg           bool
+	file          string
+	buildExamples bool
 }{}
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -56,7 +57,7 @@ func main() {
         defer pprof.StopCPUProfile()
     }
 
-	if flags.buildExamples {
+    if flags.buildExamples {
 		allExamples()
 		return
 	}
