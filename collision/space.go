@@ -6,21 +6,6 @@ import (
 	"log"
 )
 
-type settings struct {
-	AccumulateImpulses bool
-	PositionCorrection bool
-	Iterations         int
-	AutoUpdateShapes   bool
-	AutoClearForces    bool
-}
-
-var Settings settings = settings{
-	AccumulateImpulses: true,
-	PositionCorrection: true,
-	Iterations:         1,
-	AutoUpdateShapes:   true,
-}
-
 type Space struct {
 	Enabled    bool
 	Gravity    vect.Vect
