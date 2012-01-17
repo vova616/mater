@@ -8,6 +8,12 @@ import (
 	"github.com/teomat/mater/vect"
 )
 
+type ShapeProxy struct {
+	AABB aabb.AABB
+	ProxyId int
+	Shape *Shape
+}
+
 // Base shape data.
 // Holds data all shapetypes have in common.
 type Shape struct {
@@ -23,43 +29,8 @@ type Shape struct {
 	IsSensor bool
 
 	UserData UserData
-}
 
-type ShapeType int
-
-const (
-	ShapeType_Circle  = 0
-	ShapeType_Segment = 1
-	ShapeType_Polygon = 2
-	ShapeType_Box     = 3
-	numShapes         = iota
-)
-
-func (st ShapeType) ToString() string {
-	switch st {
-	case ShapeType_Circle:
-		return "Circle"
-	case ShapeType_Segment:
-		return "Segment"
-	case ShapeType_Polygon:
-		return "Polygon"
-	case ShapeType_Box:
-		return "Box"
-	default:
-		return "Unknown"
-	}
-	panic("never reached")
-}
-
-type ShapeClass interface {
-	ShapeType() ShapeType
-	// Update the shape with the new transform and compute the AABB.
-	update(xf transform.Transform) aabb.AABB
-	// Returns if the given point is located inside the shape.
-	TestPoint(point vect.Vect) bool
-
-	marshalShape(shape *Shape) ([]byte, error)
-	unmarshalShape(shape *Shape, data []byte) error
+	proxy ShapeProxy
 }
 
 // Calls ShapeClass.Update and sets the new AABB.
@@ -70,6 +41,17 @@ func (shape *Shape) Update() {
 	}
 
 	shape.AABB = shape.ShapeClass.update(shape.Body.Transform)
+}
+
+func (shape *Shape) createProxies(broadPhase BroadPhase, xf transform.Transform) {
+	if shape.proxy.Shape != nil {
+		log.Printf("Error: Proxies already created!")
+	}
+
+	shape.proxy.Shape = shape
+	shape.proxy.AABB = shape.ShapeClass.update(xf)
+
+	shape.proxy.ProxyId = broadPhase.AddProxy(shape.proxy)
 }
 
 // Returns shape.ShapeClass as CircleShape or nil.
@@ -106,4 +88,40 @@ func (shape *Shape) GetAsBox() *BoxShape {
 	}
 
 	return nil
+}
+
+type ShapeType int
+const (
+	ShapeType_Circle  = 0
+	ShapeType_Segment = 1
+	ShapeType_Polygon = 2
+	ShapeType_Box     = 3
+	numShapes         = iota
+)
+
+func (st ShapeType) ToString() string {
+	switch st {
+	case ShapeType_Circle:
+		return "Circle"
+	case ShapeType_Segment:
+		return "Segment"
+	case ShapeType_Polygon:
+		return "Polygon"
+	case ShapeType_Box:
+		return "Box"
+	default:
+		return "Unknown"
+	}
+	panic("never reached")
+}
+
+type ShapeClass interface {
+	ShapeType() ShapeType
+	// Update the shape with the new transform and compute the AABB.
+	update(xf transform.Transform) aabb.AABB
+	// Returns if the given point is located inside the shape.
+	TestPoint(point vect.Vect) bool
+
+	marshalShape(shape *Shape) ([]byte, error)
+	unmarshalShape(shape *Shape, data []byte) error
 }

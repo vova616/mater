@@ -7,11 +7,12 @@ import (
 	"log"
 )
 
+
 type DynamicTreeNode struct {
 	aabb AABB
 	child1, child2 int
 	leafCount, parentOrNext int
-	userData interface{}
+	proxy ShapeProxy
 }
 
 func (n *DynamicTreeNode) isLeaf () bool {
@@ -42,13 +43,13 @@ func NewDynamicTree () *DynamicTree {
 	return dt
 }
 
-func (dt *DynamicTree) AddProxy (aabb AABB, userData interface{}) int {
+func (dt *DynamicTree) AddProxy (aabb AABB, proxy ShapeProxy) int {
 	proxyId := dt.allocateNode()
 	
 	r := Vect{Settings.AABBExtension, Settings.AABBExtension}
 	dt._nodes[proxyId].aabb.Lower = Sub(aabb.Lower, r)
 	dt._nodes[proxyId].aabb.Upper = Add(aabb.Upper, r)
-	dt._nodes[proxyId].userData = userData
+	dt._nodes[proxyId].proxy = proxy
 	dt._nodes[proxyId].leafCount = 1
 	
 	dt.insertLeaf(proxyId)
@@ -133,11 +134,11 @@ func (dt *DynamicTree) Rebalance (iterations int) {
 	}
 }
 
-func (dt *DynamicTree) GetUserData (proxyId int) interface{} {
+func (dt *DynamicTree) GetUserData (proxyId int) ShapeProxy {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
-	return dt._nodes[proxyId].userData
+	return dt._nodes[proxyId].proxy
 }
 
 func (dt *DynamicTree) GetFatAABB (proxyId int) AABB {
