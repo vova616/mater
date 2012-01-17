@@ -16,12 +16,16 @@ type Space struct {
 		OnCollision   func(arb *Arbiter)
 		ShouldCollide func(sA, sB *Shape) bool
 	}
+
+	BroadPhase *BroadPhase
 }
 
 func (space *Space) init() {
 	space.Bodies = make([]*Body, 0, 16)
 	space.Arbiters = make([]*Arbiter, 0, 32)
 	space.Enabled = true
+
+	space.BroadPhase = NewBroadPhase()
 }
 
 func NewSpace() *Space {
@@ -38,6 +42,7 @@ func (space *Space) AddBody(body *Body) {
 	}
 	body.Space = space
 	body.UpdateShapes()
+	body.createProxies()
 	space.Bodies = append(space.Bodies, body)
 }
 
@@ -46,6 +51,7 @@ func (space *Space) RemoveBody(body *Body) {
 	for i, b := range bodies {
 		if b == body {
 			space.Bodies = append(bodies[:i], bodies[i+1:]...)
+			body.destroyProxies()
 			return
 		}
 	}

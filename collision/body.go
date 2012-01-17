@@ -105,11 +105,18 @@ func (body *Body) AddShape(shape *Shape) {
 
 	shape.Body = body
 	shape.Update()
+	if body.Space != nil {
+		shape.createProxy(body.Space.BroadPhase, body.Transform)
+	}
 	body.Shapes = append(body.Shapes, shape)
 }
 
 //Removes the given shape from the body.
 func (body *Body) RemoveShape(shape *Shape) {
+	if body.Space != nil {
+		shape.destroyProxy(body.Space.BroadPhase)
+	}
+
 	shapes := body.Shapes
 	for i, s := range shapes {
 		if s == shape {
@@ -118,6 +125,21 @@ func (body *Body) RemoveShape(shape *Shape) {
 		}
 	}
 	log.Printf("Warning removing shape: shape not found!")
+}
+
+
+//called when the body is added to a space to create all shapeProxies
+func (body *Body) createProxies() {
+	for _, shape := range body.Shapes {
+		shape.createProxy(body.Space.BroadPhase, body.Transform)
+	}
+}
+
+//called when the body is removed from a space to remove all shapeProxies
+func (body *Body) destroyProxies() {
+	for _, shape := range body.Shapes {
+		shape.destroyProxy(body.Space.BroadPhase)
+	}
 }
 
 func (body *Body) IsStatic() bool {
