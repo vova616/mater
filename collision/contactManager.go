@@ -210,7 +210,13 @@ func (cm *ContactManager) collide() {
 
 		if arb.NumContacts <= 0 {
 			cm.destroy(arb)
+		} else {
+			collisionCallback := cm.Space.Callbacks.OnCollision
+			if collisionCallback != nil {
+				collisionCallback(arb)
+			}
 		}
+
 	}
 }
 
