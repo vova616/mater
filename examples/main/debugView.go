@@ -1,4 +1,4 @@
-package mater
+package main
 
 import (
 	"github.com/banthar/Go-OpenGL/gl"
@@ -7,29 +7,7 @@ import (
 	"github.com/teomat/mater/vect"
 )
 
-var _tmpVertices []vect.Vect
-
-func init() {
-	_tmpVertices = make([]vect.Vect, 8)
-}
-
-type DebugView struct {
-	space *collision.Space
-}
-
-func NewDebugView(space *collision.Space) *DebugView {
-	dv := new(DebugView)
-	dv.space = space
-	return dv
-}
-
-func (dv *DebugView) Reset(space *collision.Space) {
-	dv.space = space
-}
-
-func (dv *DebugView) DrawDebugData() {
-	space := dv.space
-
+func DrawDebugData(space *collision.Space) {
 	//Draw shapes
 	for _, b := range space.Bodies {
 		if b.Enabled == false {

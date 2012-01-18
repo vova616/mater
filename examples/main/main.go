@@ -165,9 +165,7 @@ func main() {
 			updateAcc -= expectedFrameTime
 		}
 
-		mater.Draw()
-
-		mater.DebugDraw()
+		Draw(mater)
 
 		glfw.SwapBuffers()
 

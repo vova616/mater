@@ -78,8 +78,6 @@ func (mater *Mater) LoadScene(path string) error {
 		mater.Scene.Camera.ScreenSize = mater.ScreenSize
 	}
 
-	mater.Dbg.DebugView.Reset(mater.Scene.Space)
-
 	return nil
 }
 

@@ -20,12 +20,6 @@ func (mater *Mater) Init() {
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
 
-	if dbg.DebugView == nil {
-		mater.Dbg.DebugView = NewDebugView(mater.Scene.Space)
-	} else {
-		mater.Dbg.DebugView.Reset(mater.Scene.Space)
-	}
-
 	mater.OnKeyCallback = DefaultKeyCallback
 }
 
@@ -50,15 +44,5 @@ func (mater *Mater) OnResize(width, height int) {
 }
 
 func (mater *Mater) Update(dt float64) {
-
 	mater.Scene.Update(dt)
-}
-
-func (mater *Mater) Draw() {
-	gl.Clear(gl.COLOR_BUFFER_BIT)
-	mater.Scene.Camera.PreDraw()
-	{
-
-	}
-	mater.Scene.Camera.PostDraw()
 }
