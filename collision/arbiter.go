@@ -5,6 +5,12 @@ import (
 	"math"
 )
 
+type ArbiterEdge struct {
+	Arbiter *Arbiter
+	Next, Prev *ArbiterEdge
+	Other *Body
+}
+
 // The maximum number of ContactPoints a single Arbiter can have.
 const MaxPoints = 2
 
@@ -12,8 +18,10 @@ type Arbiter struct {
 	ShapeA, ShapeB *Shape
 	Contacts       [MaxPoints]Contact
 	NumContacts    int
+	nodeA, nodeB *ArbiterEdge
 
 	Friction float64
+	Next, Prev *Arbiter
 }
 
 func newArbiter() *Arbiter {
@@ -38,7 +46,7 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 	return arb
 }
 
-func (arb *Arbiter) delete() {
+func (arb *Arbiter) destroy() {
 	arb.ShapeA = nil
 	arb.ShapeB = nil
 	arb.NumContacts = 0

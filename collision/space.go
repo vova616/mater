@@ -18,6 +18,7 @@ type Space struct {
 	}
 
 	BroadPhase *BroadPhase
+	ContactManager *ContactManager
 }
 
 func (space *Space) init() {
@@ -26,6 +27,7 @@ func (space *Space) init() {
 	space.Enabled = true
 
 	space.BroadPhase = NewBroadPhase()
+	space.ContactManager = NewContactManager(space)
 }
 
 func NewSpace() *Space {

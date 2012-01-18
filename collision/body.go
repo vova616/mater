@@ -67,6 +67,8 @@ type Body struct {
 
 	//user defined data
 	UserData UserData
+
+	arbiterList *ArbiterEdge
 }
 
 func (body *Body) init() {
@@ -220,4 +222,12 @@ func (body *Body) SetBodyType(bodyType BodyType) {
 	} else {
 		log.Printf("Error: Unknown BodyType")
 	}
+}
+
+func (body *Body) shouldCollide(other *Body) bool {
+	if body.bodyType != BodyType_Dynamic &&
+	   other.bodyType != BodyType_Dynamic {
+		return false
+	}
+	return true
 }
