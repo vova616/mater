@@ -15,7 +15,7 @@ type Space struct {
 		ShouldCollide func(sA, sB *Shape) bool
 	}
 
-	BroadPhase *BroadPhase
+	BroadPhase     *BroadPhase
 	ContactManager *ContactManager
 }
 
@@ -131,40 +131,40 @@ func (space *Space) Step(dt float64) {
 // O(n^2) broad-phase.
 // Tries to collide everything with everything else.
 /*func (space *Space) Broadphase() {
-	space.Arbiters = make([]*Arbiter, 0, len(space.Arbiters))
-	for i := 0; i < len(space.Bodies)-1; i++ {
-		bi := space.Bodies[i]
+space.Arbiters = make([]*Arbiter, 0, len(space.Arbiters))
+for i := 0; i < len(space.Bodies)-1; i++ {
+	bi := space.Bodies[i]
 
-		for j := i + 1; j < len(space.Bodies); j++ {
-			bj := space.Bodies[j]
+	for j := i + 1; j < len(space.Bodies); j++ {
+		bj := space.Bodies[j]
 
-			if bi.IsStatic() && bj.IsStatic() {
-				continue
-			}
+		if bi.IsStatic() && bj.IsStatic() {
+			continue
+		}
 
-			for _, si := range bi.Shapes {
-				for _, sj := range bj.Shapes {
+		for _, si := range bi.Shapes {
+			for _, sj := range bj.Shapes {
 
-					shouldCollide := space.Callbacks.ShouldCollide
-					if shouldCollide != nil && shouldCollide(si, sj) == false {
-						continue
+				shouldCollide := space.Callbacks.ShouldCollide
+				if shouldCollide != nil && shouldCollide(si, sj) == false {
+					continue
+				}
+
+				//check aabbs for overlap
+				if !aabb.TestOverlap(si.AABB, sj.AABB) {
+					continue
+				}
+
+				arb := CreateArbiter(si, sj)
+				if arb.NumContacts > 0 {
+					onCollisionCallback := space.Callbacks.OnCollision
+					if onCollisionCallback != nil {
+						onCollisionCallback(arb)
 					}
+					space.Arbiters = append(space.Arbiters, arb)
+				}*/
 
-					//check aabbs for overlap
-					if !aabb.TestOverlap(si.AABB, sj.AABB) {
-						continue
-					}
-
-					arb := CreateArbiter(si, sj)
-					if arb.NumContacts > 0 {
-						onCollisionCallback := space.Callbacks.OnCollision
-						if onCollisionCallback != nil {
-							onCollisionCallback(arb)
-						}
-						space.Arbiters = append(space.Arbiters, arb)
-					}*/
-
-					/*
+/*
 						//search if this arbiter already exists
 						var oldArb *Arbiter
 						index := 0
@@ -197,7 +197,7 @@ func (space *Space) Step(dt float64) {
 							}
 							newArb.Delete()
 						}
-					
+
 				}
 			}
 

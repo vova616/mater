@@ -8,9 +8,9 @@ import (
 )
 
 type ShapeProxy struct {
-	AABB aabb.AABB
+	AABB    aabb.AABB
 	ProxyId int
-	Shape *Shape
+	Shape   *Shape
 }
 
 // Base shape data.

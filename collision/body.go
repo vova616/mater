@@ -129,7 +129,6 @@ func (body *Body) RemoveShape(shape *Shape) {
 	log.Printf("Warning removing shape: shape not found!")
 }
 
-
 //called when the body is added to a space to create all shapeProxies
 func (body *Body) createProxies() {
 	for _, shape := range body.Shapes {
@@ -226,7 +225,7 @@ func (body *Body) SetBodyType(bodyType BodyType) {
 
 func (body *Body) shouldCollide(other *Body) bool {
 	if body.bodyType != BodyType_Dynamic &&
-	   other.bodyType != BodyType_Dynamic {
+		other.bodyType != BodyType_Dynamic {
 		return false
 	}
 	return true

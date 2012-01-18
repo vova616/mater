@@ -5,11 +5,11 @@ import (
 )
 
 type RayCastInput struct {
-	MaxFraction float64
+	MaxFraction    float64
 	Point1, Point2 vect.Vect
 }
 
 type RayCastOutput struct {
 	Fraction float64
-	Normal vect.Vect
+	Normal   vect.Vect
 }

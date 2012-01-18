@@ -20,7 +20,7 @@ func (cht *CollisionCallbackTest) Init(owner *Entity) {
 }
 
 func (cht *CollisionCallbackTest) Update(owner *Entity, dt float64) {
-	
+
 }
 
 func (cht *CollisionCallbackTest) Destroy(owner *Entity) {

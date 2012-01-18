@@ -6,9 +6,9 @@ import (
 )
 
 type ArbiterEdge struct {
-	Arbiter *Arbiter
+	Arbiter    *Arbiter
 	Next, Prev *ArbiterEdge
-	Other *Body
+	Other      *Body
 }
 
 // The maximum number of ContactPoints a single Arbiter can have.
@@ -18,9 +18,9 @@ type Arbiter struct {
 	ShapeA, ShapeB *Shape
 	Contacts       [MaxPoints]Contact
 	NumContacts    int
-	nodeA, nodeB *ArbiterEdge
+	nodeA, nodeB   *ArbiterEdge
 
-	Friction float64
+	Friction   float64
 	Next, Prev *Arbiter
 }
 

@@ -41,7 +41,7 @@ func (cb *CollisionHandler) Init(owner *Entity) {
 }
 
 func (cb *CollisionHandler) Update(owner *Entity, dt float64) {
-	
+
 }
 
 func (cb *CollisionHandler) Destroy(owner *Entity) {

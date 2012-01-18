@@ -163,7 +163,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 		log.Printf("Error decoding static entity")
 		return err
 	}
-	scene.StaticEntity = *staticEntity	
+	scene.StaticEntity = *staticEntity
 
 	if scene.Entities == nil {
 		scene.Entities = make(map[int]*Entity, 32)

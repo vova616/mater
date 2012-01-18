@@ -30,11 +30,11 @@ func (aabb *AABB) ContainsVect(v vect.Vect) bool {
 		aabb.Upper.Y >= v.Y
 }
 
-func (aabb *AABB) Extents () vect.Vect {
-	return vect.Mult(vect.Sub(aabb.Upper, aabb.Lower),.5)
+func (aabb *AABB) Extents() vect.Vect {
+	return vect.Mult(vect.Sub(aabb.Upper, aabb.Lower), .5)
 }
 
-func (aabb *AABB) Perimeter () float64 {
+func (aabb *AABB) Perimeter() float64 {
 	w := vect.Sub(aabb.Upper, aabb.Lower)
 	return 2 * (w.X + w.Y)
 }

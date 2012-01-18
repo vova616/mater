@@ -7,6 +7,7 @@ import (
 )
 
 type ShapeType int
+
 const (
 	ShapeType_Circle  = 0
 	ShapeType_Segment = 1

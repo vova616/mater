@@ -4,7 +4,7 @@ import (
 	. "github.com/teomat/mater"
 )
 
-type CamTarget struct{
+type CamTarget struct {
 	Empty
 }
 

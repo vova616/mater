@@ -5,7 +5,7 @@ import (
 )
 
 //Can be embedded in other components to reduce boilerplate.
-type Empty struct {}
+type Empty struct{}
 
 func (empty Empty) Init(owner *Entity) {}
 

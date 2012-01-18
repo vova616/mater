@@ -32,12 +32,12 @@ func (arbList *ArbiterList) Remove(arb *Arbiter) {
 }
 
 type ContactManager struct {
-	BroadPhase *BroadPhase
+	BroadPhase  *BroadPhase
 	ArbiterList ArbiterList
-	Space *Space
+	Space       *Space
 }
 
-func NewContactManager (space *Space) *ContactManager {
+func NewContactManager(space *Space) *ContactManager {
 	cm := new(ContactManager)
 	cm.Space = space
 	cm.BroadPhase = space.BroadPhase
@@ -45,7 +45,7 @@ func NewContactManager (space *Space) *ContactManager {
 	return cm
 }
 
-func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
+func (cm *ContactManager) addPair(proxyA, proxyB *ShapeProxy) {
 	shapeA := proxyA.Shape
 	shapeB := proxyB.Shape
 	bodyA := shapeA.Body
@@ -55,14 +55,14 @@ func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
 	if bodyA == bodyB {
 		return
 	}
-	
+
 	// Does a arbiter already exist?
 	edge := bodyB.arbiterList
 	for edge != nil {
 		if edge.Other == bodyA {
 			sA := edge.Arbiter.ShapeA
 			sB := edge.Arbiter.ShapeB
-			
+
 			if sA == shapeA && sB == shapeB {
 				//arbiter exists
 				return
@@ -89,7 +89,7 @@ func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
 	if arbiterFilter != nil && arbiterFilter(shapeA, shapeB) == false {
 		return
 	}
-	
+
 	// Call the factory.
 	arb := CreateArbiter(shapeA, shapeB)
 
@@ -98,10 +98,10 @@ func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
 	shapeB = arb.ShapeB
 	bodyA = shapeA.Body
 	bodyB = shapeB.Body
-	
+
 	// Insert into the world.
 	cm.ArbiterList.Add(arb)
-	
+
 	// Connect to island graph.
 
 	// Connect to body A
@@ -109,37 +109,37 @@ func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
 	arb.nodeA.Other = bodyB
 	arb.nodeA.Prev = nil
 	arb.nodeA.Next = bodyA.arbiterList
-	
+
 	if bodyA.arbiterList != nil {
 		bodyA.arbiterList.Prev = arb.nodeA
 	}
 	bodyA.arbiterList = arb.nodeA
-	
+
 	// Connect to body B
 	arb.nodeB.Arbiter = arb
 	arb.nodeB.Other = bodyA
 	arb.nodeB.Prev = nil
 	arb.nodeB.Next = bodyB.arbiterList
-	
+
 	if bodyB.arbiterList != nil {
 		bodyB.arbiterList.Prev = arb.nodeB
 	}
 	bodyB.arbiterList = arb.nodeB
 }
 
-func (cm *ContactManager) findNewContacts () {
+func (cm *ContactManager) findNewContacts() {
 	cm.BroadPhase.UpdatePairs(
-		func(proxyA, proxyB *ShapeProxy){
+		func(proxyA, proxyB *ShapeProxy) {
 			cm.addPair(proxyA, proxyB)
 		})
 }
 
-func (cm *ContactManager) destroy (arbiter *Arbiter) {
+func (cm *ContactManager) destroy(arbiter *Arbiter) {
 	sA := arbiter.ShapeA
 	sB := arbiter.ShapeB
 	bodyA := sA.Body
 	bodyB := sB.Body
-	
+
 	//remove the arbiter from our list
 	cm.ArbiterList.Remove(arbiter)
 
@@ -172,7 +172,7 @@ func (cm *ContactManager) destroy (arbiter *Arbiter) {
 	arbiter.destroy()
 }
 
-func (cm *ContactManager) collide () {
+func (cm *ContactManager) collide() {
 	for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
 		shapeA := arb.ShapeA
 		shapeB := arb.ShapeB
