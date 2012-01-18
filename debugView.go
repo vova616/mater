@@ -62,7 +62,7 @@ func (dv *DebugView) DrawDebugData() {
 	const contactRadius = 0.2
 	const contactNormalScale = 0.5
 
-	for _, arb := range space.Arbiters {
+	for arb := space.ContactManager.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
 		for i := 0; i < arb.NumContacts; i++ {
 			con := arb.Contacts[i]
 			gl.Color3f(0, 0, 1)

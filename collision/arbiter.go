@@ -43,6 +43,9 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 
 	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
 
+	arb.nodeA = new(ArbiterEdge)
+	arb.nodeB = new(ArbiterEdge)
+
 	return arb
 }
 
@@ -64,9 +67,8 @@ func (arb1 *Arbiter) equals(arb2 *Arbiter) bool {
 	return false
 }
 
-/*
-func (arb *Arbiter) Update(newContacts [MaxPoints]Contact, numNewContacts int) {
-	var mergedContacts [MaxPoints]Contact
+func (arb *Arbiter) update() {
+	/*var mergedContacts [MaxPoints]Contact
 
 	for i := 0; i < numNewContacts; i++ {
 		cNew := newContacts[i]
@@ -103,8 +105,9 @@ func (arb *Arbiter) Update(newContacts [MaxPoints]Contact, numNewContacts int) {
 		arb.Contacts[i] = mergedContacts[i]
 	}
 
-	arb.NumContacts = numNewContacts
-}*/
+	arb.NumContacts = numNewContacts*/
+	arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)
+}
 
 func (arb *Arbiter) preStep(inv_dt float64) {
 	const allowedPenetration = 0.01

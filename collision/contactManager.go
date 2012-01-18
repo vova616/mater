@@ -46,7 +46,6 @@ func NewContactManager (space *Space) *ContactManager {
 }
 
 func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
-
 	shapeA := proxyA.Shape
 	shapeB := proxyB.Shape
 	bodyA := shapeA.Body
@@ -75,7 +74,7 @@ func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
 		}
 		edge = edge.Next
 	}
-	
+
 	// Does a joint override collision? Is at least one body dynamic?
 	if !bodyB.shouldCollide(bodyA) {
 		return
@@ -93,7 +92,7 @@ func (cm *ContactManager) addPair (proxyA, proxyB *ShapeProxy) {
 	
 	// Call the factory.
 	arb := CreateArbiter(shapeA, shapeB)
-	
+
 	// Contact creation may swap shapes.
 	shapeA = arb.ShapeA
 	shapeB = arb.ShapeB
@@ -205,6 +204,12 @@ func (cm *ContactManager) collide () {
 		if !overlap {
 			cm.destroy(arb)
 			continue
+		}
+
+		arb.update()
+
+		if arb.NumContacts <= 0 {
+			cm.destroy(arb)
 		}
 	}
 }

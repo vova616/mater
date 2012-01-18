@@ -1,7 +1,6 @@
 package collision
 
 import (
-	"github.com/teomat/mater/aabb"
 	"github.com/teomat/mater/vect"
 	"log"
 )
@@ -10,7 +9,6 @@ type Space struct {
 	Enabled    bool
 	Gravity    vect.Vect
 	Bodies     []*Body
-	Arbiters   []*Arbiter
 	Iterations int
 	Callbacks  struct {
 		OnCollision   func(arb *Arbiter)
@@ -23,7 +21,6 @@ type Space struct {
 
 func (space *Space) init() {
 	space.Bodies = make([]*Body, 0, 16)
-	space.Arbiters = make([]*Arbiter, 0, 32)
 	space.Enabled = true
 
 	space.BroadPhase = NewBroadPhase()
@@ -68,14 +65,16 @@ func (space *Space) Step(dt float64) {
 
 	inv_dt := 1.0 / dt
 
+	cm := space.ContactManager
 	//broadphase
-	space.Broadphase()
+	cm.findNewContacts()
+
+	cm.collide()
 
 	//Integrate forces
 	for _, body := range space.Bodies {
-		if Settings.AutoUpdateShapes {
-			body.UpdateShapes()
-		}
+		body.UpdateShapes()
+
 		if body.IsStatic() {
 			continue
 		}
@@ -97,7 +96,7 @@ func (space *Space) Step(dt float64) {
 	}
 
 	//Perform pre-steps
-	for _, arb := range space.Arbiters {
+	for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
 		if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
 			continue
 		}
@@ -106,7 +105,7 @@ func (space *Space) Step(dt float64) {
 
 	//Perform Iterations
 	for i := 0; i < Settings.Iterations; i++ {
-		for _, arb := range space.Arbiters {
+		for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
 			if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
 				continue
 			}
@@ -131,7 +130,7 @@ func (space *Space) Step(dt float64) {
 
 // O(n^2) broad-phase.
 // Tries to collide everything with everything else.
-func (space *Space) Broadphase() {
+/*func (space *Space) Broadphase() {
 	space.Arbiters = make([]*Arbiter, 0, len(space.Arbiters))
 	for i := 0; i < len(space.Bodies)-1; i++ {
 		bi := space.Bodies[i]
@@ -163,7 +162,7 @@ func (space *Space) Broadphase() {
 							onCollisionCallback(arb)
 						}
 						space.Arbiters = append(space.Arbiters, arb)
-					}
+					}*/
 
 					/*
 						//search if this arbiter already exists
@@ -198,13 +197,13 @@ func (space *Space) Broadphase() {
 							}
 							newArb.Delete()
 						}
-					*/
+					
 				}
 			}
 
 		}
 	}
-}
+}*/
 
 func (space *Space) GetDynamicTreeNodes() []DynamicTreeNode {
 	return space.BroadPhase._tree._nodes
