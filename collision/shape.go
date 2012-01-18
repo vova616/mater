@@ -3,6 +3,7 @@ package collision
 import (
 	"github.com/teomat/mater/aabb"
 	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 	"log"
 )
 
@@ -39,6 +40,12 @@ func (shape *Shape) Update() {
 	}
 
 	shape.AABB = shape.ShapeClass.update(shape.Body.Transform)
+	proxy := &shape.proxy
+	proxy.AABB = shape.AABB
+
+	if shape.Body.Space != nil {
+		shape.Body.Space.BroadPhase.MoveProxy(proxy.ProxyId, proxy.AABB, vect.Vect{})
+	}
 }
 
 func (shape *Shape) createProxy(broadPhase *BroadPhase, xf transform.Transform) {

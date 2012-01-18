@@ -75,6 +75,12 @@ func (dv *DebugView) DrawDebugData() {
 		}
 	}
 
+	const drawTreeNodes = true
+	for _, node := range space.GetDynamicTreeNodes() {
+		gl.Color3f(0.0, .7, .7)
+		render.DrawQuad(node.AABB().Lower, node.AABB().Upper, false)
+	}
+
 	/*
 
 		if b.Enabled == false {

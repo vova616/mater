@@ -19,6 +19,10 @@ func (n *DynamicTreeNode) isLeaf () bool {
 	return n.child1 == nullNode
 }
 
+func (n *DynamicTreeNode) AABB() AABB {
+	return n.aabb
+}
+
 const nullNode = -1
 
 type DynamicTree struct {

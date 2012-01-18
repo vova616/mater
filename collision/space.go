@@ -41,8 +41,8 @@ func (space *Space) AddBody(body *Body) {
 		return
 	}
 	body.Space = space
-	body.UpdateShapes()
 	body.createProxies()
+	body.UpdateShapes()
 	space.Bodies = append(space.Bodies, body)
 }
 
@@ -202,4 +202,8 @@ func (space *Space) Broadphase() {
 
 		}
 	}
+}
+
+func (space *Space) GetDynamicTreeNodes() []DynamicTreeNode {
+	return space.BroadPhase._tree._nodes
 }
