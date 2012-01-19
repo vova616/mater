@@ -6,7 +6,6 @@ import (
 	"github.com/teomat/mater/transform"
 )
 
-var MainCamera *Camera
 var ScreenSize vect.Vect
 
 type Camera struct {

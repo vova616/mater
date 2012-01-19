@@ -48,7 +48,7 @@ func Draw(mater *Mater) {
 	}
 
 
-	cam := camera.MainCamera
+	cam := MainCamera
 	if cam == nil {
 		return
 	}

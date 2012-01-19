@@ -39,6 +39,8 @@ func init() {
 		"examples", false, "Recreate the examples in \"saves/examples/\"")
 }
 
+var MainCamera *camera.Camera
+
 func main() {
 	log.SetFlags(log.Lshortfile)
 
@@ -71,8 +73,8 @@ func main() {
 
 	wx, wy := 800, 600
 
-	camera.MainCamera := new(camera.Camera)
-	cam := camera.MainCamera
+	MainCamera = new(camera.Camera)
+	cam := MainCamera
 	camera.ScreenSize = vect.Vect{float64(wx), float64(wy)}
 	cam.Transform.Position = vect.Vect{0, 0}
 	cam.Scale = vect.Vect{32, 32}
@@ -82,6 +84,8 @@ func main() {
 	mater.Init()
 
 	mater.Paused = flags.startPaused
+
+	mater.Callbacks.OnNewComponent = OnNewComponent
 
 	if flags.file != "" {
 		err := mater.LoadScene(flags.file)
@@ -107,7 +111,7 @@ func main() {
 	glfw.SetSwapInterval(1)
 	glfw.SetWindowTitle("mater test")
 	glfw.SetWindowSizeCallback(func(w, h int) {OnResize(w, h)})
-	glfw.SetKeyCallback(func(k, s int) { mater.OnKey(k, s) })
+	glfw.SetKeyCallback(func(k, s int) { OnKey(mater, k, s) })
 
 	//init opengl
 	{

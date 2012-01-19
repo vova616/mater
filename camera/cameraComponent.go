@@ -33,9 +33,6 @@ func (cam *Camera) Unmarshal(owner *Entity, data []byte) error {
 		return err
 	}
 
-	if cam.IsMainCamera {
-		MainCamera = cam
-	}
 	return nil
 }
 

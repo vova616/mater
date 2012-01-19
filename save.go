@@ -56,6 +56,7 @@ func (mater *Mater) LoadScene(path string) error {
 	defer file.Close()
 
 	scene = new(Scene)
+	scene.Mater = mater
 	decoder := json.NewDecoder(file)
 
 	err = decoder.Decode(scene)

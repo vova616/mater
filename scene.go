@@ -8,12 +8,14 @@ type Scene struct {
 	Space        *collision.Space
 	StaticEntity Entity
 	Entities     map[int]*Entity
+	Mater *Mater
 }
 
 func (scene *Scene) Init(mater *Mater) {
 	scene.Space = collision.NewSpace()
 	scene.StaticEntity.Init()
 	scene.Entities = make(map[int]*Entity, 32)
+	scene.Mater = mater
 }
 
 func (scene *Scene) Update(dt float64) {

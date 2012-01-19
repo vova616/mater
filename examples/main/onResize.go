@@ -6,15 +6,18 @@ import (
 	"github.com/banthar/Go-OpenGL/gl"
 )
 
+var ScreenSize vect.Vect
+
 func OnResize(width, height int) {
 	if height == 0 {
 		height = 1
 	}
 
 	w, h := float64(width), float64(height)
-	camera.ScreenSize = vect.Vect{w, h}
-	if camera.MainCamera != nil {
-		camera.MainCamera.ScreenSize = camera.ScreenSize
+	ScreenSize = vect.Vect{w, h}
+	camera.ScreenSize = ScreenSize
+	if MainCamera != nil {
+		MainCamera.ScreenSize = ScreenSize
 	}
 
 	gl.MatrixMode(gl.PROJECTION)

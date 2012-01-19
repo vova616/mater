@@ -76,6 +76,11 @@ func (entity *Entity) AddComponent(component Component) {
 
 		comp.OnNewComponent(entity, component)
 	}
+
+	onNewComponent := entity.Scene.Mater.Callbacks.OnNewComponent
+	if onNewComponent != nil {
+		onNewComponent(entity, component)
+	}
 }
 
 func (entity *Entity) RemoveComponent(component Component) {

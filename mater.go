@@ -4,7 +4,9 @@ type Mater struct {
 	Running, Paused bool
 	Dbg             DebugData
 	Scene           *Scene
-	OnKeyCallback   OnKeyCallbackFunc
+	Callbacks struct {
+		OnNewComponent func(entity *Entity, comp Component)
+	}
 }
 
 func (mater *Mater) Init() {
@@ -12,8 +14,6 @@ func (mater *Mater) Init() {
 	dbg.Init(mater)
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
-
-	mater.OnKeyCallback = DefaultKeyCallback
 }
 
 func (mater *Mater) Update(dt float64) {
