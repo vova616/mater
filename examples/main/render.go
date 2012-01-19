@@ -5,6 +5,7 @@ import (
 	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/teomat/mater/render"
 	"github.com/teomat/mater/vect"
+	"github.com/teomat/mater/camera"
 	"github.com/teomat/ftgl-go"
 	"log"
 )
@@ -35,14 +36,21 @@ func Draw(mater *Mater) {
 
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
-	cam := mater.Scene.Camera
 	gl.PushMatrix()
+	defer gl.PopMatrix()
+
 	gl.Color4f(0, 1, 0, .5)
-	render.DrawCircle(vect.Vect{cam.ScreenSize.X / 2, cam.ScreenSize.Y / 2}, cam.ScreenSize.Y/2.0-5.0, false)
+	render.DrawCircle(vect.Vect{camera.ScreenSize.X / 2, camera.ScreenSize.Y / 2}, camera.ScreenSize.Y/2.0-5.0, false)
 
 	if mater.Paused {
 		gl.Color3f(1, 1, 1)
 		RenderFontAt("Paused", 20, 30)
+	}
+
+
+	cam := camera.MainCamera
+	if cam == nil {
+		return
 	}
 
 	//draw collision objects
@@ -51,6 +59,4 @@ func Draw(mater *Mater) {
 	DrawDebugData(mater.Scene.Space)
 	
 	cam.PostDraw()
-
-	gl.PopMatrix()
 }

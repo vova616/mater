@@ -56,8 +56,6 @@ func (mater *Mater) LoadScene(path string) error {
 	defer file.Close()
 
 	scene = new(Scene)
-	cam := mater.DefaultCamera
-	scene.Camera = &cam
 	decoder := json.NewDecoder(file)
 
 	err = decoder.Decode(scene)
@@ -71,13 +69,6 @@ func (mater *Mater) LoadScene(path string) error {
 	mater.Scene = scene
 	scene.Space.Enabled = true
 
-	if mater.Scene.Camera == nil {
-		cam := mater.DefaultCamera
-		mater.Scene.Camera = &cam
-	} else {
-		mater.Scene.Camera.ScreenSize = mater.ScreenSize
-	}
-
 	return nil
 }
 
@@ -87,10 +78,9 @@ func (scene *Scene) MarshalJSON() ([]byte, error) {
 
 	var err error
 
-	buf.WriteString(`{"Camera":`)
-	encoder.Encode(scene.Camera)
+	buf.WriteByte('{')
 
-	buf.WriteString(`,"StaticEntity":`)
+	buf.WriteString(`"StaticEntity":`)
 	encoder.Encode(&scene.StaticEntity)
 
 	buf.WriteString(`,"Entities":`)
@@ -139,7 +129,6 @@ func (scene *Scene) MarshalEntities() ([]byte, error) {
 
 func (scene *Scene) UnmarshalJSON(data []byte) error {
 	sceneData := struct {
-		Camera       *Camera
 		Space        *collision.Space
 		StaticEntity json.RawMessage
 		Entities     []json.RawMessage
@@ -154,7 +143,6 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 	sd := &sceneData
 
 	scene.Space = sd.Space
-	scene.Camera = sd.Camera
 
 	staticEntity, err := scene.UnmarshalEntity(sd.StaticEntity)
 	if err != nil {

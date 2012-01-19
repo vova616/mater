@@ -1,15 +1,4 @@
 {
-	"Camera": {
-		"Position": [
-			1,
-			-5
-		],
-		"Scale": [
-			50,
-			50
-		],
-		"Rotation": 0
-	},
 	"StaticEntity": {
 		"ID": 1,
 		"Enabled": true,
@@ -34,8 +23,22 @@
 			},
 			"Components": [
 				{
-					"Name": "CamTarget",
-					"Data": {}
+					"Name": "Camera",
+					"Data": {
+						"Scale": [
+							32,
+							32
+						],
+						"Transform": {
+							"Position": [
+								1,
+								-5
+							],
+							"Rotation": 0
+						},
+						"FollowTarget": true,
+						"IsMainCamera": true
+					}
 				},
 				{
 					"Name": "Body",

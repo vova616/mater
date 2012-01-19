@@ -6,15 +6,12 @@ import (
 
 type Scene struct {
 	Space        *collision.Space
-	Camera       *Camera
 	StaticEntity Entity
 	Entities     map[int]*Entity
 }
 
 func (scene *Scene) Init(mater *Mater) {
 	scene.Space = collision.NewSpace()
-	cam := mater.DefaultCamera
-	scene.Camera = &cam
 	scene.StaticEntity.Init()
 	scene.Entities = make(map[int]*Entity, 32)
 }

@@ -13,6 +13,7 @@ import (
 
 	"os"
 	"runtime/pprof"
+	"github.com/teomat/mater/camera"
 )
 
 var flags = struct {
@@ -70,14 +71,14 @@ func main() {
 
 	wx, wy := 800, 600
 
-	cam := new(Camera)
-	cam.ScreenSize = vect.Vect{float64(wx), float64(wy)}
-	cam.Position = vect.Vect{0, 0}
+	camera.MainCamera := new(camera.Camera)
+	cam := camera.MainCamera
+	camera.ScreenSize = vect.Vect{float64(wx), float64(wy)}
+	cam.Transform.Position = vect.Vect{0, 0}
 	cam.Scale = vect.Vect{32, 32}
-	cam.Rotation = 0
+	cam.Transform.SetAngle(0)
 
 	mater := new(Mater)
-	mater.DefaultCamera = *cam
 	mater.Init()
 
 	mater.Paused = flags.startPaused
@@ -105,7 +106,7 @@ func main() {
 
 	glfw.SetSwapInterval(1)
 	glfw.SetWindowTitle("mater test")
-	glfw.SetWindowSizeCallback(func(w, h int) { mater.OnResize(w, h) })
+	glfw.SetWindowSizeCallback(func(w, h int) {OnResize(w, h)})
 	glfw.SetKeyCallback(func(k, s int) { mater.OnKey(k, s) })
 
 	//init opengl
