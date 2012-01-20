@@ -61,6 +61,8 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
+	loadSettingsFile()
+
 	if flags.buildExamples {
 		allExamples()
 		return
@@ -86,6 +88,8 @@ func main() {
 
 	mater := new(Mater)
 	mater.Init()
+
+	reloadSettings(mater)
 
 	mater.Paused = flags.startPaused
 
