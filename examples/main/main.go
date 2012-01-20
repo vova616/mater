@@ -40,6 +40,7 @@ func init() {
 }
 
 var MainCamera *camera.Camera
+var console Console
 
 func main() {
 	log.SetFlags(log.Lshortfile)
@@ -73,12 +74,15 @@ func main() {
 
 	wx, wy := 800, 600
 
-	MainCamera = new(camera.Camera)
-	cam := MainCamera
-	camera.ScreenSize = vect.Vect{float64(wx), float64(wy)}
-	cam.Transform.Position = vect.Vect{0, 0}
-	cam.Scale = vect.Vect{32, 32}
-	cam.Transform.SetAngle(0)
+	//setup default camera
+	{
+		MainCamera = new(camera.Camera)
+		cam := MainCamera
+		camera.ScreenSize = vect.Vect{float64(wx), float64(wy)}
+		cam.Transform.Position = vect.Vect{0, 0}
+		cam.Scale = vect.Vect{32, 32}
+		cam.Transform.SetAngle(0)
+	}
 
 	mater := new(Mater)
 	mater.Init()
@@ -86,6 +90,8 @@ func main() {
 	mater.Paused = flags.startPaused
 
 	mater.Callbacks.OnNewComponent = OnNewComponent
+
+	console.Init(mater)
 
 	if flags.file != "" {
 		err := mater.LoadScene(flags.file)
@@ -108,10 +114,13 @@ func main() {
 		panic("gl error")
 	}
 
-	glfw.SetSwapInterval(1)
-	glfw.SetWindowTitle("mater test")
-	glfw.SetWindowSizeCallback(func(w, h int) {OnResize(w, h)})
-	glfw.SetKeyCallback(func(k, s int) { OnKey(mater, k, s) })
+	//glfw config
+	{
+		glfw.SetSwapInterval(1)
+		glfw.SetWindowTitle("mater test")
+		glfw.SetWindowSizeCallback(func(w, h int) {OnResize(w, h)})
+		glfw.SetKeyCallback(func(k, s int) { OnKey(mater, k, s) })
+	}
 
 	//init opengl
 	{
@@ -147,8 +156,8 @@ func main() {
 
 		//execute console commands
 		select {
-		case command := <-mater.Dbg.Console.Command:
-			mater.Dbg.Console.ExecuteCommand(command)
+		case command := <-console.Command:
+			console.ExecuteCommand(command)
 		default:
 		}
 

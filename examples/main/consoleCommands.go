@@ -1,6 +1,7 @@
-package mater
+package main
 
 import (
+	. "github.com/teomat/mater"
 	"fmt"
 	"os"
 )

@@ -10,8 +10,6 @@ type Mater struct {
 }
 
 func (mater *Mater) Init() {
-	dbg := &(mater.Dbg)
-	dbg.Init(mater)
 	mater.Scene = new(Scene)
 	mater.Scene.Init(mater)
 }
