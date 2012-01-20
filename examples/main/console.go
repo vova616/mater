@@ -4,25 +4,18 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/teomat/mater/engine"
 	"os"
 	"strings"
 )
 
 type Console struct {
-	Scene   *engine.Scene
 	Reader  *bufio.Reader
 	Command chan string
 	Buffer  *bytes.Buffer
 }
 
-func (console *Console) Init(scene *engine.Scene) {
-	if console.Scene != nil {
-		return
-	}
-
+func (console *Console) Init() {
 	console.Command = make(chan string)
-	console.Scene = scene
 	console.Reader = bufio.NewReader(os.Stdin)
 	console.Buffer = bytes.NewBuffer(nil)
 
@@ -54,7 +47,7 @@ func (console *Console) ExecuteCommand(param string) {
 	params = params[1:]
 
 	if commandFunc, ok := commands[command]; ok {
-		commandFunc(console.Scene, params)
+		commandFunc(params)
 	} else {
 		fmt.Printf("Command not found\n")
 	}

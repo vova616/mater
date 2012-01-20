@@ -8,10 +8,10 @@ import (
 	"os"
 )
 
-var basePath = "examples/"
+var examplesPath = "examples/"
 
 func saveToFile(i interface{}, fileName string) {
-	path := Settings.SaveDir + basePath + fileName + ".json"
+	path := Settings.SaveDir + examplesPath + fileName + ".json"
 	file, err := os.Create(path)
 	if err != nil {
 		fmt.Printf("Error opening File: %v", err)
@@ -34,7 +34,7 @@ func saveToFile(i interface{}, fileName string) {
 
 //Creates example json files
 func allExamples() {
-	basePath = "examples/"
+	examplesPath = "examples/"
 	collisionExamples()
 }
 

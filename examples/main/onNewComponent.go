@@ -5,7 +5,8 @@ import (
 	"github.com/teomat/mater/engine"
 )
 
-func OnNewComponent(entity *engine.Entity, comp engine.Component) {
+//called whenever a new component is added to an entity in the active scene
+func onNewComponent(entity *engine.Entity, comp engine.Component) {
 	if comp.Name() == "Camera" {
 		cam := comp.(*camera.Camera)
 
