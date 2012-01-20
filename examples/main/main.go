@@ -17,25 +17,20 @@ import (
 
 var flags = struct {
 	startPaused   bool
-	help          bool
-	dbg           bool
 	file          string
 	buildExamples bool
+	cpuprofile    string
 }{}
 
-var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
-
 func init() {
-	flag.BoolVar(&flags.help,
-		"help", false, "Shows command line flags and default values")
 	flag.BoolVar(&flags.startPaused,
-		"paused", false, "Starts the game in a paused state")
+		"paused", false, "Start the game in a paused state.")
 	flag.StringVar(&flags.file,
-		"file", "", "WorldFile to load on start")
-	flag.BoolVar(&flags.dbg,
-		"dbg", false, "Enable debugmode")
+		"file", "", "Load the given savefile located in \"./saves/\" on start. (e.g. -file=\"quicksave.json\")")
 	flag.BoolVar(&flags.buildExamples,
-		"examples", false, "Recreate the examples in \"saves/examples/\"")
+		"examples", false, "Rebuild example savefiles in \"./saves/examples/\".")
+	flag.StringVar(&flags.cpuprofile,
+		"cpuprofile", "", "Write cpu profile to file.")
 }
 
 var MainCamera *camera.Camera
@@ -50,13 +45,9 @@ func main() {
 
 	//parse flags
 	flag.Parse()
-	if flags.help {
-		flag.PrintDefaults()
-		return
-	}
 
-	if *cpuprofile != "" {
-		f, err := os.Create(*cpuprofile)
+	if flags.cpuprofile != "" {
+		f, err := os.Create(flags.cpuprofile)
 		if err != nil {
 			log.Fatal(err)
 		}

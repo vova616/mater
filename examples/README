@@ -1,8 +1,16 @@
+To compile: run ./build or use go-gb.
+To run: execute ./_bin/main inside the examples folder.
+
+settings.json can be changed to change the resolution and the save directory.
+
+Flags: run "./_bin/main -help" form more information.
+
 Controls:
- 'P': un/pause
- 'S': advance by a single frame when paused
-'F5': save to ./saves/quicksave.json
-'F9': load from ./saves/quicksave.json
+     'P': pause/resume
+     'S': advance by a single frame when paused
+    'F5': save to ./saves/quicksave.json
+    'F9': load from ./saves/quicksave.json
+'Escape': close the application
 
 Console commands:
 "save <file>" saves the scene to "./saves/<file>"
