@@ -1,8 +1,8 @@
 package camera
 
 import (
-	"github.com/teomat/mater/engine"
 	"encoding/json"
+	"github.com/teomat/mater/engine"
 )
 
 func (cam *Camera) Name() string {

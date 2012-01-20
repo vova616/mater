@@ -1,36 +1,36 @@
 package main
 
 import (
-	"os"
-	"encoding/json"
-	"log"
 	"bytes"
+	"encoding/json"
 	"github.com/jteeuwen/glfw"
+	"log"
+	"os"
 )
 
 const settingsPath = "settings.json"
 
 var Settings = struct {
 	Resolution struct {
-		Width int
+		Width  int
 		Height int
 	}
-	SaveDir string
-	Running bool `json:"-"`
-	Paused bool `json:"-"`
+	SaveDir    string
+	Running    bool `json:"-"`
+	Paused     bool `json:"-"`
 	SingleStep bool `json:"-"`
 }{
-	Resolution: struct{
-		Width int
+	Resolution: struct {
+		Width  int
 		Height int
 	}{
-		Width: 800,
+		Width:  800,
 		Height: 600,
 	},
 	SaveDir: "saves/",
 }
 
-func saveSettingsFile()  error {
+func saveSettingsFile() error {
 	file, err := os.Create(settingsPath)
 	if err != nil {
 		log.Printf("Error opening File: %v", err)

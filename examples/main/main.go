@@ -9,10 +9,10 @@ import (
 	"github.com/teomat/mater/vect"
 	"log"
 	//importing so the components can register themselves
+	"github.com/teomat/mater/camera"
 	_ "github.com/teomat/mater/components"
 	"os"
 	"runtime/pprof"
-	"github.com/teomat/mater/camera"
 )
 
 var flags = struct {
@@ -40,7 +40,7 @@ func init() {
 
 var MainCamera *camera.Camera
 var console Console
-var callbacks = engine.Callbacks {
+var callbacks = engine.Callbacks{
 	OnNewComponent: OnNewComponent,
 }
 var scene *engine.Scene
@@ -125,7 +125,7 @@ func main() {
 	{
 		glfw.SetSwapInterval(1)
 		glfw.SetWindowTitle("mater test")
-		glfw.SetWindowSizeCallback(func(w, h int) {OnResize(w, h)})
+		glfw.SetWindowSizeCallback(func(w, h int) { OnResize(w, h) })
 		glfw.SetKeyCallback(func(k, s int) { OnKey(k, s) })
 	}
 

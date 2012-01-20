@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/teomat/mater/engine"
 	"github.com/banthar/Go-OpenGL/gl"
+	"github.com/teomat/ftgl-go"
+	"github.com/teomat/mater/camera"
+	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/render"
 	"github.com/teomat/mater/vect"
-	"github.com/teomat/mater/camera"
-	"github.com/teomat/ftgl-go"
 	"log"
 )
 
@@ -47,7 +47,6 @@ func Draw(scene *engine.Scene) {
 		RenderFontAt("Paused", 20, 30)
 	}
 
-
 	cam := MainCamera
 	if cam == nil {
 		return
@@ -55,8 +54,8 @@ func Draw(scene *engine.Scene) {
 
 	//draw collision objects
 	cam.PreDraw()
-	
+
 	DrawDebugData(scene.Space)
-	
+
 	cam.PostDraw()
 }

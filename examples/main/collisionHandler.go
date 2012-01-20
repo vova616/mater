@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/collision"
+	"github.com/teomat/mater/engine"
 )
 
 type CollisionHandler struct{}

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/teomat/mater/engine"
 	"fmt"
+	"github.com/teomat/mater/engine"
 	"os"
 )
 

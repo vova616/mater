@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/teomat/mater/vect"
-	"github.com/teomat/mater/camera"
 	"github.com/banthar/Go-OpenGL/gl"
+	"github.com/teomat/mater/camera"
+	"github.com/teomat/mater/vect"
 )
 
 var ScreenSize vect.Vect

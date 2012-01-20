@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/camera"
+	"github.com/teomat/mater/engine"
 )
 
 func OnNewComponent(entity *engine.Entity, comp engine.Component) {

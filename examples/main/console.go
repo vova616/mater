@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/teomat/mater/engine"
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/teomat/mater/engine"
 	"os"
 	"strings"
 )

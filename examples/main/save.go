@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/teomat/mater/engine"
 	"bytes"
 	"encoding/json"
+	"github.com/teomat/mater/engine"
 	"log"
 	"os"
 )

@@ -3,8 +3,8 @@ package components
 import (
 	"encoding/json"
 	"errors"
-	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/collision"
+	"github.com/teomat/mater/engine"
 	"log"
 )
 

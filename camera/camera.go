@@ -2,8 +2,8 @@ package camera
 
 import (
 	"github.com/banthar/Go-OpenGL/gl"
-	"github.com/teomat/mater/vect"
 	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 )
 
 var ScreenSize vect.Vect
