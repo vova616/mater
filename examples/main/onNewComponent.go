@@ -1,11 +1,11 @@
 package main
 
 import (
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/camera"
 )
 
-func OnNewComponent(entity *Entity, comp Component) {
+func OnNewComponent(entity *engine.Entity, comp engine.Component) {
 	if comp.Name() == "Camera" {
 		cam := comp.(*camera.Camera)
 

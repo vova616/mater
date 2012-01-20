@@ -1,14 +1,14 @@
 package main
 
 import (
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"fmt"
 	"os"
 )
 
-type consoleCommand func(scene *Scene, params []string)
+type consoleCommand func(scene *engine.Scene, params []string)
 
-var commands = map[string]func(*Scene, []string){
+var commands = map[string]func(*engine.Scene, []string){
 	"save":    command_save,
 	"load":    command_load,
 	"exit":    command_quit,
@@ -29,7 +29,7 @@ func init() {
 
 var lastSave string
 
-func command_save(scene *Scene, params []string) {
+func command_save(scene *engine.Scene, params []string) {
 	var path string
 	if len(params) < 1 {
 		if lastSave != "" {
@@ -50,7 +50,7 @@ func command_save(scene *Scene, params []string) {
 	}
 }
 
-func command_load(scene *Scene, params []string) {
+func command_load(scene *engine.Scene, params []string) {
 	var path string
 	if len(params) < 1 {
 		if lastSave != "" {
@@ -72,19 +72,19 @@ func command_load(scene *Scene, params []string) {
 	}
 }
 
-func command_quit(scene *Scene, params []string) {
+func command_quit(scene *engine.Scene, params []string) {
 	os.Exit(0)
 }
 
-func command_pause(scene *Scene, params []string) {
+func command_pause(scene *engine.Scene, params []string) {
 	Settings.Paused = true
 }
 
-func command_unpause(scene *Scene, params []string) {
+func command_unpause(scene *engine.Scene, params []string) {
 	Settings.Paused = false
 }
 
-func command_help(scene *Scene, params []string) {
+func command_help(scene *engine.Scene, params []string) {
 	fmt.Printf("Possible commands are:\n")
 	for _, cmdName := range commandNames {
 		fmt.Printf("%v\n", cmdName)

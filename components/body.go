@@ -3,7 +3,7 @@ package components
 import (
 	"encoding/json"
 	"errors"
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/collision"
 	"log"
 )
@@ -17,7 +17,7 @@ func (body *Body) Name() string {
 	return "Body"
 }
 
-func (body *Body) Init(owner *Entity) {
+func (body *Body) Init(owner *engine.Entity) {
 	if body.Body == nil {
 		log.Printf("Error: Body component is not initialized correctly!")
 		return
@@ -32,7 +32,7 @@ func (body *Body) Init(owner *Entity) {
 	body.Body.UserData = owner
 }
 
-func (body *Body) Destroy(owner *Entity) {
+func (body *Body) Destroy(owner *engine.Entity) {
 	if body.Body == nil {
 		log.Printf("Error: Body component is not initialized correctly!")
 		return
@@ -42,11 +42,11 @@ func (body *Body) Destroy(owner *Entity) {
 	body.Body.UserData = nil
 }
 
-func (body *Body) Marshal(owner *Entity) ([]byte, error) {
+func (body *Body) Marshal(owner *engine.Entity) ([]byte, error) {
 	return json.Marshal(body.Body)
 }
 
-func (body *Body) Unmarshal(owner *Entity, data []byte) error {
+func (body *Body) Unmarshal(owner *engine.Entity, data []byte) error {
 	if body.Body == nil {
 		body.Body = collision.NewBody(collision.BodyType_Static)
 	}
@@ -66,5 +66,5 @@ func (body *Body) Unmarshal(owner *Entity, data []byte) error {
 }
 
 func init() {
-	RegisterComponent(&Body{})
+	engine.RegisterComponent(&Body{})
 }

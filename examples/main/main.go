@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/jteeuwen/glfw"
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/vect"
 	"log"
 	//importing so the components can register themselves
 	_ "github.com/teomat/mater/components"
-
 	"os"
 	"runtime/pprof"
 	"github.com/teomat/mater/camera"
@@ -41,10 +40,10 @@ func init() {
 
 var MainCamera *camera.Camera
 var console Console
-var callbacks = Callbacks {
+var callbacks = engine.Callbacks {
 	OnNewComponent: OnNewComponent,
 }
-var scene *Scene
+var scene *engine.Scene
 
 func main() {
 	log.SetFlags(log.Lshortfile)
@@ -90,10 +89,10 @@ func main() {
 		cam.Transform.SetAngle(0)
 	}
 
-	scene = new(Scene)
+	scene = new(engine.Scene)
 	scene.Init()
 
-	reloadSettings(scene)
+	reloadSettings()
 
 	Settings.Paused = flags.startPaused
 

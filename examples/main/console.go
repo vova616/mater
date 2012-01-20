@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"bufio"
 	"bytes"
 	"fmt"
@@ -10,13 +10,13 @@ import (
 )
 
 type Console struct {
-	Scene   *Scene
+	Scene   *engine.Scene
 	Reader  *bufio.Reader
 	Command chan string
 	Buffer  *bytes.Buffer
 }
 
-func (console *Console) Init(scene *Scene) {
+func (console *Console) Init(scene *engine.Scene) {
 	if console.Scene != nil {
 		return
 	}

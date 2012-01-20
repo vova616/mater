@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/collision"
 )
 
@@ -13,7 +13,7 @@ func (cb *CollisionHandler) Name() string {
 	return "CollisionHandler"
 }
 
-func (cb *CollisionHandler) Init(owner *Entity) {
+func (cb *CollisionHandler) Init(owner *engine.Entity) {
 	owner.Scene.Space.Callbacks.OnCollision = func(arb *collision.Arbiter) {
 
 		callCollisionFunc := func(s *collision.Shape) {
@@ -40,26 +40,26 @@ func (cb *CollisionHandler) Init(owner *Entity) {
 	}
 }
 
-func (cb *CollisionHandler) Update(owner *Entity, dt float64) {
+func (cb *CollisionHandler) Update(owner *engine.Entity, dt float64) {
 
 }
 
-func (cb *CollisionHandler) Destroy(owner *Entity) {
+func (cb *CollisionHandler) Destroy(owner *engine.Entity) {
 
 }
 
-func (cb *CollisionHandler) Marshal(owner *Entity) ([]byte, error) {
+func (cb *CollisionHandler) Marshal(owner *engine.Entity) ([]byte, error) {
 	return ([]byte)("{}"), nil
 }
 
-func (cb *CollisionHandler) Unmarshal(owner *Entity, data []byte) error {
+func (cb *CollisionHandler) Unmarshal(owner *engine.Entity, data []byte) error {
 	return nil
 }
 
-func (cb *CollisionHandler) OnNewComponent(owner *Entity, other Component) {
+func (cb *CollisionHandler) OnNewComponent(owner *engine.Entity, other engine.Component) {
 
 }
 
 func init() {
-	RegisterComponent(&CollisionHandler{})
+	engine.RegisterComponent(&CollisionHandler{})
 }

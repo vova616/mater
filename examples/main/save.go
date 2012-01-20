@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"bytes"
 	"encoding/json"
 	"log"
@@ -38,7 +38,7 @@ func saveScene(path string) error {
 
 func loadScene(path string) error {
 
-	var newScene *Scene
+	var newScene *engine.Scene
 
 	path = Settings.SaveDir + path
 
@@ -49,7 +49,7 @@ func loadScene(path string) error {
 	}
 	defer file.Close()
 
-	newScene = new(Scene)
+	newScene = new(engine.Scene)
 	newScene.Callbacks = callbacks
 	decoder := json.NewDecoder(file)
 

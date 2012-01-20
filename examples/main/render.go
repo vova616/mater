@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/teomat/mater"
+	"github.com/teomat/mater/engine"
 	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/teomat/mater/render"
 	"github.com/teomat/mater/vect"
@@ -32,7 +32,7 @@ func RenderFontAt(text string, x, y float64) {
 	gl.PopMatrix()
 }
 
-func Draw(scene *Scene) {
+func Draw(scene *engine.Scene) {
 
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
