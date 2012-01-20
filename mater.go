@@ -1,8 +1,6 @@
 package mater
 
 type Mater struct {
-	Running, Paused bool
-	Dbg             DebugData
 	Scene           *Scene
 	Callbacks struct {
 		OnNewComponent func(entity *Entity, comp Component)

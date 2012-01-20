@@ -12,19 +12,19 @@ func OnKey(mater *Mater, key, state int) {
 	if state == 1 {
 		switch key {
 		case 'P':
-			mater.Paused = !mater.Paused
+			Settings.Paused = !Settings.Paused
 		case 'S':
-			mater.Dbg.SingleStep = !mater.Dbg.SingleStep
+			Settings.SingleStep = Settings.SingleStep
 		//Escape
 		case glfw.KeyEsc:
-			mater.Running = false
+			Settings.Running = false
 		case glfw.KeyF5:
 			log.Printf("QuickSave\n")
 			mater.SaveScene(QuickSavePath)
 		case glfw.KeyF9:
 			log.Printf("QuickLoad\n")
 			mater.LoadScene(QuickSavePath)
-			mater.Paused = true
+			Settings.Paused = true
 		}
 	}
 }

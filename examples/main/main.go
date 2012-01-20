@@ -91,7 +91,7 @@ func main() {
 
 	reloadSettings(mater)
 
-	mater.Paused = flags.startPaused
+	Settings.Paused = flags.startPaused
 
 	mater.Callbacks.OnNewComponent = OnNewComponent
 
@@ -99,7 +99,7 @@ func main() {
 
 	if flags.file != "" {
 		err := mater.LoadScene(flags.file)
-		mater.Paused = true
+		Settings.Paused = true
 		if err != nil {
 			panic(err)
 		}
@@ -145,8 +145,9 @@ func main() {
 	const expectedFps = 30.0
 	const expectedFrameTime = 1.0 / expectedFps
 	var fps, updateFps int
-	mater.Running = true
-	for mater.Running && 1 == glfw.WindowParam(glfw.Opened) {
+	Settings.Running = true
+
+	for Settings.Running && glfw.WindowParam(glfw.Opened) == 1 {
 		time = glfw.Time()
 		now = time
 		dt = now - lastTime
@@ -173,10 +174,10 @@ func main() {
 				updateFrameCount = 0
 			}
 
-			if !mater.Paused || mater.Dbg.SingleStep {
+			if !Settings.Paused || Settings.SingleStep {
 				mater.Update(expectedFrameTime)
-				if mater.Dbg.SingleStep {
-					mater.Dbg.SingleStep = false
+				if Settings.SingleStep {
+					Settings.SingleStep = false
 				}
 			}
 
@@ -190,7 +191,7 @@ func main() {
 		if acc > 1 {
 			fps = frameCount
 			frameCount = 0
-			if !mater.Paused && printFPS {
+			if !Settings.Paused && printFPS {
 				fmt.Printf("---\n")
 				fmt.Printf("FPS: %v\n", fps)
 				fmt.Printf("Update FPS: %v\n", updateFps)

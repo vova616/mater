@@ -11,15 +11,16 @@ import (
 
 const settingsPath = "settings.json"
 
-type Settings struct {
+var Settings = struct {
 	Resolution struct {
 		Width int
 		Height int
 	}
 	SaveDir string
-}
-
-var settings = Settings {
+	Running bool `json:"-"`
+	Paused bool `json:"-"`
+	SingleStep bool `json:"-"`
+}{
 	Resolution: struct{
 		Width int
 		Height int
@@ -38,7 +39,7 @@ func saveSettingsFile()  error {
 	}
 	defer file.Close()
 
-	dataString, err := json.MarshalIndent(&settings, "", "\t")
+	dataString, err := json.MarshalIndent(&Settings, "", "\t")
 	if err != nil {
 		log.Printf("Error encoding Settings: %v", err)
 		return err
@@ -64,7 +65,7 @@ func loadSettingsFile() error {
 
 	decoder := json.NewDecoder(file)
 
-	err = decoder.Decode(&settings)
+	err = decoder.Decode(&Settings)
 	if err != nil {
 		log.Printf("Error decoding Settings: %v", err)
 		return err
@@ -74,7 +75,7 @@ func loadSettingsFile() error {
 }
 
 func reloadSettings(m *mater.Mater) {
-	glfw.SetWindowSize(settings.Resolution.Width, settings.Resolution.Height)
+	glfw.SetWindowSize(Settings.Resolution.Width, Settings.Resolution.Height)
 
-	mater.SaveDirectory = settings.SaveDir
+	mater.SaveDirectory = Settings.SaveDir
 }

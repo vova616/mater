@@ -42,7 +42,7 @@ func Draw(mater *Mater) {
 	gl.Color4f(0, 1, 0, .5)
 	render.DrawCircle(vect.Vect{camera.ScreenSize.X / 2, camera.ScreenSize.Y / 2}, camera.ScreenSize.Y/2.0-5.0, false)
 
-	if mater.Paused {
+	if Settings.Paused {
 		gl.Color3f(1, 1, 1)
 		RenderFontAt("Paused", 20, 30)
 	}

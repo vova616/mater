@@ -64,7 +64,7 @@ func command_load(mater *Mater, params []string) {
 	}
 
 	fmt.Printf("Loading from %v\n", path)
-	mater.Paused = true
+	Settings.Paused = true
 	err := mater.LoadScene(path)
 
 	if err == nil {
@@ -77,11 +77,11 @@ func command_quit(mater *Mater, params []string) {
 }
 
 func command_pause(mater *Mater, params []string) {
-	mater.Paused = true
+	Settings.Paused = true
 }
 
 func command_unpause(mater *Mater, params []string) {
-	mater.Paused = false
+	Settings.Paused = false
 }
 
 func command_help(mater *Mater, params []string) {
