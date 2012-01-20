@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"encoding/json"
-	"github.com/teomat/mater"
+	. "github.com/teomat/mater"
 	"log"
 	"bytes"
 	"github.com/jteeuwen/glfw"
@@ -74,6 +74,6 @@ func loadSettingsFile() error {
 	return nil
 }
 
-func reloadSettings(m *mater.Mater) {
+func reloadSettings(scene *Scene) {
 	glfw.SetWindowSize(Settings.Resolution.Width, Settings.Resolution.Height)
 }

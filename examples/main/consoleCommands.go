@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-type consoleCommand func(mater *Mater, params []string)
+type consoleCommand func(scene *Scene, params []string)
 
-var commands = map[string]func(*Mater, []string){
+var commands = map[string]func(*Scene, []string){
 	"save":    command_save,
 	"load":    command_load,
 	"exit":    command_quit,
@@ -29,7 +29,7 @@ func init() {
 
 var lastSave string
 
-func command_save(mater *Mater, params []string) {
+func command_save(scene *Scene, params []string) {
 	var path string
 	if len(params) < 1 {
 		if lastSave != "" {
@@ -43,14 +43,14 @@ func command_save(mater *Mater, params []string) {
 	}
 
 	fmt.Printf("Saving to %v\n", path)
-	err := saveScene(mater.Scene, path)
+	err := saveScene(path)
 
 	if err == nil {
 		lastSave = path
 	}
 }
 
-func command_load(mater *Mater, params []string) {
+func command_load(scene *Scene, params []string) {
 	var path string
 	if len(params) < 1 {
 		if lastSave != "" {
@@ -65,26 +65,26 @@ func command_load(mater *Mater, params []string) {
 
 	fmt.Printf("Loading from %v\n", path)
 	Settings.Paused = true
-	err := loadScene(mater.Scene, path)
+	err := loadScene(path)
 
 	if err == nil {
 		lastSave = path
 	}
 }
 
-func command_quit(mater *Mater, params []string) {
+func command_quit(scene *Scene, params []string) {
 	os.Exit(0)
 }
 
-func command_pause(mater *Mater, params []string) {
+func command_pause(scene *Scene, params []string) {
 	Settings.Paused = true
 }
 
-func command_unpause(mater *Mater, params []string) {
+func command_unpause(scene *Scene, params []string) {
 	Settings.Paused = false
 }
 
-func command_help(mater *Mater, params []string) {
+func command_help(scene *Scene, params []string) {
 	fmt.Printf("Possible commands are:\n")
 	for _, cmdName := range commandNames {
 		fmt.Printf("%v\n", cmdName)

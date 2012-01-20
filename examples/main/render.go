@@ -32,7 +32,7 @@ func RenderFontAt(text string, x, y float64) {
 	gl.PopMatrix()
 }
 
-func Draw(mater *Mater) {
+func Draw(scene *Scene) {
 
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
@@ -56,7 +56,7 @@ func Draw(mater *Mater) {
 	//draw collision objects
 	cam.PreDraw()
 	
-	DrawDebugData(mater.Scene.Space)
+	DrawDebugData(scene.Space)
 	
 	cam.PostDraw()
 }

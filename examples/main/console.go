@@ -10,19 +10,19 @@ import (
 )
 
 type Console struct {
-	Mater   *Mater
+	Scene   *Scene
 	Reader  *bufio.Reader
 	Command chan string
 	Buffer  *bytes.Buffer
 }
 
-func (console *Console) Init(mater *Mater) {
-	if console.Mater != nil {
+func (console *Console) Init(scene *Scene) {
+	if console.Scene != nil {
 		return
 	}
 
 	console.Command = make(chan string)
-	console.Mater = mater
+	console.Scene = scene
 	console.Reader = bufio.NewReader(os.Stdin)
 	console.Buffer = bytes.NewBuffer(nil)
 
@@ -54,7 +54,7 @@ func (console *Console) ExecuteCommand(param string) {
 	params = params[1:]
 
 	if commandFunc, ok := commands[command]; ok {
-		commandFunc(console.Mater, params)
+		commandFunc(console.Scene, params)
 	} else {
 		fmt.Printf("Command not found\n")
 	}

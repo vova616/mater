@@ -10,7 +10,7 @@ import (
 
 var SaveDirectory = "saves/"
 
-func saveScene(scene *Scene, path string) error {
+func saveScene(path string) error {
 	path = Settings.SaveDir + path
 
 	file, err := os.Create(path)
@@ -36,7 +36,7 @@ func saveScene(scene *Scene, path string) error {
 	return nil
 }
 
-func loadScene(scene *Scene, path string) error {
+func loadScene(path string) error {
 
 	var newScene *Scene
 
@@ -50,6 +50,7 @@ func loadScene(scene *Scene, path string) error {
 	defer file.Close()
 
 	newScene = new(Scene)
+	newScene.Callbacks = callbacks
 	decoder := json.NewDecoder(file)
 
 	err = decoder.Decode(newScene)
@@ -58,7 +59,7 @@ func loadScene(scene *Scene, path string) error {
 		return err
 	}
 
-	*scene = *newScene
+	scene = newScene
 	scene.Space.Enabled = true
 
 	return nil

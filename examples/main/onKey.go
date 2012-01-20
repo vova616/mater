@@ -2,13 +2,12 @@ package main
 
 import (
 	"github.com/jteeuwen/glfw"
-	. "github.com/teomat/mater"
 	"log"
 )
 
 var QuickSavePath = "quicksave.json"
 
-func OnKey(mater *Mater, key, state int) {
+func OnKey(key, state int) {
 	if state == 1 {
 		switch key {
 		case 'P':
@@ -20,10 +19,10 @@ func OnKey(mater *Mater, key, state int) {
 			Settings.Running = false
 		case glfw.KeyF5:
 			log.Printf("QuickSave\n")
-			saveScene(mater.Scene, QuickSavePath)
+			saveScene(QuickSavePath)
 		case glfw.KeyF9:
 			log.Printf("QuickLoad\n")
-			loadScene(mater.Scene, QuickSavePath)
+			loadScene(QuickSavePath)
 			Settings.Paused = true
 		}
 	}

@@ -41,6 +41,10 @@ func init() {
 
 var MainCamera *camera.Camera
 var console Console
+var callbacks = Callbacks {
+	OnNewComponent: OnNewComponent,
+}
+var scene *Scene
 
 func main() {
 	log.SetFlags(log.Lshortfile)
@@ -86,19 +90,19 @@ func main() {
 		cam.Transform.SetAngle(0)
 	}
 
-	mater := new(Mater)
-	mater.Init()
+	scene = new(Scene)
+	scene.Init()
 
-	reloadSettings(mater)
+	reloadSettings(scene)
 
 	Settings.Paused = flags.startPaused
 
-	//mater.Callbacks.OnNewComponent = OnNewComponent
+	scene.Callbacks = callbacks
 
-	console.Init(mater)
+	console.Init(scene)
 
 	if flags.file != "" {
-		err := loadScene(mater.Scene, flags.file)
+		err := loadScene(flags.file)
 		Settings.Paused = true
 		if err != nil {
 			panic(err)
@@ -123,7 +127,7 @@ func main() {
 		glfw.SetSwapInterval(1)
 		glfw.SetWindowTitle("mater test")
 		glfw.SetWindowSizeCallback(func(w, h int) {OnResize(w, h)})
-		glfw.SetKeyCallback(func(k, s int) { OnKey(mater, k, s) })
+		glfw.SetKeyCallback(func(k, s int) { OnKey(k, s) })
 	}
 
 	//init opengl
@@ -175,7 +179,7 @@ func main() {
 			}
 
 			if !Settings.Paused || Settings.SingleStep {
-				mater.Update(expectedFrameTime)
+				scene.Update(expectedFrameTime)
 				if Settings.SingleStep {
 					Settings.SingleStep = false
 				}
@@ -184,7 +188,7 @@ func main() {
 			updateAcc -= expectedFrameTime
 		}
 
-		Draw(mater)
+		Draw(scene)
 
 		glfw.SwapBuffers()
 
