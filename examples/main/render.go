@@ -33,7 +33,6 @@ func RenderFontAt(text string, x, y float64) {
 }
 
 func Draw(scene *engine.Scene) {
-
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
 	gl.PushMatrix()

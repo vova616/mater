@@ -8,6 +8,8 @@ import (
 
 var ScreenSize vect.Vect
 
+//Callback for window resize events.
+//Updates Settings.ScreenSize as well as the size of the main camera.
 func OnResize(width, height int) {
 	if height == 0 {
 		height = 1

@@ -123,10 +123,10 @@ func main() {
 
 	//set callbacks
 	{
-		callbacks.OnNewComponent = onNewComponent
+		callbacks.OnNewComponent = OnNewComponent
 		scene.Callbacks = callbacks
-		glfw.SetWindowSizeCallback(func(w, h int) { OnResize(w, h) })
-		glfw.SetKeyCallback(func(k, s int) { OnKey(k, s) })
+		glfw.SetWindowSizeCallback(OnResize)
+		glfw.SetKeyCallback(OnKey)
 	}
 
 	//init debug console
