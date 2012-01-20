@@ -4,18 +4,21 @@ import (
 	"github.com/teomat/mater/collision"
 )
 
+type Callbacks struct {
+	OnNewComponent func(entity *Entity, comp Component)
+}
+
 type Scene struct {
 	Space        *collision.Space
 	StaticEntity Entity
 	Entities     map[int]*Entity
-	Mater *Mater
+	Callbacks Callbacks
 }
 
-func (scene *Scene) Init(mater *Mater) {
+func (scene *Scene) Init() {
 	scene.Space = collision.NewSpace()
 	scene.StaticEntity.Init()
 	scene.Entities = make(map[int]*Entity, 32)
-	scene.Mater = mater
 }
 
 func (scene *Scene) Update(dt float64) {

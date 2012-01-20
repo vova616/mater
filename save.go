@@ -6,72 +6,7 @@ import (
 	"github.com/teomat/mater/collision"
 	"github.com/teomat/mater/transform"
 	"log"
-	"os"
 )
-
-var SaveDirectory = "saves/"
-
-func (mater *Mater) SaveScene(path string) error {
-	scene := mater.Scene
-
-	path = SaveDirectory + path
-
-	file, err := os.Create(path)
-	if err != nil {
-		log.Printf("Error opening File: %v", err)
-		return err
-	}
-	defer file.Close()
-
-	//encoder := json.NewEncoder(file)
-	//err = encoder.Encode(scene)
-
-	dataString, err := json.MarshalIndent(scene, "", "\t")
-	if err != nil {
-		log.Printf("Error encoding Scene: %v", err)
-		return err
-	}
-
-	buf := bytes.NewBuffer(dataString)
-	n, err := buf.WriteTo(file)
-	if err != nil {
-		log.Printf("Error after writing %v characters to File: %v", n, err)
-		return err
-	}
-
-	return nil
-}
-
-func (mater *Mater) LoadScene(path string) error {
-
-	var scene *Scene
-
-	path = SaveDirectory + path
-
-	file, err := os.Open(path)
-	if err != nil {
-		log.Printf("Error opening File: %v", err)
-		return err
-	}
-	defer file.Close()
-
-	scene = new(Scene)
-	scene.Mater = mater
-	decoder := json.NewDecoder(file)
-
-	err = decoder.Decode(scene)
-	if err != nil {
-		log.Printf("Error decoding Scene: %v", err)
-		return err
-	}
-
-	mater.Scene.Destroy()
-
-	mater.Scene = scene
-	scene.Space.Enabled = true
-
-	return nil
-}
 
 func (scene *Scene) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)

@@ -76,6 +76,4 @@ func loadSettingsFile() error {
 
 func reloadSettings(m *mater.Mater) {
 	glfw.SetWindowSize(Settings.Resolution.Width, Settings.Resolution.Height)
-
-	mater.SaveDirectory = Settings.SaveDir
 }

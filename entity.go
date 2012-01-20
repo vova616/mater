@@ -77,7 +77,7 @@ func (entity *Entity) AddComponent(component Component) {
 		comp.OnNewComponent(entity, component)
 	}
 
-	onNewComponent := entity.Scene.Mater.Callbacks.OnNewComponent
+	onNewComponent := entity.Scene.Callbacks.OnNewComponent
 	if onNewComponent != nil {
 		onNewComponent(entity, component)
 	}

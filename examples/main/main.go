@@ -93,12 +93,12 @@ func main() {
 
 	Settings.Paused = flags.startPaused
 
-	mater.Callbacks.OnNewComponent = OnNewComponent
+	//mater.Callbacks.OnNewComponent = OnNewComponent
 
 	console.Init(mater)
 
 	if flags.file != "" {
-		err := mater.LoadScene(flags.file)
+		err := loadScene(mater.Scene, flags.file)
 		Settings.Paused = true
 		if err != nil {
 			panic(err)
