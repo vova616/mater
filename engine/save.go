@@ -140,7 +140,7 @@ func (scene *Scene) MarshalJSON() ([]byte, error) {
 	buf.WriteByte('{')
 
 	buf.WriteString(`"StaticEntity":`)
-	encoder.Encode(scene.StaticEntity)
+	encoder.Encode(&scene.StaticEntity)
 
 	buf.WriteString(`,"Entities":`)
 	buf.WriteByte('[')

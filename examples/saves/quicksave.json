@@ -1,0 +1,195 @@
+{
+	"StaticEntity": {
+		"ID": 1,
+		"Enabled": true,
+		"Transform": null,
+		"Components": [
+			{
+				"Name": "CollisionHandler",
+				"Data": {}
+			}
+		]
+	},
+	"Entities": [
+		{
+			"ID": 2,
+			"Enabled": true,
+			"Transform": {
+				"Position": [
+					1,
+					-5
+				],
+				"Rotation": 0
+			},
+			"Components": [
+				{
+					"Name": "Camera",
+					"Data": {
+						"Scale": [
+							32,
+							32
+						],
+						"Transform": {
+							"Position": [
+								1,
+								-5
+							],
+							"Rotation": 0
+						},
+						"FollowTarget": true,
+						"IsMainCamera": true
+					}
+				},
+				{
+					"Name": "Body",
+					"Data": {
+						"Type": "Dynamic",
+						"Transform": {
+							"Position": [
+								1,
+								-5
+							],
+							"Rotation": 0
+						},
+						"Shapes": [
+							{
+								"ShapeType": "Circle",
+								"Friction": 0,
+								"Restitution": 0,
+								"Sensor": false,
+								"Position": [
+									0,
+									-0.35
+								],
+								"Radius": 0.4
+							},
+							{
+								"ShapeType": "Box",
+								"Friction": 0,
+								"Restitution": 0,
+								"Sensor": false,
+								"Width": 0.8,
+								"Height": 0.7,
+								"Position": [
+									0,
+									0
+								]
+							},
+							{
+								"ShapeType": "Circle",
+								"Friction": 0,
+								"Restitution": 0,
+								"Sensor": false,
+								"Position": [
+									0,
+									0.35
+								],
+								"Radius": 0.4
+							}
+						],
+						"Enabled": true,
+						"Mass": 1,
+						"Inertia": 0,
+						"Velocity": [
+							0,
+							0
+						],
+						"AngularVelocity": 0,
+						"Force": [
+							0,
+							0
+						],
+						"Torque": 0,
+						"IgnoreGravity": false
+					}
+				},
+				{
+					"Name": "CollisionCallbackTest",
+					"Data": {}
+				}
+			]
+		}
+	],
+	"Space": {
+		"Gravity": [
+			0,
+			5
+		],
+		"Bodies": [
+			{
+				"Type": "Static",
+				"Transform": {
+					"Position": [
+						0,
+						0
+					],
+					"Rotation": 0.49999999999999994
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Sensor": false,
+						"Vertices": [
+							[
+								-5,
+								-1
+							],
+							[
+								-5,
+								1
+							],
+							[
+								5,
+								1
+							],
+							[
+								5,
+								-1
+							]
+						]
+					}
+				],
+				"Enabled": true
+			},
+			{
+				"Type": "Static",
+				"Transform": {
+					"Position": [
+						6,
+						0
+					],
+					"Rotation": -0.49999999999999994
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Sensor": false,
+						"Vertices": [
+							[
+								-5,
+								-1
+							],
+							[
+								-5,
+								1
+							],
+							[
+								5,
+								1
+							],
+							[
+								5,
+								-1
+							]
+						]
+					}
+				],
+				"Enabled": true
+			}
+		]
+	}
+}
