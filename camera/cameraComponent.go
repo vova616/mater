@@ -21,11 +21,11 @@ func (cam *Camera) Update(owner *engine.Entity, dt float64) {
 	}
 }
 
-func (cam *Camera) Marshal(owner *engine.Entity) ([]byte, error) {
+func (cam *Camera) Marshal() ([]byte, error) {
 	return json.Marshal(cam)
 }
 
-func (cam *Camera) Unmarshal(owner *engine.Entity, data []byte) error {
+func (cam *Camera) Unmarshal(data []byte) error {
 	cam.ScreenSize = ScreenSize
 	err := json.Unmarshal(data, cam)
 

@@ -32,11 +32,13 @@ func (scene *Scene) Update(dt float64) {
 }
 
 func (scene *Scene) AddEntity(entity *Entity) {
+	entity.Scene = scene
 	scene.Entities[entity.Id()] = entity
 }
 
 func (scene *Scene) RemoveEntity(entity *Entity) {
 	delete(scene.Entities, entity.Id())
+	entity.Destroy()
 }
 
 func (scene *Scene) Destroy() {

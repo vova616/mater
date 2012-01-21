@@ -48,11 +48,11 @@ func (cb *CollisionHandler) Destroy(owner *engine.Entity) {
 
 }
 
-func (cb *CollisionHandler) Marshal(owner *engine.Entity) ([]byte, error) {
+func (cb *CollisionHandler) Marshal() ([]byte, error) {
 	return ([]byte)("{}"), nil
 }
 
-func (cb *CollisionHandler) Unmarshal(owner *engine.Entity, data []byte) error {
+func (cb *CollisionHandler) Unmarshal(data []byte) error {
 	return nil
 }
 

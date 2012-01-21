@@ -29,6 +29,8 @@ func (body *Body) Init(owner *engine.Entity) {
 
 	owner.Transform = &body.Transform
 
+	owner.Scene.Space.AddBody(body.Body)
+
 	body.Body.UserData = owner
 }
 
@@ -42,11 +44,11 @@ func (body *Body) Destroy(owner *engine.Entity) {
 	body.Body.UserData = nil
 }
 
-func (body *Body) Marshal(owner *engine.Entity) ([]byte, error) {
+func (body *Body) Marshal() ([]byte, error) {
 	return json.Marshal(body.Body)
 }
 
-func (body *Body) Unmarshal(owner *engine.Entity, data []byte) error {
+func (body *Body) Unmarshal(data []byte) error {
 	if body.Body == nil {
 		body.Body = collision.NewBody(collision.BodyType_Static)
 	}
@@ -59,8 +61,6 @@ func (body *Body) Unmarshal(owner *engine.Entity, data []byte) error {
 	if body.Body == nil {
 		return errors.New("nil Body")
 	}
-
-	owner.Scene.Space.AddBody(body.Body)
 
 	return nil
 }

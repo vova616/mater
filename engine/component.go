@@ -18,9 +18,9 @@ type Component interface {
 	OnNewComponent(owner *Entity, other Component)
 
 	//
-	Marshal(owner *Entity) ([]byte, error)
+	Marshal() ([]byte, error)
 
-	Unmarshal(owner *Entity, data []byte) error
+	Unmarshal(data []byte) error
 }
 
 var components = make(map[string]reflect.Type)
