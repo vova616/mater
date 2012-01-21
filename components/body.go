@@ -9,7 +9,6 @@ import (
 )
 
 type Body struct {
-	Empty
 	*collision.Body
 }
 
@@ -34,6 +33,8 @@ func (body *Body) Init(owner *engine.Entity) {
 	body.Body.UserData = owner
 }
 
+func (body *Body) Update(owner *engine.Entity, dt float64) {}
+
 func (body *Body) Destroy(owner *engine.Entity) {
 	if body.Body == nil {
 		log.Printf("Error: Body component is not initialized correctly!")
@@ -44,11 +45,13 @@ func (body *Body) Destroy(owner *engine.Entity) {
 	body.Body.UserData = nil
 }
 
-func (body *Body) Marshal() ([]byte, error) {
+func (body *Body) OnNewComponent(owner *engine.Entity, other engine.Component) {}
+
+func (body *Body) MarshalJSON() ([]byte, error) {
 	return json.Marshal(body.Body)
 }
 
-func (body *Body) Unmarshal(data []byte) error {
+func (body *Body) UnmarshalJSON(data []byte) error {
 	if body.Body == nil {
 		body.Body = collision.NewBody(collision.BodyType_Static)
 	}

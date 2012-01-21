@@ -1,7 +1,6 @@
 package camera
 
 import (
-	"encoding/json"
 	"github.com/teomat/mater/engine"
 )
 
@@ -19,21 +18,6 @@ func (cam *Camera) Update(owner *engine.Entity, dt float64) {
 	if cam.FollowTarget {
 		cam.Transform.Position = owner.Transform.Position
 	}
-}
-
-func (cam *Camera) Marshal() ([]byte, error) {
-	return json.Marshal(cam)
-}
-
-func (cam *Camera) Unmarshal(data []byte) error {
-	cam.ScreenSize = ScreenSize
-	err := json.Unmarshal(data, cam)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (cam *Camera) Destroy(owner *engine.Entity) {}

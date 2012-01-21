@@ -16,11 +16,6 @@ type Component interface {
 	Destroy(owner *Entity)
 	//Called when a new component is added to the owner
 	OnNewComponent(owner *Entity, other Component)
-
-	//
-	Marshal() ([]byte, error)
-
-	Unmarshal(data []byte) error
 }
 
 var components = make(map[string]reflect.Type)

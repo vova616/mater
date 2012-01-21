@@ -27,14 +27,6 @@ func (cht *CollisionCallbackTest) Destroy(owner *engine.Entity) {
 
 }
 
-func (cht *CollisionCallbackTest) Marshal() ([]byte, error) {
-	return ([]byte)("{}"), nil
-}
-
-func (cht *CollisionCallbackTest) Unmarshal(data []byte) error {
-	return nil
-}
-
 func (cht *CollisionCallbackTest) OnNewComponent(owner *engine.Entity, other engine.Component) {
 	if other.Name() == "Body" {
 		cht.addHandlerToBody(other)

@@ -48,14 +48,6 @@ func (cb *CollisionHandler) Destroy(owner *engine.Entity) {
 
 }
 
-func (cb *CollisionHandler) Marshal() ([]byte, error) {
-	return ([]byte)("{}"), nil
-}
-
-func (cb *CollisionHandler) Unmarshal(data []byte) error {
-	return nil
-}
-
 func (cb *CollisionHandler) OnNewComponent(owner *engine.Entity, other engine.Component) {
 
 }

@@ -73,7 +73,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 			if component == nil {
 				continue
 			}
-			err := component.Unmarshal(componentData.Data)
+			err := json.Unmarshal(componentData.Data, component)
 			if err != nil {
 				log.Printf("Error decoding entity")
 				return err
@@ -195,7 +195,7 @@ func (entity *Entity) MarshalJSON() ([]byte, error) {
 	ccount := 0
 	for _, component := range entity.ComponentList {
 		name := component.Name()
-		data, err := component.Marshal()
+		data, err := json.Marshal(component)
 		if err != nil {
 			log.Printf("Error encoding entity")
 			return nil, err
