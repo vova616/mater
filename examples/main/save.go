@@ -3,11 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/teomat/mater/engine"
+	"io/ioutil"
 	"log"
 	"os"
-	"io/ioutil"
-	"fmt"
 	"strings"
 )
 
@@ -73,15 +73,15 @@ func printSyntaxError(js string, err error) {
 		fmt.Println(err)
 		return
 	}
-	
+
 	start, end := strings.LastIndex(js[:syntax.Offset], "\n")+1, len(js)
 	if idx := strings.Index(js[start:], "\n"); idx >= 0 {
 		end = start + idx
 	}
-	
-	line, pos := strings.Count(js[:start], "\n"), int(syntax.Offset) - start - 1
+
+	line, pos := strings.Count(js[:start], "\n"), int(syntax.Offset)-start-1
 	line = line + 1
-	
+
 	fmt.Printf("Error in line %d: %s \n", line, err)
 
 	if start > 0 && start < end {

@@ -121,7 +121,7 @@ func (scene *Scene) UnmarshalJSON(data []byte) error {
 	}
 
 	createEntityFromData(&scene.StaticEntity, staticEntity)
-	
+
 	for _, entityData := range entities {
 		entity := new(Entity)
 		createEntityFromData(entity, &entityData)

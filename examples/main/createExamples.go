@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/teomat/mater/collision"
-	"github.com/teomat/mater/vect"
-	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/camera"
+	"github.com/teomat/mater/collision"
+	"github.com/teomat/mater/engine"
+	"github.com/teomat/mater/vect"
 	"os"
 )
 
@@ -195,7 +195,7 @@ func collisionTests() {
 
 			space.AddBody(body)
 		}
-		
+
 		saveToFile(scene, "circle-polygon")
 	}
 
@@ -253,7 +253,7 @@ func collisionTests() {
 
 			space.AddBody(body)
 		}
-		
+
 		saveToFile(scene, "polygon-polygon")
 	}
 }

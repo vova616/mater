@@ -19,12 +19,12 @@ type Arbiter struct {
 	// The two colliding shapes.
 	ShapeA, ShapeB *Shape
 	// The contact points between the shapes.
-	Contacts       [MaxPoints]Contact
+	Contacts [MaxPoints]Contact
 	// The number of contact points.
-	NumContacts    int
-	nodeA, nodeB   *ArbiterEdge
+	NumContacts  int
+	nodeA, nodeB *ArbiterEdge
 
-	Friction   float64
+	Friction float64
 
 	// Used to keep a linked list of all arbiters in a space.
 	Next, Prev *Arbiter
