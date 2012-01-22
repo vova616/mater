@@ -18,6 +18,7 @@ type Scene struct {
 func (scene *Scene) Init() {
 	scene.Space = collision.NewSpace()
 	scene.StaticEntity.Init()
+	scene.StaticEntity.Scene = scene
 	scene.Entities = make(map[int]*Entity, 32)
 }
 
