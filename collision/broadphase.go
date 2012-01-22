@@ -39,10 +39,10 @@ func (p pairSlice) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
 }
 
-/// The broad-phase is used for computing pairs and performing volume queries and ray casts.
-/// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
-/// It is up to the client to consume the new pairs and to track subsequent overlap.
-type BroadPhase struct {
+// The broad-phase is used for computing pairs and performing volume queries and ray casts.
+// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
+// It is up to the client to consume the new pairs and to track subsequent overlap.
+type broadPhase struct {
 	_moveBuffer   []int
 	_moveCapacity int
 	_moveCount    int
@@ -56,8 +56,8 @@ type BroadPhase struct {
 	_tree              *dynamicTree
 }
 
-func newBroadPhase() *BroadPhase {
-	dtb := new(BroadPhase)
+func newBroadPhase() *broadPhase {
+	dtb := new(broadPhase)
 	dtb._queryCallbackFunc = func(proxyId int) bool {
 		return dtb.queryCallback(proxyId)
 	}
@@ -73,52 +73,52 @@ func newBroadPhase() *BroadPhase {
 	return dtb
 }
 
-func (dtb *BroadPhase) proxyCount() int {
+func (dtb *broadPhase) proxyCount() int {
 	return dtb._proxyCount
 }
 
-/// Create a proxy with an initial AABB. Pairs are not reported until
-/// UpdatePairs is called.
-func (dtb *BroadPhase) addProxy(proxy shapeProxy) int {
+// Create a proxy with an initial AABB. Pairs are not reported until
+// UpdatePairs is called.
+func (dtb *broadPhase) addProxy(proxy shapeProxy) int {
 	proxyId := dtb._tree.AddProxy(proxy.AABB, proxy)
 	dtb._proxyCount++
 	dtb.bufferMove(proxyId)
 	return proxyId
 }
 
-/// Destroy a proxy. It is up to the client to remove any pairs.
-func (dtb *BroadPhase) removeProxy(proxyId int) {
+// Destroy a proxy. It is up to the client to remove any pairs.
+func (dtb *broadPhase) removeProxy(proxyId int) {
 	dtb.unBufferMove(proxyId)
 	dtb._proxyCount--
 	dtb._tree.RemoveProxy(proxyId)
 }
 
-func (dtb *BroadPhase) moveProxy(proxyId int, aabb AABB, displacement vect.Vect) {
+func (dtb *broadPhase) moveProxy(proxyId int, aabb AABB, displacement vect.Vect) {
 	buffer := dtb._tree.MoveProxy(proxyId, aabb, displacement)
 	if buffer {
 		dtb.bufferMove(proxyId)
 	}
 }
 
-/// Get the AABB for a proxy.
-func (dtb *BroadPhase) getFatAABB(proxyId int) AABB {
+// Get the AABB for a proxy.
+func (dtb *broadPhase) getFatAABB(proxyId int) AABB {
 	return dtb._tree.GetFatAABB(proxyId)
 }
 
-/// Get user data from a proxy. Returns null if the id is invalid.
-func (dtb *BroadPhase) getProxy(proxyId int) shapeProxy {
+// Get user data from a proxy. Returns null if the id is invalid.
+func (dtb *broadPhase) getProxy(proxyId int) shapeProxy {
 	return dtb._tree.GetUserData(proxyId)
 }
 
-/// Test overlap of fat AABBs.
-func (dtb *BroadPhase) testOverlap(proxyIdA, proxyIdB int) bool {
+// Test overlap of fat AABBs.
+func (dtb *broadPhase) testOverlap(proxyIdA, proxyIdB int) bool {
 	aabbA := dtb._tree.GetFatAABB(proxyIdA)
 	aabbB := dtb._tree.GetFatAABB(proxyIdB)
 	return TestOverlap(aabbA, aabbB)
 }
 
-/// Update the pairs. This results in pair callbacks. This can only add pairs.
-func (dtb *BroadPhase) updatePairs(callback func(proxyA, proxyB *shapeProxy)) {
+// Update the pairs. This results in pair callbacks. This can only add pairs.
+func (dtb *broadPhase) updatePairs(callback func(proxyA, proxyB *shapeProxy)) {
 	// Reset pair buffer
 	dtb._pairCount = 0
 	// Perform tree queries for all moving proxies.
@@ -165,31 +165,31 @@ func (dtb *BroadPhase) updatePairs(callback func(proxyA, proxyB *shapeProxy)) {
 	//dtb._tree.Rebalance(4)
 }
 
-/// Query an AABB for overlapping proxies. The callback class
-/// is called for each proxy that overlaps the supplied AABB.
-func (dtb *BroadPhase) query(callback func(int) bool, aabb AABB) {
+// Query an AABB for overlapping proxies. The callback class
+// is called for each proxy that overlaps the supplied AABB.
+func (dtb *broadPhase) query(callback func(int) bool, aabb AABB) {
 	dtb._tree.Query(callback, aabb)
 }
 
-/// Ray-cast against the proxies in the tree. This relies on the callback
-/// to perform a exact ray-cast in the case were the proxy contains a shape.
-/// The callback also performs the any collision filtering. This has performance
-/// roughly equal to k * log(n), where k is the number of collisions and n is the
-/// number of proxies in the tree.
-func (dtb *BroadPhase) rayCast(callback func(RayCastInput, int) float64, input *RayCastInput) {
+// Ray-cast against the proxies in the tree. This relies on the callback
+// to perform a exact ray-cast in the case were the proxy contains a shape.
+// The callback also performs the any collision filtering. This has performance
+// roughly equal to k * log(n), where k is the number of collisions and n is the
+// number of proxies in the tree.
+func (dtb *broadPhase) rayCast(callback func(RayCastInput, int) float64, input *RayCastInput) {
 	dtb._tree.RayCast(callback, input)
 }
 
-func (dtb *BroadPhase) touchProxy(proxyId int) {
+func (dtb *broadPhase) touchProxy(proxyId int) {
 	dtb.bufferMove(proxyId)
 }
 
-/// Compute the height of the embedded tree.
-func (dtb *BroadPhase) computeHeight() int {
+// Compute the height of the embedded tree.
+func (dtb *broadPhase) computeHeight() int {
 	return dtb._tree.ComputeHeight()
 }
 
-func (dtb *BroadPhase) bufferMove(proxyId int) {
+func (dtb *broadPhase) bufferMove(proxyId int) {
 	if dtb._moveCount == dtb._moveCapacity {
 		dtb._moveBuffer = append(dtb._moveBuffer, make([]int, dtb._moveCapacity)...)
 		dtb._moveCapacity *= 2
@@ -199,7 +199,7 @@ func (dtb *BroadPhase) bufferMove(proxyId int) {
 	dtb._moveCount++
 }
 
-func (dtb *BroadPhase) unBufferMove(proxyId int) {
+func (dtb *broadPhase) unBufferMove(proxyId int) {
 	for i := 0; i < dtb._moveCount; i++ {
 		if dtb._moveBuffer[i] == proxyId {
 			dtb._moveBuffer[i] = -1
@@ -208,7 +208,7 @@ func (dtb *BroadPhase) unBufferMove(proxyId int) {
 	}
 }
 
-func (dtb *BroadPhase) queryCallback(proxyId int) bool {
+func (dtb *broadPhase) queryCallback(proxyId int) bool {
 	// A proxy cannot form a pair with itself.
 	if proxyId == dtb._queryProxyId {
 		return true

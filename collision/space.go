@@ -16,7 +16,7 @@ type Space struct {
 		ShouldCollide func(sA, sB *Shape) bool
 	}
 
-	BroadPhase     *BroadPhase
+	BroadPhase     *broadPhase
 	ContactManager *ContactManager
 }
 

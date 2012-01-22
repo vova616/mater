@@ -32,7 +32,7 @@ func (arbList *ArbiterList) Remove(arb *Arbiter) {
 }
 
 type ContactManager struct {
-	BroadPhase  *BroadPhase
+	broadPhase  *broadPhase
 	ArbiterList ArbiterList
 	Space       *Space
 }
@@ -40,7 +40,7 @@ type ContactManager struct {
 func newContactManager(space *Space) *ContactManager {
 	cm := new(ContactManager)
 	cm.Space = space
-	cm.BroadPhase = space.BroadPhase
+	cm.broadPhase = space.BroadPhase
 
 	return cm
 }
@@ -128,7 +128,7 @@ func (cm *ContactManager) addPair(proxyA, proxyB *shapeProxy) {
 }
 
 func (cm *ContactManager) findNewContacts() {
-	cm.BroadPhase.updatePairs(
+	cm.broadPhase.updatePairs(
 		func(proxyA, proxyB *shapeProxy) {
 			cm.addPair(proxyA, proxyB)
 		})
@@ -199,7 +199,7 @@ func (cm *ContactManager) collide() {
 
 		proxyIdA := shapeA.proxy.ProxyId
 		proxyIdB := shapeB.proxy.ProxyId
-		overlap := cm.BroadPhase.testOverlap(proxyIdA, proxyIdB)
+		overlap := cm.broadPhase.testOverlap(proxyIdA, proxyIdB)
 		// Here we destroy arbiters that cease to overlap in the broad-phase.
 		if !overlap {
 			cm.destroy(arb)

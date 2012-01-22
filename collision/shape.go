@@ -48,7 +48,7 @@ func (shape *Shape) Update() {
 	}
 }
 
-func (shape *Shape) createProxy(broadPhase *BroadPhase, xf transform.Transform) {
+func (shape *Shape) createProxy(broadPhase *broadPhase, xf transform.Transform) {
 	if shape.proxy.Shape != nil {
 		log.Printf("Error: Proxies already created!")
 	}
@@ -59,6 +59,6 @@ func (shape *Shape) createProxy(broadPhase *BroadPhase, xf transform.Transform) 
 	shape.proxy.ProxyId = broadPhase.addProxy(shape.proxy)
 }
 
-func (shape *Shape) destroyProxy(broadPhase *BroadPhase) {
+func (shape *Shape) destroyProxy(broadPhase *broadPhase) {
 	broadPhase.removeProxy(shape.proxy.ProxyId)
 }

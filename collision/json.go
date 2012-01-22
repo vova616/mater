@@ -43,48 +43,6 @@ func (f *InfFloat) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-//START VERTICES REGION
-/*func (verts Vertices) MarshalJSON ([]byte, error) {
-	buf := new(bytes.Buffer)
-	encoder := json.NewEncoder(buf)
-
-	buf.WriteByte('[')
-
-	for _, v := range verts {
-		encoder.Encode(v.X)
-		buf.WriteByte(',')
-		encoder.Encode(v.Y)
-		buf.WriteByte(',')
-	}
-
-	if len(verts) > 0 {
-		buf.Truncate(buf.Len() - 1)
-	}
-
-	buf.WriteByte(']')
-	return
-}
-*/
-func (verts *Vertices) UnmarshalJSON(data []byte) error {
-	vertData := []*vect.Vect{}
-	err := json.Unmarshal(data, &vertData)
-	if err != nil {
-		log.Printf("Error decoding vertices!")
-		return err
-	}
-
-	v := make(Vertices, len(vertData))
-	*verts = v
-
-	for i := 0; i < len(vertData); i++ {
-		v[i] = *vertData[i]
-	}
-
-	return nil
-}
-
-//END VERTICES REGION
-
 //START SPACE REGION
 
 // Serializes gravity and bodies to json.
