@@ -10,7 +10,6 @@ import (
 	"log"
 	//importing so the components can register themselves
 	"github.com/teomat/mater/camera"
-	_ "github.com/teomat/mater/components"
 	"os"
 	"runtime/pprof"
 )
