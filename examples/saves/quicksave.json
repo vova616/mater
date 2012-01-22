@@ -113,7 +113,7 @@
 	"Space": {
 		"Gravity": [
 			0,
-			5
+			10
 		],
 		"Bodies": [
 			{

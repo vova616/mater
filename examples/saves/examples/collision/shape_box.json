@@ -2,6 +2,7 @@
 	"ShapeType": "Box",
 	"Friction": 0,
 	"Restitution": 0,
+	"Sensor": false,
 	"Width": 1,
 	"Height": 1,
 	"Position": [

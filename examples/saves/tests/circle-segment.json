@@ -1,80 +1,59 @@
 {
-	"Camera": {
-		"ScreenSize": {
-			"X": 800,
-			"Y": 600
-		},
-		"Position": {
-			"X": 0,
-			"Y": 0
-		},
-		"Scale": {
-			"X": 32,
-			"Y": 32
-		},
-		"Rotation": 0
+	"StaticEntity": {
+		"ID": 1,
+		"Enabled": false,
+		"Transform": null,
+		"Components": [
+			{
+				"Name": "Camera",
+				"Data": {
+					"Scale": [
+						32,
+						32
+					],
+					"Transform": {
+						"Position": [
+							0,
+							0
+						],
+						"Rotation": 0
+					},
+					"FollowTarget": false,
+					"IsMainCamera": true
+				}
+			}
+		]
 	},
 	"Entities": [],
 	"Space": {
-		"Gravity": {
-			"X": 0,
-			"Y": 5
-		},
+		"Gravity": [
+			0,
+			10
+		],
 		"Bodies": [
-			{
-				"Type": "Dynamic",
-				"Transform": {
-					"X": 6,
-					"Y": -8,
-					"Rotation": 0
-				},
-				"Shapes": [
-					{
-						"ShapeType": "Circle",
-						"Friction": 0,
-						"Restitution": 0,
-						"Position": {
-							"X": 0,
-							"Y": 0
-						},
-						"Radius": 1
-					}
-				],
-				"Enabled": true,
-				"Mass": 1,
-				"Inertia": 0,
-				"Velocity": {
-					"X": 0,
-					"Y": 0
-				},
-				"AngularVelocity": 0,
-				"Force": {
-					"X": 0,
-					"Y": 0
-				},
-				"Torque": 0,
-				"IgnoreGravity": false
-			},
 			{
 				"Type": "Static",
 				"Transform": {
-					"X": -3,
-					"Y": 0,
-					"Rotation": 0.5
+					"Position": [
+						-3,
+						0
+					],
+					"Rotation": 0.49999999999999994
 				},
 				"Shapes": [
 					{
 						"ShapeType": "Segment",
 						"Friction": 0,
 						"Restitution": 0,
-						"A": {
-							"X": 5,
-							"Y": 0
-						},
-						"B": {
-							"X": -5,
-							"Y": 0
-						},
+						"Sensor": false,
+						"A": [
+							5,
+							0
+						],
+						"B": [
+							-5,
+							0
+						],
 						"Radius": 0
 					}
 				],
@@ -83,27 +62,67 @@
 			{
 				"Type": "Static",
 				"Transform": {
-					"X": 3,
-					"Y": 0,
-					"Rotation": -0.5
+					"Position": [
+						3,
+						0
+					],
+					"Rotation": -0.49999999999999994
 				},
 				"Shapes": [
 					{
 						"ShapeType": "Segment",
 						"Friction": 0,
 						"Restitution": 0,
-						"A": {
-							"X": 5,
-							"Y": 0
-						},
-						"B": {
-							"X": -5,
-							"Y": 0
-						},
-						"Radius": 0.5
+						"Sensor": false,
+						"A": [
+							5,
+							0
+						],
+						"B": [
+							-5,
+							0
+						],
+						"Radius": 1
 					}
 				],
 				"Enabled": true
+			},
+			{
+				"Type": "Dynamic",
+				"Transform": {
+					"Position": [
+						6,
+						-7
+					],
+					"Rotation": 0
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Circle",
+						"Friction": 0,
+						"Restitution": 0,
+						"Sensor": false,
+						"Position": [
+							0,
+							0
+						],
+						"Radius": 1
+					}
+				],
+				"Enabled": true,
+				"Mass": 1,
+				"Inertia": 1,
+				"Velocity": [
+					0,
+					0
+				],
+				"AngularVelocity": 0,
+				"Force": [
+					0,
+					0
+				],
+				"Torque": 0,
+				"IgnoreGravity": false
 			}
 		]
 	}

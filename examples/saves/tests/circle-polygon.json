@@ -1,31 +1,117 @@
 {
-	"Camera": {
-		"ScreenSize": {
-			"X": 800,
-			"Y": 600
-		},
-		"Position": {
-			"X": 0,
-			"Y": 0
-		},
-		"Scale": {
-			"X": 32,
-			"Y": 32
-		},
-		"Rotation": 0
+	"StaticEntity": {
+		"ID": 1,
+		"Enabled": false,
+		"Transform": null,
+		"Components": [
+			{
+				"Name": "Camera",
+				"Data": {
+					"Scale": [
+						32,
+						32
+					],
+					"Transform": {
+						"Position": [
+							0,
+							0
+						],
+						"Rotation": 0
+					},
+					"FollowTarget": false,
+					"IsMainCamera": true
+				}
+			}
+		]
 	},
 	"Entities": [],
 	"Space": {
-		"Gravity": {
-			"X": 0,
-			"Y": 5
-		},
+		"Gravity": [
+			0,
+			10
+		],
 		"Bodies": [
+			{
+				"Type": "Static",
+				"Transform": {
+					"Position": [
+						-3,
+						0
+					],
+					"Rotation": 0.49999999999999994
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Sensor": false,
+						"Vertices": [
+							[
+								-5,
+								-1
+							],
+							[
+								-5,
+								1
+							],
+							[
+								5,
+								1
+							],
+							[
+								5,
+								-1
+							]
+						]
+					}
+				],
+				"Enabled": true
+			},
+			{
+				"Type": "Static",
+				"Transform": {
+					"Position": [
+						3,
+						0
+					],
+					"Rotation": -0.49999999999999994
+				},
+				"Shapes": [
+					{
+						"ShapeType": "Polygon",
+						"Friction": 0,
+						"Restitution": 0,
+						"Sensor": false,
+						"Vertices": [
+							[
+								-5,
+								-1
+							],
+							[
+								-5,
+								1
+							],
+							[
+								5,
+								1
+							],
+							[
+								5,
+								-1
+							]
+						]
+					}
+				],
+				"Enabled": true
+			},
 			{
 				"Type": "Dynamic",
 				"Transform": {
-					"X": 6,
-					"Y": -8,
+					"Position": [
+						6,
+						-7
+					],
 					"Rotation": 0
 				},
 				"Shapes": [
@@ -33,95 +119,28 @@
 						"ShapeType": "Circle",
 						"Friction": 0,
 						"Restitution": 0,
-						"Position": {
-							"X": 0,
-							"Y": 0
-						},
+						"Sensor": false,
+						"Position": [
+							0,
+							0
+						],
 						"Radius": 1
 					}
 				],
 				"Enabled": true,
 				"Mass": 1,
-				"Inertia": 0,
-				"Velocity": {
-					"X": 0,
-					"Y": 0
-				},
+				"Inertia": 1,
+				"Velocity": [
+					0,
+					0
+				],
 				"AngularVelocity": 0,
-				"Force": {
-					"X": 0,
-					"Y": 0
-				},
+				"Force": [
+					0,
+					0
+				],
 				"Torque": 0,
 				"IgnoreGravity": false
-			},
-			{
-				"Type": "Static",
-				"Transform": {
-					"X": -3,
-					"Y": 0,
-					"Rotation": 0.5
-				},
-				"Shapes": [
-					{
-						"ShapeType": "Polygon",
-						"Friction": 0,
-						"Restitution": 0,
-						"Vertices": [
-							{
-								"X": -5,
-								"Y": -1
-							},
-							{
-								"X": -5,
-								"Y": 1
-							},
-							{
-								"X": 5,
-								"Y": 1
-							},
-							{
-								"X": 5,
-								"Y": -1
-							}
-						]
-					}
-				],
-				"Enabled": true
-			},
-			{
-				"Type": "Static",
-				"Transform": {
-					"X": 3,
-					"Y": 0,
-					"Rotation": -0.5
-				},
-				"Shapes": [
-					{
-						"ShapeType": "Polygon",
-						"Friction": 0,
-						"Restitution": 0,
-						"Vertices": [
-							{
-								"X": -5,
-								"Y": -1
-							},
-							{
-								"X": -5,
-								"Y": 1
-							},
-							{
-								"X": 5,
-								"Y": 1
-							},
-							{
-								"X": 5,
-								"Y": -1
-							}
-						]
-					}
-				],
-				"Enabled": true
 			}
 		]
 	}

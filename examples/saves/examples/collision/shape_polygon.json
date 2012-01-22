@@ -2,6 +2,7 @@
 	"ShapeType": "Polygon",
 	"Friction": 0,
 	"Restitution": 0,
+	"Sensor": false,
 	"Vertices": [
 		[
 			-1,
