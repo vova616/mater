@@ -7,14 +7,15 @@ import (
 )
 
 type CircleShape struct {
-	// Center of the circle. Call Update() if changed.
+	// Center of the circle. Call Update() on the parent shape if changed.
 	Position vect.Vect
-	// Radius of the circle. Call Update() if changed.
+	// Radius of the circle. Call Update() on the parent shape if changed.
 	Radius float64
 	// Global center of the circle. Do not touch!
 	Tc vect.Vect
 }
 
+// Creates a new CircleShape with the given center and radius.
 func NewCircle(pos vect.Vect, radius float64) *Shape {
 	shape := new(Shape)
 	shape.ShapeClass = &CircleShape{
@@ -24,6 +25,7 @@ func NewCircle(pos vect.Vect, radius float64) *Shape {
 	return shape
 }
 
+// Returns ShapeType_Circle. Needed to implemet the ShapeClass interface.
 func (circle *CircleShape) ShapeType() ShapeType {
 	return ShapeType_Circle
 }
@@ -41,6 +43,7 @@ func (circle *CircleShape) update(xf transform.Transform) aabb.AABB {
 	}
 }
 
+// Returns true if the given point is located inside the circle.
 func (circle *CircleShape) TestPoint(point vect.Vect) bool {
 	d := vect.Sub(point, circle.Tc)
 

@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-type ShapeProxy struct {
+type shapeProxy struct {
 	AABB    aabb.AABB
 	ProxyId int
 	Shape   *Shape
@@ -29,10 +29,10 @@ type Shape struct {
 
 	UserData UserData
 
-	proxy ShapeProxy
+	proxy shapeProxy
 }
 
-// Calls ShapeClass.Update and sets the new AABB.
+// Calls ShapeClass.update and sets the new AABB.
 func (shape *Shape) Update() {
 	if shape.Body == nil {
 		log.Printf("Error: uninitialized shape")
@@ -44,7 +44,7 @@ func (shape *Shape) Update() {
 	proxy.AABB = shape.AABB
 
 	if shape.Body.Space != nil {
-		shape.Body.Space.BroadPhase.MoveProxy(proxy.ProxyId, proxy.AABB, vect.Vect{})
+		shape.Body.Space.BroadPhase.moveProxy(proxy.ProxyId, proxy.AABB, vect.Vect{})
 	}
 }
 
@@ -56,9 +56,9 @@ func (shape *Shape) createProxy(broadPhase *BroadPhase, xf transform.Transform) 
 	shape.proxy.Shape = shape
 	shape.proxy.AABB = shape.ShapeClass.update(xf)
 
-	shape.proxy.ProxyId = broadPhase.AddProxy(shape.proxy)
+	shape.proxy.ProxyId = broadPhase.addProxy(shape.proxy)
 }
 
 func (shape *Shape) destroyProxy(broadPhase *BroadPhase) {
-	broadPhase.RemoveProxy(shape.proxy.ProxyId)
+	broadPhase.removeProxy(shape.proxy.ProxyId)
 }

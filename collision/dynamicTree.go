@@ -7,36 +7,36 @@ import (
 	"math"
 )
 
-type DynamicTreeNode struct {
+type dynamicTreeNode struct {
 	aabb                    AABB
 	child1, child2          int
 	leafCount, parentOrNext int
-	proxy                   ShapeProxy
+	proxy                   shapeProxy
 }
 
-func (n *DynamicTreeNode) isLeaf() bool {
+func (n *dynamicTreeNode) isLeaf() bool {
 	return n.child1 == nullNode
 }
 
-func (n *DynamicTreeNode) AABB() AABB {
+func (n *dynamicTreeNode) AABB() AABB {
 	return n.aabb
 }
 
 const nullNode = -1
 
-type DynamicTree struct {
+type dynamicTree struct {
 	_freeList, _insertionCount, _nodeCapacity,
 	_nodeCount, _path, _root int
-	_nodes      []DynamicTreeNode
+	_nodes      []dynamicTreeNode
 	_stackCount int
 	_stack      [255]int
 }
 
-func NewDynamicTree() *DynamicTree {
-	dt := new(DynamicTree)
+func newDynamicTree() *dynamicTree {
+	dt := new(dynamicTree)
 	dt._root = nullNode
 	dt._nodeCapacity = 16
-	dt._nodes = make([]DynamicTreeNode, dt._nodeCapacity)
+	dt._nodes = make([]dynamicTreeNode, dt._nodeCapacity)
 
 	for i := 0; i < dt._nodeCapacity-1; i++ {
 		dt._nodes[i].parentOrNext = i + 1
@@ -46,7 +46,7 @@ func NewDynamicTree() *DynamicTree {
 	return dt
 }
 
-func (dt *DynamicTree) AddProxy(aabb AABB, proxy ShapeProxy) int {
+func (dt *dynamicTree) AddProxy(aabb AABB, proxy shapeProxy) int {
 	proxyId := dt.allocateNode()
 
 	r := Vect{Settings.AABBExtension, Settings.AABBExtension}
@@ -60,7 +60,7 @@ func (dt *DynamicTree) AddProxy(aabb AABB, proxy ShapeProxy) int {
 	return proxyId
 }
 
-func (dt *DynamicTree) RemoveProxy(proxyId int) {
+func (dt *dynamicTree) RemoveProxy(proxyId int) {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
@@ -72,7 +72,7 @@ func (dt *DynamicTree) RemoveProxy(proxyId int) {
 	dt.freeNode(proxyId)
 }
 
-func (dt *DynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool {
+func (dt *dynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
@@ -110,7 +110,7 @@ func (dt *DynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool
 	return true
 }
 
-func (dt *DynamicTree) Rebalance(iterations int) {
+func (dt *dynamicTree) Rebalance(iterations int) {
 	if dt._root == nullNode {
 		return
 	}
@@ -139,25 +139,25 @@ func (dt *DynamicTree) Rebalance(iterations int) {
 	}
 }
 
-func (dt *DynamicTree) GetUserData(proxyId int) ShapeProxy {
+func (dt *dynamicTree) GetUserData(proxyId int) shapeProxy {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
 	return dt._nodes[proxyId].proxy
 }
 
-func (dt *DynamicTree) GetFatAABB(proxyId int) AABB {
+func (dt *dynamicTree) GetFatAABB(proxyId int) AABB {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
 	return dt._nodes[proxyId].aabb
 }
 
-func (dt *DynamicTree) ComputeHeight() int {
+func (dt *dynamicTree) ComputeHeight() int {
 	return dt.computeHeight(dt._root)
 }
 
-func (dt *DynamicTree) Query(callback func(int) bool, aabb AABB) {
+func (dt *dynamicTree) Query(callback func(int) bool, aabb AABB) {
 	//clears the stack and pushes root
 	dt._stack[0] = dt._root
 	dt._stackCount = 1
@@ -185,7 +185,7 @@ func (dt *DynamicTree) Query(callback func(int) bool, aabb AABB) {
 	}
 }
 
-func (dt *DynamicTree) RayCast(callback func(RayCastInput, int) float64, input *RayCastInput) {
+func (dt *dynamicTree) RayCast(callback func(RayCastInput, int) float64, input *RayCastInput) {
 	var p1, p2, r Vect
 	p1 = input.Point1
 	p2 = input.Point2
@@ -278,7 +278,7 @@ func (dt *DynamicTree) RayCast(callback func(RayCastInput, int) float64, input *
 	}
 }
 
-func (dt *DynamicTree) countLeaves(nodeId int) int {
+func (dt *dynamicTree) countLeaves(nodeId int) int {
 	if nodeId == nullNode {
 		return 0
 	}
@@ -305,14 +305,14 @@ func (dt *DynamicTree) countLeaves(nodeId int) int {
 	return count
 }
 
-func (dt *DynamicTree) validate() {
+func (dt *dynamicTree) validate() {
 	dt.countLeaves(dt._root)
 }
 
-func (dt *DynamicTree) allocateNode() int {
+func (dt *dynamicTree) allocateNode() int {
 	if dt._freeList == nullNode {
 		//create a new slice with double the capacity
-		dt._nodes = append(dt._nodes, make([]DynamicTreeNode, dt._nodeCapacity)...)
+		dt._nodes = append(dt._nodes, make([]dynamicTreeNode, dt._nodeCapacity)...)
 		dt._nodeCapacity *= 2
 
 		for i := dt._nodeCount; i < dt._nodeCapacity-1; i++ {
@@ -332,7 +332,7 @@ func (dt *DynamicTree) allocateNode() int {
 	return nodeId
 }
 
-func (dt *DynamicTree) freeNode(nodeId int) {
+func (dt *dynamicTree) freeNode(nodeId int) {
 	if nodeId < 0 || nodeId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, nodeId)
 	}
@@ -344,7 +344,7 @@ func (dt *DynamicTree) freeNode(nodeId int) {
 	dt._nodeCount--
 }
 
-func (dt *DynamicTree) insertLeaf(leaf int) {
+func (dt *dynamicTree) insertLeaf(leaf int) {
 	dt._insertionCount++
 	if dt._root == nullNode {
 		dt._root = leaf
@@ -433,7 +433,7 @@ func (dt *DynamicTree) insertLeaf(leaf int) {
 	}
 }
 
-func (dt *DynamicTree) removeLeaf(leaf int) {
+func (dt *dynamicTree) removeLeaf(leaf int) {
 	if leaf == dt._root {
 		dt._root = nullNode
 		return
@@ -477,7 +477,7 @@ func (dt *DynamicTree) removeLeaf(leaf int) {
 	}
 }
 
-func (dt *DynamicTree) computeHeight(nodeId int) int {
+func (dt *dynamicTree) computeHeight(nodeId int) int {
 	if nodeId == nullNode {
 		return 0
 	}

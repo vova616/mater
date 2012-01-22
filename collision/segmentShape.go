@@ -6,7 +6,7 @@ import (
 	"github.com/teomat/mater/vect"
 )
 
-//If Settings.AutoUpdateShapes is not set, call Update on the shape for changes to the A, B and Radius to take effect.
+//If Settings.AutoUpdateShapes is not set, call Update on the parent shape for changes to the A, B and Radius to take effect.
 type SegmentShape struct {
 	//start/end points of the segment.
 	A, B vect.Vect
@@ -24,6 +24,7 @@ type SegmentShape struct {
 	A_tangent, B_tangent vect.Vect
 }
 
+// Creates a new SegmentShape with the given points and radius.
 func NewSegment(a, b vect.Vect, r float64) *Shape {
 	shape := new(Shape)
 	shape.ShapeClass = &SegmentShape{
@@ -34,11 +35,12 @@ func NewSegment(a, b vect.Vect, r float64) *Shape {
 	return shape
 }
 
+// Returns ShapeType_Segment. Needed to implemet the ShapeClass interface.
 func (segment *SegmentShape) ShapeType() ShapeType {
 	return ShapeType_Segment
 }
 
-//Called to update N, Tn, Ta and Tb the the bounding box.
+//Called to update N, Tn, Ta, Tb and the the bounding box.
 func (segment *SegmentShape) update(xf transform.Transform) aabb.AABB {
 	a := xf.TransformVect(segment.A)
 	b := xf.TransformVect(segment.B)
@@ -61,7 +63,7 @@ func (segment *SegmentShape) update(xf transform.Transform) aabb.AABB {
 	}
 }
 
+// Only returns false for now.
 func (segment *SegmentShape) TestPoint(point vect.Vect) bool {
-	panic("Not yet implemented!")
 	return false
 }

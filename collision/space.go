@@ -5,6 +5,7 @@ import (
 	"log"
 )
 
+// Holds all bodies, the broadphase and the contactmanager.
 type Space struct {
 	Enabled    bool
 	Gravity    vect.Vect
@@ -23,10 +24,11 @@ func (space *Space) init() {
 	space.Bodies = make([]*Body, 0, 16)
 	space.Enabled = true
 
-	space.BroadPhase = NewBroadPhase()
-	space.ContactManager = NewContactManager(space)
+	space.BroadPhase = newBroadPhase()
+	space.ContactManager = newContactManager(space)
 }
 
+// Creates a new, empty space.
 func NewSpace() *Space {
 	space := new(Space)
 	space.init()
@@ -34,6 +36,7 @@ func NewSpace() *Space {
 	return space
 }
 
+// Adds the given body to the space.
 func (space *Space) AddBody(body *Body) {
 	if body.Space != nil {
 		log.Printf("Error adding body: body.Space != nil")
@@ -45,6 +48,7 @@ func (space *Space) AddBody(body *Body) {
 	space.Bodies = append(space.Bodies, body)
 }
 
+// Adds the given body from the space.
 func (space *Space) RemoveBody(body *Body) {
 	bodies := space.Bodies
 	for i, b := range bodies {
@@ -57,6 +61,7 @@ func (space *Space) RemoveBody(body *Body) {
 	log.Printf("Warning removing body: body not found!")
 }
 
+// Advances the space by the given timestep.
 func (space *Space) Step(dt float64) {
 
 	if dt <= 0.0 {
@@ -128,83 +133,6 @@ func (space *Space) Step(dt float64) {
 	}
 }
 
-// O(n^2) broad-phase.
-// Tries to collide everything with everything else.
-/*func (space *Space) Broadphase() {
-space.Arbiters = make([]*Arbiter, 0, len(space.Arbiters))
-for i := 0; i < len(space.Bodies)-1; i++ {
-	bi := space.Bodies[i]
-
-	for j := i + 1; j < len(space.Bodies); j++ {
-		bj := space.Bodies[j]
-
-		if bi.IsStatic() && bj.IsStatic() {
-			continue
-		}
-
-		for _, si := range bi.Shapes {
-			for _, sj := range bj.Shapes {
-
-				shouldCollide := space.Callbacks.ShouldCollide
-				if shouldCollide != nil && shouldCollide(si, sj) == false {
-					continue
-				}
-
-				//check aabbs for overlap
-				if !aabb.TestOverlap(si.AABB, sj.AABB) {
-					continue
-				}
-
-				arb := CreateArbiter(si, sj)
-				if arb.NumContacts > 0 {
-					onCollisionCallback := space.Callbacks.OnCollision
-					if onCollisionCallback != nil {
-						onCollisionCallback(arb)
-					}
-					space.Arbiters = append(space.Arbiters, arb)
-				}*/
-
-/*
-						//search if this arbiter already exists
-						var oldArb *Arbiter
-						index := 0
-
-						for i , arb := range space.Arbiters {
-							if arb.Equals(newArb) {
-								oldArb = arb
-								index = i
-								break
-							}
-						}
-
-						if newArb.NumContacts > 0 {
-							//insert or update the arbiter
-							if oldArb == nil {
-								println(1)
-								//insert
-								space.Arbiters = append(space.Arbiters, newArb)
-							} else {
-								println(2)
-								//update
-								oldArb.Update(newArb.Contacts, newArb.NumContacts)
-							}
-
-						} else {
-							if oldArb != nil {
-								println(3)
-								//remove the arbiter
-								space.Arbiters = append(space.Arbiters[:index], space.Arbiters[index+1:]...)
-							}
-							newArb.Delete()
-						}
-
-				}
-			}
-
-		}
-	}
-}*/
-
-func (space *Space) GetDynamicTreeNodes() []DynamicTreeNode {
+func (space *Space) GetDynamicTreeNodes() []dynamicTreeNode {
 	return space.BroadPhase._tree._nodes
 }

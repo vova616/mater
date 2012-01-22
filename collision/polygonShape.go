@@ -87,6 +87,7 @@ func (poly *PolygonShape) SetVerts(verts Vertices, offset vect.Vect) {
 	}
 }
 
+// Returns ShapeType_Polygon. Needed to implemet the ShapeClass interface.
 func (poly *PolygonShape) ShapeType() ShapeType {
 	return ShapeType_Polygon
 }
@@ -129,6 +130,7 @@ func (poly *PolygonShape) update(xf transform.Transform) aabb.AABB {
 	}
 }
 
+// Returns true if the given point is located inside the box.
 func (poly *PolygonShape) TestPoint(point vect.Vect) bool {
 	return poly.ContainsVert(point)
 }

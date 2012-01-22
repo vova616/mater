@@ -2,10 +2,9 @@ package collision
 
 import (
 	"github.com/teomat/mater/vect"
-	"unsafe"
 )
 
-type FeaturePair struct {
+/*type FeaturePair struct {
 	InEdge1  uint8
 	OutEdge1 uint8
 	InEdge2  uint8
@@ -15,7 +14,7 @@ type FeaturePair struct {
 // unsafe pointer magic because go doesn't have unions
 func (fp *FeaturePair) Value() int32 {
 	return *(*int32)(unsafe.Pointer(fp))
-}
+}*/
 
 // Contact point between 2 shapes.
 type Contact struct {
@@ -31,7 +30,7 @@ type Contact struct {
 	Bias                    float64
 }
 
-func (con *Contact) Reset(pos, norm vect.Vect, sep float64) {
+func (con *Contact) reset(pos, norm vect.Vect, sep float64) {
 	con.Position = pos
 	con.Normal = norm
 	con.Separation = sep

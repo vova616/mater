@@ -38,10 +38,9 @@ func (bt *BodyType) FromString(bodyType string) {
 	}
 }
 
-//represents a rigid body
 type Body struct {
-	//The body's transform.
-	//If Settings.AutoUpdateShapes is et to false, you have to call body.UpdateShapes() for the changes to take effect.
+	// The body's transform.
+	// If Settings.AutoUpdateShapes is set to false, you have to call body.UpdateShapes() for the changes to take effect.
 	Transform transform.Transform
 
 	Velocity        vect.Vect
@@ -53,11 +52,10 @@ type Body struct {
 	mass, invMass float64
 	i, invI       float64
 
-	//List of shapes that make up this body.
-	//Use body.Add/RemoveShape() instead of changing this directly.
+	// List of shapes that make up this body. Do not touch!
 	Shapes []*Shape
 
-	//The space this body is part of. Don't change!
+	// The space this body is part of. Don not touch!
 	Space *Space
 
 	Enabled  bool
@@ -65,7 +63,7 @@ type Body struct {
 
 	IgnoreGravity bool
 
-	//user defined data
+	// Pointer to userdata.
 	UserData UserData
 
 	arbiterList *ArbiterEdge
@@ -76,6 +74,7 @@ func (body *Body) init() {
 	body.Enabled = true
 }
 
+// Creates a new body with the given bodytype and mass and inertia set to 1.
 func NewBody(bodyType BodyType) *Body {
 	body := new(Body)
 	body.init()
@@ -88,7 +87,7 @@ func NewBody(bodyType BodyType) *Body {
 	return body
 }
 
-//adds the given shape to the body
+// Adds the given shape to the body.
 func (body *Body) AddShape(shape *Shape) {
 	if shape == nil {
 		log.Printf("Error adding shape: shape == nil")
@@ -113,7 +112,7 @@ func (body *Body) AddShape(shape *Shape) {
 	body.Shapes = append(body.Shapes, shape)
 }
 
-//Removes the given shape from the body.
+// Removes the given shape from the body.
 func (body *Body) RemoveShape(shape *Shape) {
 	if body.Space != nil {
 		shape.destroyProxy(body.Space.BroadPhase)
@@ -143,6 +142,7 @@ func (body *Body) destroyProxies() {
 	}
 }
 
+// Returns true if body.BodyType is BodyType_Static.
 func (body *Body) IsStatic() bool {
 	return body.bodyType == BodyType_Static
 }
@@ -163,12 +163,13 @@ func (body *Body) SetMass(mass float64) {
 	}
 }
 
+// Returns the body's mass.
 func (body *Body) Mass() float64 {
 	return body.mass
 }
 
-// Set the inertia of the body. If the body is Static the inertia can not be changed.
-// Setting the inertia to 0 and Infinity will both result in the body no longer being able to rotate.
+// Sets the inertia of the body. If the body is Static the inertia can not be changed.
+// Setting the inertia to 0 or Infinity will both result in the body no longer being able to rotate.
 func (body *Body) SetInertia(i float64) {
 	if body.IsStatic() {
 		log.Printf("Error: can't change inertia of a static body")
@@ -184,6 +185,7 @@ func (body *Body) SetInertia(i float64) {
 	}
 }
 
+// Returns the body's inertia.
 func (body *Body) Inertia() float64 {
 	return body.i
 }
@@ -195,6 +197,7 @@ func (body *Body) UpdateShapes() {
 	}
 }
 
+// Returns the body's type.
 func (body *Body) BodyType() BodyType {
 	return body.bodyType
 }

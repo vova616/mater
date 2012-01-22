@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+// Used to keep a linked list of all arbiters on a body.
 type ArbiterEdge struct {
 	Arbiter    *Arbiter
 	Next, Prev *ArbiterEdge
@@ -15,12 +16,17 @@ type ArbiterEdge struct {
 const MaxPoints = 2
 
 type Arbiter struct {
+	// The two colliding shapes.
 	ShapeA, ShapeB *Shape
+	// The contact points between the shapes.
 	Contacts       [MaxPoints]Contact
+	// The number of contact points.
 	NumContacts    int
 	nodeA, nodeB   *ArbiterEdge
 
 	Friction   float64
+
+	// Used to keep a linked list of all arbiters in a space.
 	Next, Prev *Arbiter
 }
 
@@ -28,6 +34,8 @@ func newArbiter() *Arbiter {
 	return new(Arbiter)
 }
 
+// Creates an arbiter between the given shapes.
+// If the shapes do not collide, arbiter.NumContact is zero.
 func CreateArbiter(sa, sb *Shape) *Arbiter {
 	arb := newArbiter()
 

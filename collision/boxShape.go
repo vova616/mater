@@ -19,6 +19,7 @@ type BoxShape struct {
 	Position vect.Vect
 }
 
+// Creates a new BoxShape with given position, width and height.
 func NewBox(pos vect.Vect, w, h float64) *Shape {
 	shape := new(Shape)
 	box := &BoxShape{
@@ -44,7 +45,7 @@ func NewBox(pos vect.Vect, w, h float64) *Shape {
 	return shape
 }
 
-// Recalculates the internal Polygon with new Width, Height and Position.
+// Recalculates the internal Polygon with the Width, Height and Position.
 func (box *BoxShape) UpdatePoly() {
 	hw := box.Width / 2.0
 	hh := box.Height / 2.0
@@ -59,15 +60,17 @@ func (box *BoxShape) UpdatePoly() {
 	poly.SetVerts(box.verts[:], box.Position)
 }
 
+// Returns ShapeType_Box. Needed to implemet the ShapeClass interface.
 func (box *BoxShape) ShapeType() ShapeType {
 	return ShapeType_Box
 }
 
-// Recalculates the transformed vertices and axes and the bounding box.
+// Recalculates the transformed vertices, axes and the bounding box.
 func (box *BoxShape) update(xf transform.Transform) aabb.AABB {
 	return box.Polygon.update(xf)
 }
 
+// Returns true if the given point is located inside the box.
 func (box *BoxShape) TestPoint(point vect.Vect) bool {
 	return box.Polygon.TestPoint(point)
 }
