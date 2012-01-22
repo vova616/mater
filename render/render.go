@@ -2,7 +2,6 @@ package render
 
 import (
 	gl "github.com/banthar/Go-OpenGL/gl"
-	. "github.com/teomat/mater/texutil"
 	"github.com/teomat/mater/vect"
 	"math"
 )
@@ -63,20 +62,4 @@ func DrawPoly(vertices []vect.Vect, vertCount int, filled bool) {
 		v := vertices[i]
 		gl.Vertex2d(v.X, v.Y)
 	}
-}
-
-func DrawTextureQuad(texture *Texture, vertices [4]vect.Vect, texCoords [4]vect.Vect) {
-
-	gl.BindTexture(gl.TEXTURE_2D, uint(texture.Texture))
-	gl.Begin(gl.QUADS)
-
-	for i := 0; i < 4; i++ {
-		v := vertices[i]
-		tc := texCoords[i]
-
-		gl.TexCoord2d(tc.X, tc.Y)
-		gl.Vertex2d(v.X, v.Y)
-	}
-
-	gl.End()
 }
