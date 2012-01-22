@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/teomat/mater/collision"
-	"github.com/teomat/mater/components"
 	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/vect"
 )
@@ -34,7 +33,7 @@ func (cht *CollisionCallbackTest) OnNewComponent(owner *engine.Entity, other eng
 }
 
 func (cht *CollisionCallbackTest) addHandlerToBody(comp engine.Component) {
-	if bodyComp, ok := comp.(*components.Body); ok {
+	if bodyComp, ok := comp.(*Body); ok {
 		body := bodyComp.Body
 
 		body.UserData = CollisionCallback(func(arb *collision.Arbiter) {
