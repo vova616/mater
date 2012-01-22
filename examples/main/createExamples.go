@@ -92,6 +92,7 @@ func collisionTests() {
 	scene := new(engine.Scene)
 	scene.Init()
 
+	//add a camera to the scene
 	{
 		cam := new(camera.Camera)
 		cam.Scale = vect.Vect{32, 32}
@@ -196,5 +197,63 @@ func collisionTests() {
 		}
 		
 		saveToFile(scene, "circle-polygon")
+	}
+
+	//polygon-polygon collision
+	{
+		space := collision.NewSpace()
+		scene.Space = space
+		space.Gravity = vect.Vect{0, 10}
+
+		{
+			body := collision.NewBody(collision.BodyType_Static)
+			body.Transform.Position = vect.Vect{-3, 0}
+			body.Transform.SetAngle(0.5)
+
+			verts := collision.Vertices{
+				{-5, -1},
+				{-5, 1},
+				{5, 1},
+				{5, -1},
+			}
+
+			poly := collision.NewPolygon(verts, vect.Vect{})
+			body.AddShape(poly)
+
+			space.AddBody(body)
+		}
+
+		{
+			body := collision.NewBody(collision.BodyType_Static)
+			body.Transform.Position = vect.Vect{3, 0}
+			body.Transform.SetAngle(-0.5)
+
+			verts := collision.Vertices{
+				{-5, -1},
+				{-5, 1},
+				{5, 1},
+				{5, -1},
+			}
+
+			poly := collision.NewPolygon(verts, vect.Vect{})
+			body.AddShape(poly)
+
+			space.AddBody(body)
+		}
+
+		{
+			body := collision.NewBody(collision.BodyType_Dynamic)
+			body.Transform.Position = vect.Vect{6, -7}
+			body.Transform.SetAngle(0)
+			//fixed rotation for now
+			body.SetInertia(0)
+
+			box := collision.NewBox(vect.Vect{0, 0}, 1, 1)
+			body.AddShape(box)
+
+			space.AddBody(body)
+		}
+		
+		saveToFile(scene, "polygon-polygon")
 	}
 }
