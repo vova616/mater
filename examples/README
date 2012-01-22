@@ -3,7 +3,7 @@ To run: execute ./_bin/main inside the examples folder.
 
 settings.json can be changed to change the resolution and the save directory.
 
-Flags: run "./_bin/main -help" form more information.
+Flags: run "./_bin/main -help" for more information.
 
 Controls:
      'P': pause/resume

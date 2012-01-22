@@ -1,2 +1,11 @@
 Work in progress utilities and libraries for game development in go.
-Based on compiler version weekly.2011-12-22 11071.
+Based on go compiler version weekly.2011-12-22 11071.
+
+Packages:
+	- aabb: 2d axis aligned bounding boxes
+	- camera: 2d camera component for use with mater/engine
+	- collision: 2d physics library based on box2d, box2d-lite and chipmunk-physics
+	- engine: entity-component system
+	- render: to be removed, 2d rendering utility
+	- transform: 2d transform (position & rotation)
+	- vect: 2d vectors
