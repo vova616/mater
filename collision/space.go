@@ -2,6 +2,7 @@ package collision
 
 import (
 	"github.com/teomat/mater/vect"
+	"github.com/teomat/mater/aabb"
 	"log"
 )
 
@@ -135,4 +136,15 @@ func (space *Space) Step(dt float64) {
 
 func (space *Space) GetDynamicTreeNodes() []dynamicTreeNode {
 	return space.BroadPhase._tree._nodes
+}
+
+// Queryies the dynamic tree and invokes the callback 
+// for each shape whose bounding box overlaps with the given aabb.
+// If the callback returns false, the query stops searching for new shapes.
+func (space *Space) QueryAABB(callback func(*Shape) bool, aabb aabb.AABB) {
+	queryFunc := func(proxyId int) bool{
+		proxy := space.BroadPhase.getProxy(proxyId)
+		return callback(proxy.Shape)
+	}
+	space.BroadPhase.query(queryFunc, aabb)
 }
