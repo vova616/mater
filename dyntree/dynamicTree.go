@@ -1,4 +1,4 @@
-package collision
+package dyntree
 
 import (
 	. "github.com/teomat/mater/aabb"
@@ -7,52 +7,63 @@ import (
 	"math"
 )
 
-type dynamicTreeNode struct {
-	aabb                    AABB
-	child1, child2          int
-	leafCount, parentOrNext int
-	proxy                   shapeProxy
+type DynamicTreeNode struct {
+	aabb         AABB
+	child1       int
+	child2       int
+	leafCount    int
+	parentOrNext int
+	userData     interface{}
 }
 
-func (n *dynamicTreeNode) isLeaf() bool {
+func (n *DynamicTreeNode) isLeaf() bool {
 	return n.child1 == nullNode
 }
 
-func (n *dynamicTreeNode) AABB() AABB {
+func (n *DynamicTreeNode) AABB() AABB {
 	return n.aabb
 }
 
 const nullNode = -1
 
-type dynamicTree struct {
-	_freeList, _insertionCount, _nodeCapacity,
-	_nodeCount, _path, _root int
-	_nodes      []dynamicTreeNode
-	_stackCount int
-	_stack      [255]int
+type DynamicTree struct {
+	_freeList       int
+	_insertionCount int
+	_nodeCapacity   int
+	_nodeCount      int
+	_path           int
+	_root           int
+	_nodes          []DynamicTreeNode
+	_stackCount     int
+	_stack          [255]int
+	AABBExtension   float64
+	AABBMultiplier  float64
 }
 
-func newDynamicTree() *dynamicTree {
-	dt := new(dynamicTree)
+func NewDynamicTree() *DynamicTree {
+	dt := new(DynamicTree)
 	dt._root = nullNode
 	dt._nodeCapacity = 16
-	dt._nodes = make([]dynamicTreeNode, dt._nodeCapacity)
+	dt._nodes = make([]DynamicTreeNode, dt._nodeCapacity)
 
 	for i := 0; i < dt._nodeCapacity-1; i++ {
 		dt._nodes[i].parentOrNext = i + 1
 	}
 	dt._nodes[dt._nodeCapacity-1].parentOrNext = nullNode
 
+	dt.AABBExtension = 0.1
+	dt.AABBMultiplier = 2.0
+
 	return dt
 }
 
-func (dt *dynamicTree) AddProxy(aabb AABB, proxy shapeProxy) int {
+func (dt *DynamicTree) AddProxy(aabb AABB, userData interface{}) int {
 	proxyId := dt.allocateNode()
 
-	r := Vect{Settings.AABBExtension, Settings.AABBExtension}
+	r := Vect{dt.AABBExtension, dt.AABBExtension}
 	dt._nodes[proxyId].aabb.Lower = Sub(aabb.Lower, r)
 	dt._nodes[proxyId].aabb.Upper = Add(aabb.Upper, r)
-	dt._nodes[proxyId].proxy = proxy
+	dt._nodes[proxyId].userData = userData
 	dt._nodes[proxyId].leafCount = 1
 
 	dt.insertLeaf(proxyId)
@@ -60,7 +71,7 @@ func (dt *dynamicTree) AddProxy(aabb AABB, proxy shapeProxy) int {
 	return proxyId
 }
 
-func (dt *dynamicTree) RemoveProxy(proxyId int) {
+func (dt *DynamicTree) RemoveProxy(proxyId int) {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
@@ -72,7 +83,7 @@ func (dt *dynamicTree) RemoveProxy(proxyId int) {
 	dt.freeNode(proxyId)
 }
 
-func (dt *dynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool {
+func (dt *DynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
@@ -87,11 +98,11 @@ func (dt *dynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool
 	dt.removeLeaf(proxyId)
 
 	var b AABB = aabb
-	r := Vect{Settings.AABBExtension, Settings.AABBExtension}
+	r := Vect{dt.AABBExtension, dt.AABBExtension}
 	b.Lower = Sub(b.Lower, r)
 	b.Upper = Add(b.Upper, r)
 
-	d := Mult(displacement, Settings.AABBMultiplier)
+	d := Mult(displacement, dt.AABBMultiplier)
 
 	if d.X < 0.0 {
 		b.Lower.X += d.X
@@ -110,7 +121,7 @@ func (dt *dynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool
 	return true
 }
 
-func (dt *dynamicTree) Rebalance(iterations int) {
+func (dt *DynamicTree) Rebalance(iterations int) {
 	if dt._root == nullNode {
 		return
 	}
@@ -139,25 +150,25 @@ func (dt *dynamicTree) Rebalance(iterations int) {
 	}
 }
 
-func (dt *dynamicTree) GetUserData(proxyId int) shapeProxy {
+func (dt *DynamicTree) GetUserData(proxyId int) interface{} {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
-	return dt._nodes[proxyId].proxy
+	return dt._nodes[proxyId].userData
 }
 
-func (dt *dynamicTree) GetFatAABB(proxyId int) AABB {
+func (dt *DynamicTree) GetFatAABB(proxyId int) AABB {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
 	return dt._nodes[proxyId].aabb
 }
 
-func (dt *dynamicTree) ComputeHeight() int {
+func (dt *DynamicTree) ComputeHeight() int {
 	return dt.computeHeight(dt._root)
 }
 
-func (dt *dynamicTree) Query(callback func(int) bool, aabb AABB) {
+func (dt *DynamicTree) Query(callback func(int) bool, aabb AABB) {
 	//clears the stack and pushes root
 	dt._stack[0] = dt._root
 	dt._stackCount = 1
@@ -185,11 +196,10 @@ func (dt *dynamicTree) Query(callback func(int) bool, aabb AABB) {
 	}
 }
 
-func (dt *dynamicTree) RayCast(callback func(RayCastInput, int) float64, input *RayCastInput) {
-	var p1, p2, r Vect
-	p1 = input.Point1
-	p2 = input.Point2
-	r = Sub(p2, p1)
+type RayCastCallback func(A, B Vect, maxFraction float64, nodeId int) float64
+
+func (dt *DynamicTree) RayCast(callback RayCastCallback, p1, p2 Vect, maxFraction float64) {
+	r := Sub(p2, p1)
 	if lsqr := r.LengthSqr(); lsqr <= 0.0 {
 		log.Printf("Assertion Error. Expected: value > 0.0, got: %v", lsqr)
 	}
@@ -200,8 +210,6 @@ func (dt *dynamicTree) RayCast(callback func(RayCastInput, int) float64, input *
 
 	// Separating axis for segment (Gino, p80).
 	// |dot(v, p1 - c)| > dot(|v|, h)
-
-	maxFraction := input.MaxFraction
 
 	// Build a bounding box for the segment.
 	var segmentAABB AABB
@@ -249,13 +257,7 @@ func (dt *dynamicTree) RayCast(callback func(RayCastInput, int) float64, input *
 		}
 
 		if node.isLeaf() {
-			//copy the values
-			var subInput RayCastInput
-			subInput.Point1 = input.Point1
-			subInput.Point2 = input.Point2
-			subInput.MaxFraction = maxFraction
-
-			value := callback(subInput, nodeId)
+			value := callback(p1, p2, maxFraction, nodeId)
 
 			if value == 0.0 {
 				// the client has terminated the raycast.
@@ -278,7 +280,7 @@ func (dt *dynamicTree) RayCast(callback func(RayCastInput, int) float64, input *
 	}
 }
 
-func (dt *dynamicTree) countLeaves(nodeId int) int {
+func (dt *DynamicTree) countLeaves(nodeId int) int {
 	if nodeId == nullNode {
 		return 0
 	}
@@ -305,14 +307,14 @@ func (dt *dynamicTree) countLeaves(nodeId int) int {
 	return count
 }
 
-func (dt *dynamicTree) validate() {
+func (dt *DynamicTree) validate() {
 	dt.countLeaves(dt._root)
 }
 
-func (dt *dynamicTree) allocateNode() int {
+func (dt *DynamicTree) allocateNode() int {
 	if dt._freeList == nullNode {
 		//create a new slice with double the capacity
-		dt._nodes = append(dt._nodes, make([]dynamicTreeNode, dt._nodeCapacity)...)
+		dt._nodes = append(dt._nodes, make([]DynamicTreeNode, dt._nodeCapacity)...)
 		dt._nodeCapacity *= 2
 
 		for i := dt._nodeCount; i < dt._nodeCapacity-1; i++ {
@@ -332,7 +334,7 @@ func (dt *dynamicTree) allocateNode() int {
 	return nodeId
 }
 
-func (dt *dynamicTree) freeNode(nodeId int) {
+func (dt *DynamicTree) freeNode(nodeId int) {
 	if nodeId < 0 || nodeId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, nodeId)
 	}
@@ -344,7 +346,7 @@ func (dt *dynamicTree) freeNode(nodeId int) {
 	dt._nodeCount--
 }
 
-func (dt *dynamicTree) insertLeaf(leaf int) {
+func (dt *DynamicTree) insertLeaf(leaf int) {
 	dt._insertionCount++
 	if dt._root == nullNode {
 		dt._root = leaf
@@ -433,7 +435,7 @@ func (dt *dynamicTree) insertLeaf(leaf int) {
 	}
 }
 
-func (dt *dynamicTree) removeLeaf(leaf int) {
+func (dt *DynamicTree) removeLeaf(leaf int) {
 	if leaf == dt._root {
 		dt._root = nullNode
 		return
@@ -477,7 +479,7 @@ func (dt *dynamicTree) removeLeaf(leaf int) {
 	}
 }
 
-func (dt *dynamicTree) computeHeight(nodeId int) int {
+func (dt *DynamicTree) computeHeight(nodeId int) int {
 	if nodeId == nullNode {
 		return 0
 	}
@@ -495,4 +497,8 @@ func (dt *dynamicTree) computeHeight(nodeId int) int {
 		return 1 + height2
 	}
 	panic("Never reached")
+}
+
+func (dt *DynamicTree) GetNodes() []DynamicTreeNode {
+	return dt._nodes
 }

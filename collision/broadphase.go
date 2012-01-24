@@ -2,6 +2,7 @@ package collision
 
 import (
 	. "github.com/teomat/mater/aabb"
+	. "github.com/teomat/mater/dyntree"
 	"github.com/teomat/mater/vect"
 	"math"
 	"sort"
@@ -53,7 +54,7 @@ type broadPhase struct {
 	_proxyCount        int
 	_queryCallbackFunc func(int) bool
 	_queryProxyId      int
-	_tree              *dynamicTree
+	_tree              *DynamicTree
 }
 
 func newBroadPhase() *broadPhase {
@@ -68,7 +69,7 @@ func newBroadPhase() *broadPhase {
 	dtb._moveCapacity = 16
 	dtb._moveBuffer = make([]int, dtb._moveCapacity)
 
-	dtb._tree = newDynamicTree()
+	dtb._tree = NewDynamicTree()
 
 	return dtb
 }
@@ -107,7 +108,7 @@ func (dtb *broadPhase) getFatAABB(proxyId int) AABB {
 
 // Get user data from a proxy. Returns null if the id is invalid.
 func (dtb *broadPhase) getProxy(proxyId int) shapeProxy {
-	return dtb._tree.GetUserData(proxyId)
+	return dtb._tree.GetUserData(proxyId).(shapeProxy)
 }
 
 // Test overlap of fat AABBs.
@@ -176,8 +177,8 @@ func (dtb *broadPhase) query(callback func(int) bool, aabb AABB) {
 // The callback also performs the any collision filtering. This has performance
 // roughly equal to k * log(n), where k is the number of collisions and n is the
 // number of proxies in the tree.
-func (dtb *broadPhase) rayCast(callback func(RayCastInput, int) float64, input *RayCastInput) {
-	dtb._tree.RayCast(callback, input)
+func (dtb *broadPhase) rayCast(callback func(a, b vect.Vect, fraction float64, proxyId int) float64, input *RayCastInput) {
+	dtb._tree.RayCast(callback, input.Point1, input.Point2, input.MaxFraction)
 }
 
 func (dtb *broadPhase) touchProxy(proxyId int) {
