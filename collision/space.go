@@ -57,6 +57,7 @@ func (space *Space) RemoveBody(body *Body) {
 		if b == body {
 			space.Bodies = append(bodies[:i], bodies[i+1:]...)
 			body.destroyProxies()
+			body.Space = nil
 			return
 		}
 	}

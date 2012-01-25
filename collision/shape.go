@@ -61,4 +61,5 @@ func (shape *Shape) createProxy(broadPhase *broadPhase, xf transform.Transform) 
 
 func (shape *Shape) destroyProxy(broadPhase *broadPhase) {
 	broadPhase.removeProxy(shape.proxy.ProxyId)
+	shape.proxy.Shape = nil
 }
