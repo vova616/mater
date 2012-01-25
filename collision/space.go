@@ -140,7 +140,7 @@ func (space *Space) GetDynamicTreeNodes() []dyntree.DynamicTreeNode {
 	return space.BroadPhase._tree.GetNodes()
 }
 
-// Queryies the dynamic tree and invokes the callback 
+// Queries the dynamic tree and invokes the callback 
 // for each shape whose bounding box overlaps with the given aabb.
 // If the callback returns false, the query stops searching for new shapes.
 func (space *Space) QueryAABB(callback func(*Shape) bool, aabb aabb.AABB) {
