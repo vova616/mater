@@ -10,6 +10,13 @@ type Rotation struct {
 	S, C float64
 }
 
+func NewRotation(angle float64) Rotation {
+	return Rotation{
+		C: math.Cos(angle),
+		S: math.Sin(angle),
+	}
+}
+
 func (rot *Rotation) SetIdentity() {
 	rot.S = 0
 	rot.C = 1
@@ -35,6 +42,13 @@ func (rot *Rotation) RotateVect(v vect.Vect) vect.Vect {
 type Transform struct {
 	Position vect.Vect
 	Rotation
+}
+
+func NewTransform(pos vect.Vect, angle float64) Transform {
+	return Transform{
+		Position: pos,
+		Rotation: NewRotation(angle),
+	}
 }
 
 func (xf *Transform) SetIdentity() {
