@@ -72,6 +72,7 @@ type Body struct {
 func (body *Body) init() {
 	body.Shapes = make([]*Shape, 0, 1)
 	body.Enabled = true
+	body.Transform.SetIdentity()
 }
 
 // Creates a new body with the given bodytype and mass and inertia set to 1.
