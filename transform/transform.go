@@ -39,6 +39,13 @@ func (rot *Rotation) RotateVect(v vect.Vect) vect.Vect {
 	}
 }
 
+func (rot *Rotation) RotateVectInv(v vect.Vect) vect.Vect {
+	return vect.Vect{
+		X: v.X*rot.C + v.Y*rot.S,
+		Y: -v.X*rot.S + v.Y*rot.C,
+	}
+}
+
 type Transform struct {
 	Position vect.Vect
 	Rotation
@@ -64,4 +71,8 @@ func (xf *Transform) Set(pos vect.Vect, rot float64) {
 //moves and roates the input vector.
 func (xf *Transform) TransformVect(v vect.Vect) vect.Vect {
 	return vect.Add(xf.Position, xf.RotateVect(v))
+}
+
+func (xf *Transform) TransformVectInv(v vect.Vect) vect.Vect {
+	return vect.Add(vect.Mult(xf.Position, -1), xf.RotateVectInv(v))
 }
