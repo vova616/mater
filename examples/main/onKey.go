@@ -19,10 +19,10 @@ func OnKey(key, state int) {
 			Settings.Running = false
 		case glfw.KeyF5:
 			log.Printf("QuickSave\n")
-			saveScene(QuickSavePath)
+			saveSpace(QuickSavePath)
 		case glfw.KeyF9:
 			log.Printf("QuickLoad\n")
-			loadScene(QuickSavePath)
+			loadSpace(QuickSavePath)
 			Settings.Paused = true
 		}
 	}

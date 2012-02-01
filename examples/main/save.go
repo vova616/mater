@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/teomat/mater/engine"
+	"github.com/teomat/mater/collision"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,7 +13,7 @@ import (
 
 var SaveDirectory = "saves/"
 
-func saveScene(path string) error {
+func saveSpace(path string) error {
 	path = Settings.SaveDir + path
 
 	file, err := os.Create(path)
@@ -23,9 +23,9 @@ func saveScene(path string) error {
 	}
 	defer file.Close()
 
-	dataString, err := json.MarshalIndent(scene, "", "\t")
+	dataString, err := json.MarshalIndent(space, "", "\t")
 	if err != nil {
-		log.Printf("Error encoding Scene: %v", err)
+		log.Printf("Error encoding Space: %v", err)
 		return err
 	}
 
@@ -39,9 +39,9 @@ func saveScene(path string) error {
 	return nil
 }
 
-func loadScene(path string) error {
+func loadSpace(path string) error {
 
-	var newScene *engine.Scene
+	var newSpace *collision.Space
 
 	path = Settings.SaveDir + path
 
@@ -51,18 +51,17 @@ func loadScene(path string) error {
 		return err
 	}
 
-	newScene = new(engine.Scene)
-	newScene.Callbacks = callbacks
+	newSpace = new(collision.Space)
 
-	err = json.Unmarshal(data, newScene)
+	err = json.Unmarshal(data, newSpace)
 	if err != nil {
-		log.Printf("Error decoding Scene")
+		log.Printf("Error decoding Space")
 		printSyntaxError(string(data), err)
 		return err
 	}
 
-	scene = newScene
-	scene.Space.Enabled = true
+	space = newSpace
+	space.Enabled = true
 
 	return nil
 }

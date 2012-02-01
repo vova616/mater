@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/teomat/mater/camera"
 	"github.com/teomat/mater/collision"
-	"github.com/teomat/mater/engine"
 	"github.com/teomat/mater/vect"
 	"os"
 )
@@ -89,22 +87,9 @@ func collisionExamples() {
 }
 
 func collisionTests() {
-	scene := new(engine.Scene)
-	scene.Init()
-
-	//add a camera to the scene
-	{
-		cam := new(camera.Camera)
-		cam.Scale = vect.Vect{32, 32}
-		cam.IsMainCamera = true
-
-		scene.StaticEntity.AddComponent(cam)
-	}
-
 	//circle-segment collision
 	{
 		space := collision.NewSpace()
-		scene.Space = space
 		space.Gravity = vect.Vect{0, 10}
 
 		{
@@ -140,13 +125,12 @@ func collisionTests() {
 			space.AddBody(body)
 		}
 
-		saveToFile(scene, "circle-segment")
+		saveToFile(space, "circle-segment")
 	}
 
 	//circle-polygon collision
 	{
 		space := collision.NewSpace()
-		scene.Space = space
 		space.Gravity = vect.Vect{0, 10}
 
 		{
@@ -196,13 +180,12 @@ func collisionTests() {
 			space.AddBody(body)
 		}
 
-		saveToFile(scene, "circle-polygon")
+		saveToFile(space, "circle-polygon")
 	}
 
 	//polygon-polygon collision
 	{
 		space := collision.NewSpace()
-		scene.Space = space
 		space.Gravity = vect.Vect{0, 10}
 
 		{
@@ -254,6 +237,6 @@ func collisionTests() {
 			space.AddBody(body)
 		}
 
-		saveToFile(scene, "polygon-polygon")
+		saveToFile(space, "polygon-polygon")
 	}
 }

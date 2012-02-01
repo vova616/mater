@@ -40,7 +40,7 @@ func command_save(params []string) {
 	}
 
 	fmt.Printf("Saving to %v\n", path)
-	err := saveScene(path)
+	err := saveSpace(path)
 
 	if err == nil {
 		lastSave = path
@@ -62,7 +62,7 @@ func command_load(params []string) {
 
 	fmt.Printf("Loading from %v\n", path)
 	Settings.Paused = true
-	err := loadScene(path)
+	err := loadSpace(path)
 
 	if err == nil {
 		lastSave = path

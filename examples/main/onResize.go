@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/banthar/Go-OpenGL/gl"
-	"github.com/teomat/mater/camera"
 	"github.com/teomat/mater/vect"
 )
 
@@ -17,15 +16,14 @@ func OnResize(width, height int) {
 
 	w, h := float64(width), float64(height)
 	ScreenSize = vect.Vect{w, h}
-	camera.ScreenSize = ScreenSize
-	if MainCamera != nil {
-		MainCamera.ScreenSize = ScreenSize
-	}
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
 	//camera centered at (0,0)
 	gl.Ortho(0, w, h, 0, 1, -1)
 	gl.MatrixMode(gl.MODELVIEW)
-	gl.Translated(.375, .375, 0)
+	//gl.Translated(.375, .375, 0)
+
+	//gl.Translated(-w/8, -h/2, 0)
+	//gl.Scaled(32, 32, 1)
 }

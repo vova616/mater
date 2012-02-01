@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/teomat/mater/collision"
-	"github.com/teomat/mater/render"
 	"github.com/teomat/mater/vect"
 )
 
@@ -32,7 +31,7 @@ func DrawDebugData(space *collision.Space) {
 		for _, b := range space.Bodies {
 			gl.Color3f(.3, .7, .7)
 			for _, s := range b.Shapes {
-				render.DrawQuad(s.AABB.Lower, s.AABB.Upper, false)
+				DrawQuad(s.AABB.Lower, s.AABB.Upper, false)
 			}
 		}
 	}
@@ -47,16 +46,16 @@ func DrawDebugData(space *collision.Space) {
 			p1 := con.Position
 			p2 := vect.Add(p1, vect.Mult(con.Normal, contactNormalScale))
 			//p2 := vect.Add(p1, vect.Mult(con.Normal, con.Separation))
-			render.DrawLine(p1, p2)
+			DrawLine(p1, p2)
 			gl.Color3f(0, 1, 0)
-			render.DrawCircle(con.Position, contactRadius, false)
+			DrawCircle(con.Position, contactRadius, false)
 		}
 	}
 
 	const drawTreeNodes = true
 	for _, node := range space.GetDynamicTreeNodes() {
 		gl.Color3f(0.0, .7, .7)
-		render.DrawQuad(node.AABB().Lower, node.AABB().Upper, false)
+		DrawQuad(node.AABB().Lower, node.AABB().Upper, false)
 	}
 
 	/*
@@ -88,15 +87,15 @@ func DrawDebugData(space *collision.Space) {
 			gl.Color3f(.4, .9, .4)
 			p1 := point.Position
 			p2 := Add(p1, Scale(point.Normal, axisScale))
-			render.DrawLine(p1, p2)
+			DrawLine(p1, p2)
 
 			gl.Begin(gl.POINTS)
 			if point.State == PointState_Add {
 				gl.Color3f(.3, .95, .3)
-				render.DrawCircle(p1, .1, true)
+				DrawCircle(p1, .1, true)
 			} else if point.State == PointState_Persist {
 				gl.Color3f(.3, .3, .95)
-				render.DrawCircle(p1, .1, true)
+				DrawCircle(p1, .1, true)
 			}
 			gl.End()
 		}
@@ -108,17 +107,17 @@ func DrawShape(shape *collision.Shape) {
 	switch shape.ShapeType() {
 	case collision.ShapeType_Circle:
 		circle := shape.ShapeClass.(*collision.CircleShape)
-		render.DrawCircle(vect.Add(xf.Position, xf.RotateVect(circle.Position)), circle.Radius, false)
+		DrawCircle(vect.Add(xf.Position, xf.RotateVect(circle.Position)), circle.Radius, false)
 		break
 	case collision.ShapeType_Segment:
 		segment := shape.ShapeClass.(*collision.SegmentShape)
 		a := segment.Ta
 		b := segment.Tb
 		r := segment.Radius
-		render.DrawLine(a, b)
+		DrawLine(a, b)
 		if segment.Radius > 0.0 {
-			render.DrawCircle(a, r, false)
-			render.DrawCircle(b, r, false)
+			DrawCircle(a, r, false)
+			DrawCircle(b, r, false)
 
 			verts := [4]vect.Vect{
 				vect.Add(a, vect.Vect{0, r}),
@@ -126,30 +125,30 @@ func DrawShape(shape *collision.Shape) {
 				vect.Add(b, vect.Vect{0, -r}),
 				vect.Add(b, vect.Vect{0, r}),
 			}
-			render.DrawPoly(verts[:], 4, false)
+			DrawPoly(verts[:], 4, false)
 
 		}
 		//Normal:
 		/*n := segment.Normal()
-		render.DrawLine(a, vect.Add(a, n))
-		render.DrawLine(b, vect.Add(b, n))*/
+		DrawLine(a, vect.Add(a, n))
+		DrawLine(b, vect.Add(b, n))*/
 	case collision.ShapeType_Polygon:
 		poly := shape.ShapeClass.(*collision.PolygonShape)
 		verts := poly.TVerts
-		render.DrawPoly(verts, poly.NumVerts, false)
+		DrawPoly(verts, poly.NumVerts, false)
 		//Normals
 		/*axes := poly.TAxes
 		for i, v := range verts {
 			a := axes[i]
 			v1 := v
 			v2 := verts[(i + 1) % len(verts)]
-			render.DrawLine(v1, vect.Add(v1, a.N))
-			render.DrawLine(v2, vect.Add(v2, a.N))
+			DrawLine(v1, vect.Add(v1, a.N))
+			DrawLine(v2, vect.Add(v2, a.N))
 		}*/
 
 	case collision.ShapeType_Box:
 		poly := shape.ShapeClass.(*collision.BoxShape).Polygon
 		verts := poly.TVerts
-		render.DrawPoly(verts, poly.NumVerts, false)
+		DrawPoly(verts, poly.NumVerts, false)
 	}
 }

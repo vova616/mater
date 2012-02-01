@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/jteeuwen/glfw"
-	"github.com/teomat/mater/engine"
-	"github.com/teomat/mater/vect"
+	"github.com/teomat/mater/collision"
 	"log"
 	//importing so the components can register themselves
-	"github.com/teomat/mater/camera"
 	"os"
 	"runtime/pprof"
 )
@@ -32,11 +30,9 @@ func init() {
 		"cpuprofile", "", "Write cpu profile to file.")
 }
 
-var MainCamera *camera.Camera
 var console Console
-var callbacks engine.Callbacks
 
-var scene *engine.Scene
+var space *collision.Space
 
 func main() {
 	log.SetFlags(log.Lshortfile)
@@ -104,17 +100,8 @@ func main() {
 
 	//setup scene related stuff
 	{
-		//setup default camera
-		MainCamera = new(camera.Camera)
-		cam := MainCamera
-		camera.ScreenSize = vect.Vect{float64(wx), float64(wy)}
-		cam.Transform.Position = vect.Vect{0, 0}
-		cam.Scale = vect.Vect{32, 32}
-		cam.Transform.SetAngle(0)
-
-		//create empty scene
-		scene = new(engine.Scene)
-		scene.Init()
+		//create empty space
+		space = collision.NewSpace()
 	}
 
 	//reload settings so they take effect
@@ -122,8 +109,6 @@ func main() {
 
 	//set callbacks
 	{
-		callbacks.OnNewComponent = OnNewComponent
-		scene.Callbacks = callbacks
 		glfw.SetWindowSizeCallback(OnResize)
 		glfw.SetKeyCallback(OnKey)
 	}
@@ -133,7 +118,7 @@ func main() {
 
 	//load savefile passed from the commandline if any
 	if flags.file != "" {
-		err := loadScene(flags.file)
+		err := loadSpace(flags.file)
 		Settings.Paused = true
 		if err != nil {
 			panic(err)
@@ -191,7 +176,7 @@ func main() {
 
 			//only update if not paused or if set to advance a single frame
 			if !Settings.Paused || Settings.SingleStep {
-				scene.Update(expectedFrameTime)
+				space.Step(expectedFrameTime)
 				Settings.SingleStep = false
 			}
 
@@ -199,7 +184,7 @@ func main() {
 		}
 
 		//draw debug data
-		Draw(scene)
+		Draw()
 
 		glfw.SwapBuffers()
 
