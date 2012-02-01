@@ -5,15 +5,12 @@ include $(GOROOT)/src/Make.inc
 
 TARG=main
 GOFILES=\
-	collisionCallbackTest.go\
-	collisionHandler.go\
 	console.go\
 	consoleCommands.go\
 	createExamples.go\
 	debugView.go\
 	main.go\
 	onKey.go\
-	onNewComponent.go\
 	onResize.go\
 	render.go\
 	save.go\
