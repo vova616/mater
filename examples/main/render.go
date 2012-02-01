@@ -107,7 +107,7 @@ func Draw() {
 	gl.PushMatrix()
 	
 	gl.Translated(ScreenSize.X / 2, ScreenSize.Y / 2, 0)
-	gl.Scaled(32, 32, 0)
+	gl.Scaled(Settings.Scale, Settings.Scale, 1)
 
 	DrawDebugData(space)
 

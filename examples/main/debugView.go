@@ -25,9 +25,7 @@ func DrawDebugData(space *collision.Space) {
 		}
 	}
 
-	//Draw aabbs
-	const drawAABBs = false
-	if drawAABBs {
+	if Settings.DrawAABBs {
 		for _, b := range space.Bodies {
 			gl.Color3f(.3, .7, .7)
 			for _, s := range b.Shapes {
@@ -52,54 +50,12 @@ func DrawDebugData(space *collision.Space) {
 		}
 	}
 
-	const drawTreeNodes = true
-	for _, node := range space.GetDynamicTreeNodes() {
-		gl.Color3f(0.0, .7, .7)
-		DrawQuad(node.AABB().Lower, node.AABB().Upper, false)
+	if Settings.DrawTreeNodes {
+		for _, node := range space.GetDynamicTreeNodes() {
+			gl.Color3f(0.0, .7, .7)
+			DrawQuad(node.AABB().Lower, node.AABB().Upper, false)
+		}
 	}
-
-	/*
-
-		if b.Enabled == false {
-					//Inactive
-					gl.Color3f(.5, .8, .5)
-				} else if b.IsStatic() {
-					//Static
-					gl.Color3f(1, 1, 1)
-				} else if b.Awake() == false {
-					//Sleeping
-					gl.Color3f(.5, .5, .5)
-				} else {
-					//Default
-					gl.Color3f(1, 0, 0)
-				}
-	*/
-	/*
-		const axisScale = .3
-
-		if dv.lastPoint != 0 {
-			dv.pointCount = dv.lastPoint
-		}
-
-		for i := 0; i < dv.pointCount; i++ {
-			point := &dv.points[i]
-
-			gl.Color3f(.4, .9, .4)
-			p1 := point.Position
-			p2 := Add(p1, Scale(point.Normal, axisScale))
-			DrawLine(p1, p2)
-
-			gl.Begin(gl.POINTS)
-			if point.State == PointState_Add {
-				gl.Color3f(.3, .95, .3)
-				DrawCircle(p1, .1, true)
-			} else if point.State == PointState_Persist {
-				gl.Color3f(.3, .3, .95)
-				DrawCircle(p1, .1, true)
-			}
-			gl.End()
-		}
-		dv.lastPoint = 0*/
 }
 
 func DrawShape(shape *collision.Shape) {
@@ -128,23 +84,25 @@ func DrawShape(shape *collision.Shape) {
 			DrawPoly(verts[:], 4, false)
 
 		}
-		//Normal:
-		/*n := segment.Normal()
-		DrawLine(a, vect.Add(a, n))
-		DrawLine(b, vect.Add(b, n))*/
+		if Settings.DrawNormals {
+			n := segment.Tn
+			DrawLine(a, vect.Add(a, n))
+			DrawLine(b, vect.Add(b, n))
+		}
 	case collision.ShapeType_Polygon:
 		poly := shape.ShapeClass.(*collision.PolygonShape)
 		verts := poly.TVerts
 		DrawPoly(verts, poly.NumVerts, false)
-		//Normals
-		/*axes := poly.TAxes
-		for i, v := range verts {
-			a := axes[i]
-			v1 := v
-			v2 := verts[(i + 1) % len(verts)]
-			DrawLine(v1, vect.Add(v1, a.N))
-			DrawLine(v2, vect.Add(v2, a.N))
-		}*/
+		if Settings.DrawNormals {
+			axes := poly.TAxes
+			for i, v := range verts {
+				a := axes[i]
+				v1 := v
+				v2 := verts[(i + 1) % len(verts)]
+				DrawLine(v1, vect.Add(v1, a.N))
+				DrawLine(v2, vect.Add(v2, a.N))
+			}
+		}
 
 	case collision.ShapeType_Box:
 		poly := shape.ShapeClass.(*collision.BoxShape).Polygon

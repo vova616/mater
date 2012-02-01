@@ -5,6 +5,9 @@ settings.json can be changed to change the resolution and the save directory.
 
 Flags: run "./_bin/main -help" for more information.
 
+The files in "saves/tests/" can be run with the -file flag,
+e.g. "./_bin/main -file=tests/circle-polygon.json".
+
 Controls:
      'P': pause/resume
      'S': advance by a single frame when paused

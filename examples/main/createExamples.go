@@ -45,12 +45,12 @@ func collisionExamples() {
 	{
 		circle := collision.NewCircle(vect.Vect{}, 1.0)
 
-		saveToFile(circle, "collision/shape_circle")
+		saveToFile(circle, "shape_circle")
 	}
 	{
 		segment := collision.NewSegment(vect.Vect{1, 1}, vect.Vect{-1, -1}, 0)
 
-		saveToFile(segment, "collision/shape_segment")
+		saveToFile(segment, "shape_segment")
 	}
 	{
 		verts := collision.Vertices{
@@ -62,27 +62,27 @@ func collisionExamples() {
 
 		poly := collision.NewPolygon(verts, vect.Vect{})
 
-		saveToFile(poly, "collision/shape_polygon")
+		saveToFile(poly, "shape_polygon")
 	}
 	{
 		box := collision.NewBox(vect.Vect{}, 1, 1)
 
-		saveToFile(box, "collision/shape_box")
+		saveToFile(box, "shape_box")
 	}
 	{
 		body := collision.NewBody(collision.BodyType_Static)
 
-		saveToFile(body, "collision/body_static")
+		saveToFile(body, "body_static")
 	}
 	{
 		body := collision.NewBody(collision.BodyType_Dynamic)
 
-		saveToFile(body, "collision/body_dynamic")
+		saveToFile(body, "body_dynamic")
 	}
 	{
 		space := collision.NewSpace()
 
-		saveToFile(space, "collision/space")
+		saveToFile(space, "space")
 	}
 }
 

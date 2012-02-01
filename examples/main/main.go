@@ -106,6 +106,7 @@ func main() {
 
 	//reload settings so they take effect
 	reloadSettings()
+	saveSettingsFile()
 
 	//set callbacks
 	{
