@@ -15,14 +15,14 @@ var Settings = struct {
 		Width  int
 		Height int
 	}
-	Scale float64
-	SaveDir    string
-	Running    bool `json:"-"`
-	Paused     bool `json:"-"`
-	SingleStep bool `json:"-"`
+	Scale         float64
+	SaveDir       string
+	Running       bool `json:"-"`
+	Paused        bool `json:"-"`
+	SingleStep    bool `json:"-"`
 	DrawTreeNodes bool
-	DrawNormals bool
-	DrawAABBs bool
+	DrawNormals   bool
+	DrawAABBs     bool
 }{
 	Resolution: struct {
 		Width  int
@@ -31,11 +31,11 @@ var Settings = struct {
 		Width:  800,
 		Height: 600,
 	},
-	Scale: 32,
-	SaveDir: "saves/",
+	Scale:         32,
+	SaveDir:       "saves/",
 	DrawTreeNodes: false,
-	DrawNormals: false,
-	DrawAABBs: false,
+	DrawNormals:   false,
+	DrawAABBs:     false,
 }
 
 func saveSettingsFile() error {

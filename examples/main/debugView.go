@@ -98,7 +98,7 @@ func DrawShape(shape *collision.Shape) {
 			for i, v := range verts {
 				a := axes[i]
 				v1 := v
-				v2 := verts[(i + 1) % len(verts)]
+				v2 := verts[(i+1)%len(verts)]
 				DrawLine(v1, vect.Add(v1, a.N))
 				DrawLine(v2, vect.Add(v2, a.N))
 			}
