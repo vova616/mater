@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/banthar/Go-OpenGL/gl"
 	"github.com/teomat/mater/collision"
+	"github.com/teomat/mater/transform"
 	"github.com/teomat/mater/vect"
 )
 
@@ -23,6 +24,11 @@ func DrawDebugData(space *collision.Space) {
 			DrawShape(s)
 
 		}
+	}
+
+	gl.Color3f(0, 1, 0.5)
+	for _, b := range space.Bodies {
+		DrawTransform(&b.Transform, 0.2)
 	}
 
 	if Settings.DrawAABBs {
@@ -59,11 +65,21 @@ func DrawDebugData(space *collision.Space) {
 }
 
 func DrawShape(shape *collision.Shape) {
-	xf := shape.Body.Transform
 	switch shape.ShapeType() {
 	case collision.ShapeType_Circle:
 		circle := shape.ShapeClass.(*collision.CircleShape)
-		DrawCircle(vect.Add(xf.Position, xf.RotateVect(circle.Position)), circle.Radius, false)
+		DrawCircle(circle.Tc, circle.Radius, false)
+		const circleMarkerSize = 0.08
+		{
+			p1 := vect.Add(circle.Tc, vect.Vect{0, circleMarkerSize})
+			p2 := vect.Sub(circle.Tc, vect.Vect{0, circleMarkerSize})
+			DrawLine(p1, p2)
+		}
+		{
+			p1 := vect.Add(circle.Tc, vect.Vect{circleMarkerSize, 0})
+			p2 := vect.Sub(circle.Tc, vect.Vect{circleMarkerSize, 0})
+			DrawLine(p1, p2)
+		}
 		break
 	case collision.ShapeType_Segment:
 		segment := shape.ShapeClass.(*collision.SegmentShape)
@@ -109,4 +125,11 @@ func DrawShape(shape *collision.Shape) {
 		verts := poly.TVerts
 		DrawPoly(verts, poly.NumVerts, false)
 	}
+}
+
+func DrawTransform(xf *transform.Transform, radius float64) {
+	DrawCircle(xf.Position, radius, false)
+	p := xf.RotateVect(vect.Vect{0, -radius})
+	p.Add(xf.Position)
+	DrawLine(xf.Position, p)
 }

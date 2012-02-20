@@ -38,13 +38,15 @@ func (shape *Shape) Update() {
 		log.Printf("Error: uninitialized shape")
 		return
 	}
+	body := shape.Body
 
-	shape.AABB = shape.ShapeClass.update(shape.Body.Transform)
+	shape.AABB = shape.ShapeClass.update(body.Transform)
 	proxy := &shape.proxy
 	proxy.AABB = shape.AABB
 
-	if shape.Body.Space != nil {
-		shape.Body.Space.BroadPhase.moveProxy(proxy.ProxyId, proxy.AABB, vect.Vect{})
+	if body.Space != nil {
+		d := vect.Sub(body.Transform.Position, body.prevTransform.Position)
+		body.Space.BroadPhase.moveProxy(proxy.ProxyId, proxy.AABB, d)
 	}
 }
 

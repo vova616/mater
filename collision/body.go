@@ -42,6 +42,7 @@ type Body struct {
 	// The body's transform.
 	// If Settings.AutoUpdateShapes is set to false, you have to call body.UpdateShapes() for the changes to take effect.
 	Transform transform.Transform
+	prevTransform transform.Transform
 
 	Velocity        vect.Vect
 	AngularVelocity float64
@@ -196,6 +197,7 @@ func (body *Body) UpdateShapes() {
 	for _, shape := range body.Shapes {
 		shape.Update()
 	}
+	body.prevTransform = body.Transform
 }
 
 // Returns the body's type.
