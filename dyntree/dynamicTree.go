@@ -16,7 +16,7 @@ type DynamicTreeNode struct {
 	userData     interface{}
 }
 
-func (n *DynamicTreeNode) isLeaf() bool {
+func (n *DynamicTreeNode) IsLeaf() bool {
 	return n.child1 == nullNode
 }
 
@@ -75,7 +75,7 @@ func (dt *DynamicTree) RemoveProxy(proxyId int) {
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
-	if isLeaf := dt._nodes[proxyId].isLeaf(); !isLeaf {
+	if isLeaf := dt._nodes[proxyId].IsLeaf(); !isLeaf {
 		log.Printf("Assertion Error: Expected: value == true, got: %v", isLeaf)
 	}
 
@@ -87,7 +87,7 @@ func (dt *DynamicTree) MoveProxy(proxyId int, aabb AABB, displacement Vect) bool
 	if proxyId < 0 || proxyId > dt._nodeCapacity {
 		log.Printf("Assertion Error: Expected: 0 <= value < %v, got: %v", dt._nodeCapacity, proxyId)
 	}
-	if isLeaf := dt._nodes[proxyId].isLeaf(); !isLeaf {
+	if isLeaf := dt._nodes[proxyId].IsLeaf(); !isLeaf {
 		log.Printf("Assertion Error: Expected: value == true, got: %v", isLeaf)
 	}
 
@@ -130,7 +130,7 @@ func (dt *DynamicTree) Rebalance(iterations int) {
 		node := dt._root
 
 		var bit uint = 0
-		for !dt._nodes[node].isLeaf() {
+		for !dt._nodes[node].IsLeaf() {
 			var selector int = (dt._path >> bit) & 1
 
 			if selector == 0 {
@@ -181,7 +181,7 @@ func (dt *DynamicTree) Query(callback func(int) bool, aabb AABB) {
 
 		node := dt._nodes[nodeId]
 		if TestOverlap(node.aabb, aabb) {
-			if node.isLeaf() {
+			if node.IsLeaf() {
 				proceed := callback(nodeId)
 				if !proceed {
 					return
@@ -256,7 +256,7 @@ func (dt *DynamicTree) RayCast(callback RayCastCallback, p1, p2 Vect, maxFractio
 			continue
 		}
 
-		if node.isLeaf() {
+		if node.IsLeaf() {
 			value := callback(p1, p2, maxFraction, nodeId)
 
 			if value == 0.0 {
@@ -290,7 +290,7 @@ func (dt *DynamicTree) countLeaves(nodeId int) int {
 	}
 	node := dt._nodes[nodeId]
 
-	if node.isLeaf() {
+	if node.IsLeaf() {
 		if node.leafCount != 1 {
 			log.Printf("Assertion Error: Expected: 1, got: %v", node.leafCount)
 		}
@@ -358,7 +358,7 @@ func (dt *DynamicTree) insertLeaf(leaf int) {
 	var leafAABB AABB = dt._nodes[leaf].aabb
 	silbling := dt._root
 
-	for !dt._nodes[silbling].isLeaf() {
+	for !dt._nodes[silbling].IsLeaf() {
 		child1 := dt._nodes[silbling].child1
 		child2 := dt._nodes[silbling].child2
 
@@ -374,7 +374,7 @@ func (dt *DynamicTree) insertLeaf(leaf int) {
 		inheritanceCost := 2.0 * (parentArea - silblingArea)
 
 		var cost2 float64
-		if dt._nodes[child1].isLeaf() {
+		if dt._nodes[child1].IsLeaf() {
 			aabb := Combine(leafAABB, dt._nodes[child1].aabb)
 			cost2 = aabb.Perimeter() + inheritanceCost
 		} else {
@@ -385,7 +385,7 @@ func (dt *DynamicTree) insertLeaf(leaf int) {
 		}
 
 		var cost3 float64
-		if dt._nodes[child2].isLeaf() {
+		if dt._nodes[child2].IsLeaf() {
 			aabb := Combine(leafAABB, dt._nodes[child2].aabb)
 			cost3 = aabb.Perimeter() + inheritanceCost
 		} else {
