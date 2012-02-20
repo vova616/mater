@@ -229,7 +229,6 @@ func collisionTests() {
 			body.Transform.Position = vect.Vect{6, -7}
 			body.Transform.SetAngle(0)
 			//fixed rotation for now
-			body.SetInertia(0)
 
 			box := collision.NewBox(vect.Vect{0, 0}, 1, 1)
 			body.AddShape(box)
@@ -238,5 +237,67 @@ func collisionTests() {
 		}
 
 		saveToFile(space, "polygon-polygon")
+	}
+
+	//polygon-polygon collision 2
+	{
+		space := collision.NewSpace()
+		space.Gravity = vect.Vect{0, 10}
+
+		{
+			body := collision.NewBody(collision.BodyType_Static)
+			body.Transform.Position = vect.Vect{-3, 0}
+			body.Transform.SetAngle(0.5)
+
+			verts := collision.Vertices{
+				{-5, -1},
+				{-5, 1},
+				{5, 1},
+				{5, -1},
+			}
+
+			poly := collision.NewPolygon(verts, vect.Vect{})
+			body.AddShape(poly)
+
+			space.AddBody(body)
+		}
+
+		{
+			body := collision.NewBody(collision.BodyType_Static)
+			body.Transform.Position = vect.Vect{3, 0}
+			body.Transform.SetAngle(-0.5)
+
+			verts := collision.Vertices{
+				{-5, -1},
+				{-5, 1},
+				{5, 1},
+				{5, -1},
+			}
+
+			poly := collision.NewPolygon(verts, vect.Vect{})
+			body.AddShape(poly)
+
+			space.AddBody(body)
+		}
+
+		{
+			body := collision.NewBody(collision.BodyType_Dynamic)
+			body.Transform.Position = vect.Vect{6, -7}
+			body.Transform.SetAngle(0)
+			//fixed rotation for now
+
+			{
+				box := collision.NewBox(vect.Vect{0, -0.5}, 1, 1)
+				body.AddShape(box)
+			}
+			{
+				box := collision.NewBox(vect.Vect{0, 0.5}, 1, 1)
+				body.AddShape(box)
+			}
+
+			space.AddBody(body)
+		}
+
+		saveToFile(space, "polygon-polygon2")
 	}
 }
