@@ -128,10 +128,34 @@ func (cm *ContactManager) addPair(proxyA, proxyB *shapeProxy) {
 }
 
 func (cm *ContactManager) findNewContacts() {
-	cm.broadPhase.updatePairs(
-		func(proxyA, proxyB *shapeProxy) {
-			cm.addPair(proxyA, proxyB)
-		})
+	const bruteForceBroadphase = false
+	if bruteForceBroadphase {
+		//alternative broadphase, tries to collide everything
+		for i, bodyA := range cm.Space.Bodies {
+			if !bodyA.Enabled {
+				continue
+			}
+			for j, bodyB := range cm.Space.Bodies {
+				if !bodyB.Enabled {
+					continue
+				}
+				if j <= i {
+					continue
+				}
+
+				for _, sA := range bodyA.Shapes {
+					for _, sB := range bodyB.Shapes {
+						cm.addPair(&sA.proxy, &sB.proxy)
+					}
+				}
+			}
+		}
+	} else {
+		cm.broadPhase.updatePairs(
+			func(proxyA, proxyB *shapeProxy) {
+				cm.addPair(proxyA, proxyB)
+			})
+	}
 }
 
 func (cm *ContactManager) destroy(arbiter *Arbiter) {
@@ -208,9 +232,8 @@ func (cm *ContactManager) collide() {
 
 		arb.update()
 
-		if arb.NumContacts <= 0 {
-			cm.destroy(arb)
-		} else {
+		//keep arbiters around even if no contacts exist
+		if arb.NumContacts > 0 {
 			collisionCallback := cm.Space.Callbacks.OnCollision
 			if collisionCallback != nil {
 				collisionCallback(arb)
