@@ -96,9 +96,11 @@ func (dtb *broadPhase) removeProxy(proxyId int) {
 
 func (dtb *broadPhase) moveProxy(proxyId int, aabb AABB, displacement vect.Vect) {
 	buffer := dtb._tree.MoveProxy(proxyId, aabb, displacement)
-	if buffer {
+	_ = buffer
+	//buffering everything for now
+	//if buffer {
 		dtb.bufferMove(proxyId)
-	}
+	//}
 }
 
 // Get the AABB for a proxy.
@@ -220,6 +222,7 @@ func (dtb *broadPhase) queryCallback(proxyId int) bool {
 		dtb._pairBuffer = append(make([]pair, dtb._pairCapacity), dtb._pairBuffer...)
 		dtb._pairCapacity *= 2
 	}
+
 	dtb._pairBuffer[dtb._pairCount].ProxyIdA = int(math.Min(float64(proxyId), float64(dtb._queryProxyId)))
 	dtb._pairBuffer[dtb._pairCount].ProxyIdB = int(math.Max(float64(proxyId), float64(dtb._queryProxyId)))
 	dtb._pairCount++

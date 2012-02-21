@@ -3,6 +3,7 @@ package collision
 //doubly linked list of arbiters
 type ArbiterList struct {
 	Arbiter *Arbiter
+	length int
 }
 
 //new arbiters are inserted at the front of the list
@@ -12,6 +13,7 @@ func (arbList *ArbiterList) Add(arb *Arbiter) {
 		arb.Next = arbList.Arbiter
 	}
 	arbList.Arbiter = arb
+	arbList.length++
 }
 
 func (arbList *ArbiterList) Remove(arb *Arbiter) {
@@ -29,6 +31,7 @@ func (arbList *ArbiterList) Remove(arb *Arbiter) {
 			arbList.Arbiter = arb.Next
 		}
 	}
+	arbList.length--
 }
 
 type ContactManager struct {
@@ -145,7 +148,9 @@ func (cm *ContactManager) findNewContacts() {
 
 				for _, sA := range bodyA.Shapes {
 					for _, sB := range bodyB.Shapes {
-						cm.addPair(&sA.proxy, &sB.proxy)
+						if cm.broadPhase.testOverlap(sA.proxy.ProxyId, sB.proxy.ProxyId) {
+							cm.addPair(&sA.proxy, &sB.proxy)
+						}
 					}
 				}
 			}
