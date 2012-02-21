@@ -3,7 +3,7 @@ package collision
 //doubly linked list of arbiters
 type ArbiterList struct {
 	Arbiter *Arbiter
-	length int
+	length  int
 }
 
 //new arbiters are inserted at the front of the list

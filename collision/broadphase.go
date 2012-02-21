@@ -99,7 +99,7 @@ func (dtb *broadPhase) moveProxy(proxyId int, aabb AABB, displacement vect.Vect)
 	_ = buffer
 	//buffering everything for now
 	//if buffer {
-		dtb.bufferMove(proxyId)
+	dtb.bufferMove(proxyId)
 	//}
 }
 

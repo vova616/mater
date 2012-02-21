@@ -41,7 +41,7 @@ func (bt *BodyType) FromString(bodyType string) {
 type Body struct {
 	// The body's transform.
 	// If Settings.AutoUpdateShapes is set to false, you have to call body.UpdateShapes() for the changes to take effect.
-	Transform transform.Transform
+	Transform     transform.Transform
 	prevTransform transform.Transform
 
 	Velocity        vect.Vect

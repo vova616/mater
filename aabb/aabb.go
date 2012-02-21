@@ -9,6 +9,10 @@ type AABB struct {
 	Lower, Upper vect.Vect
 }
 
+func (aabb *AABB) Valid() bool {
+	return aabb.Lower.X <= aabb.Upper.X && aabb.Lower.Y <= aabb.Upper.Y
+}
+
 //returns the center of the aabb
 func (aabb *AABB) Center() vect.Vect {
 	return vect.Mult(vect.Add(aabb.Lower, aabb.Upper), 0.5)
