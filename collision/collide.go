@@ -416,7 +416,93 @@ func findVertsFallback(contacts *[MaxPoints]Contact, poly1, poly2 *PolygonShape,
 	return num
 }
 
+func segValueOnAxis(seg *SegmentShape, n vect.Vect, d float64) float64 {
+	a := vect.Dot(n, seg.Ta) - seg.Radius
+	b := vect.Dot(n, seg.Tb) - seg.Radius
+	return math.Min(a, b) - d
+}
+
+func findPoinsBehindSeg(contacts *[MaxPoints]Contact, num *int, seg *SegmentShape, poly *PolygonShape, pDist, coef float64) {
+	dta := vect.Cross(seg.Tn, seg.Ta)
+	dtb := vect.Cross(seg.Tn, seg.Tb)
+	n := vect.Mult(seg.Tn, coef)
+
+	for i := 0; i < poly.NumVerts; i++ {
+		v := poly.TVerts[i]
+		if vect.Dot(v, n) < vect.Dot(seg.Tn, seg.Ta) * coef + seg.Radius {
+			dt := vect.Cross(seg.Tn, v)
+			if dta >= dt && dt >= dtb {
+				nextContact(contacts, num).reset(v, n, pDist)
+			}
+		}
+	}
+}
+
 func seg2polyFunc(contacts *[MaxPoints]Contact, seg *SegmentShape, poly *PolygonShape) int {
-	log.Printf("Segment2Poly collision not yet implemented!")
-	return 0
+	axes := poly.TAxes
+
+	segD := vect.Dot(seg.Tn, seg.Ta)
+	minNorm := poly.ValueOnAxis(seg.Tn, segD) - seg.Radius
+	minNeg := poly.ValueOnAxis(vect.Mult(seg.Tn, -1), -segD) - seg.Radius
+	if minNeg > 0.0 || minNorm > 0.0 {
+		return 0
+	}
+
+	mini := 0
+	poly_min := segValueOnAxis(seg, axes[0].N, axes[0].D)
+	if poly_min > 0.0 {
+		return 0
+	}
+
+	for i := 0; i < poly.NumVerts; i++ {
+		dist := segValueOnAxis(seg, axes[i].N, axes[i].D)
+		if dist > 0.0 {
+			return 0
+		} else if dist > poly_min {
+			poly_min = dist;
+			mini = i
+		}
+	}
+
+	num := 0
+
+	poly_n := vect.Mult(axes[mini].N, -1)
+
+	va := vect.Add(seg.Ta, vect.Mult(poly_n, seg.Radius))
+	vb := vect.Add(seg.Tb, vect.Mult(poly_n, seg.Radius))
+	if poly.ContainsVert(va) {
+		nextContact(contacts, &num).reset(va, poly_n, poly_min)
+	}
+	if poly.ContainsVert(vb) {
+		nextContact(contacts, &num).reset(vb, poly_n, poly_min)
+	}
+
+	if minNorm >= poly_min || minNeg >= poly_min {
+		if minNorm > minNeg {
+			findPoinsBehindSeg(contacts, &num, seg, poly, minNorm, 1.0)
+		} else {
+			findPoinsBehindSeg(contacts, &num, seg, poly, minNeg, -1.0)
+		}
+	}
+
+	// If no other collision points are found, try colliding endpoints.
+	if num == 0 {
+		poly_a := poly.TVerts[mini]
+		poly_b := poly.TVerts[(mini + 1) % poly.NumVerts]
+
+		if segmentEncapQuery(seg.Ta, poly_a, seg.Radius, 0.0, &contacts[0], vect.Mult(seg.A_tangent, -1)) != 0 {
+			return 1
+		}
+		if segmentEncapQuery(seg.Tb, poly_a, seg.Radius, 0.0, &contacts[0], vect.Mult(seg.B_tangent, -1)) != 0 {
+			return 1
+		}
+		if segmentEncapQuery(seg.Ta, poly_b, seg.Radius, 0.0, &contacts[0], vect.Mult(seg.A_tangent, -1)) != 0 {
+			return 1
+		}
+		if segmentEncapQuery(seg.Tb, poly_b, seg.Radius, 0.0, &contacts[0], vect.Mult(seg.B_tangent, -1)) != 0 {
+			return 1
+		}
+	}
+
+	return num
 }

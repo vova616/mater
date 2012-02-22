@@ -159,3 +159,14 @@ func (poly *PolygonShape) ContainsVertPartial(v, n vect.Vect) bool {
 
 	return true
 }
+
+func (poly *PolygonShape) ValueOnAxis(n vect.Vect, d float64) float64 {
+	verts := poly.TVerts
+	min := vect.Dot(n, verts[0])
+
+	for i := 1; i < poly.NumVerts; i++ {
+		min = math.Min(min, vect.Dot(n, verts[i]))
+	}
+
+	return min - d
+}
