@@ -71,15 +71,16 @@
 			},
 			"Shapes": [
 				{
-					"ShapeType": "Circle",
+					"ShapeType": "Box",
 					"Friction": 0.2,
 					"Restitution": 0,
 					"Sensor": false,
+					"Width": 1,
+					"Height": 1,
 					"Position": [
 						0,
 						0
-					],
-					"Radius": 1
+					]
 				}
 			],
 			"Enabled": true,
