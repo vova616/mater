@@ -13,6 +13,12 @@ type ArbiterEdge struct {
 	Other      *Body
 }
 
+type arbiterState int
+const(
+	arbiterStateFirstColl = iota
+	arbiterStateNormal
+)
+
 // The maximum number of ContactPoints a single Arbiter can have.
 const MaxPoints = 2
 
@@ -23,6 +29,10 @@ type Arbiter struct {
 	Contacts [MaxPoints]Contact
 	// The number of contact points.
 	NumContacts  int
+
+	oldContacts [MaxPoints]Contact
+	oldNumContacts  int
+
 	nodeA, nodeB *ArbiterEdge
 
 	Friction float64
@@ -32,6 +42,8 @@ type Arbiter struct {
 
 	// Used to keep a linked list of all arbiters in a space.
 	Next, Prev *Arbiter
+
+	state arbiterState
 }
 
 func newArbiter() *Arbiter {
@@ -79,13 +91,12 @@ func (arb1 *Arbiter) equals(arb2 *Arbiter) bool {
 }
 
 func (arb *Arbiter) update() {
-	var oldContacts [MaxPoints]Contact = arb.Contacts
-	var oldNumContacts = arb.NumContacts
+	oldContacts := &arb.oldContacts
+	oldNumContacts := arb.oldNumContacts
 
 	sa := arb.ShapeA
 	sb := arb.ShapeB
 
-	arb.NumContacts = collide(&arb.Contacts, sa, sb)
 	for i := 0; i < oldNumContacts; i++ {
 		oldC := &oldContacts[i]
 		for j := 0; j < arb.NumContacts; j++ {
@@ -134,8 +145,11 @@ func (arb *Arbiter) preStep(inv_dt float64) {
 }
 
 func (arb *Arbiter) applyCachedImpulse(dt_coef float64) {
-	return
-	//if(cpArbiterIsFirstContact(arb)) return;
+	if arb.state == arbiterStateFirstColl {
+		arb.state = arbiterStateNormal
+		return
+	}
+
 	a := arb.ShapeA.Body
 	b := arb.ShapeB.Body
 	for i := 0; i < arb.NumContacts; i++ {
