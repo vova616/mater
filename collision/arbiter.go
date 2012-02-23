@@ -30,9 +30,6 @@ type Arbiter struct {
 	// The number of contact points.
 	NumContacts  int
 
-	oldContacts [MaxPoints]Contact
-	oldNumContacts  int
-
 	nodeA, nodeB *ArbiterEdge
 
 	Friction float64
@@ -63,7 +60,7 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 		arb.ShapeB = sa
 	}
 
-	arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)
+	/*arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)*/
 
 	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
 	arb.Restitution = math.Sqrt(sa.Restitution * sb.Restitution)
@@ -90,17 +87,17 @@ func (arb1 *Arbiter) equals(arb2 *Arbiter) bool {
 	return false
 }
 
-func (arb *Arbiter) update() {
-	oldContacts := &arb.oldContacts
-	oldNumContacts := arb.oldNumContacts
+func (arb *Arbiter) update(contacts *[MaxPoints]Contact, numContacts int) {
+	oldContacts := &arb.Contacts
+	oldNumContacts := arb.NumContacts
 
 	sa := arb.ShapeA
 	sb := arb.ShapeB
 
 	for i := 0; i < oldNumContacts; i++ {
 		oldC := &oldContacts[i]
-		for j := 0; j < arb.NumContacts; j++ {
-			newC := &arb.Contacts[j]
+		for j := 0; j < numContacts; j++ {
+			newC := &contacts[j]
 
 			if newC.hash == oldC.hash {
 				newC.jnAcc = oldC.jnAcc
@@ -108,6 +105,9 @@ func (arb *Arbiter) update() {
 			}
 		}
 	}
+
+	arb.Contacts = *contacts
+	arb.NumContacts = numContacts
 	
 	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
 	arb.Restitution = math.Sqrt(sa.Restitution * sb.Restitution)
@@ -149,7 +149,7 @@ func (arb *Arbiter) applyCachedImpulse(dt_coef float64) {
 		arb.state = arbiterStateNormal
 		return
 	}
-
+	return
 	a := arb.ShapeA.Body
 	b := arb.ShapeB.Body
 	for i := 0; i < arb.NumContacts; i++ {

@@ -234,14 +234,13 @@ func (cm *ContactManager) collide() {
 			cm.destroy(arb)
 			continue
 		}
-		arb.oldContacts = arb.Contacts
-		arb.oldNumContacts = arb.NumContacts
 
-		arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)
+		newContacts := [MaxPoints]Contact{}
+		numContacts := collide(&newContacts, arb.ShapeA, arb.ShapeB)
+		arb.update(&newContacts, numContacts)
 
 		//keep arbiters around even if no contacts exist
 		if arb.NumContacts > 0 {
-			arb.update()
 			collisionCallback := cm.Space.Callbacks.OnCollision
 			if collisionCallback != nil {
 				collisionCallback(arb)
