@@ -2,6 +2,7 @@ package collision
 
 import (
 	"github.com/teomat/mater/vect"
+	"github.com/teomat/mater/transform"
 	"math"
 )
 
@@ -25,6 +26,9 @@ type Arbiter struct {
 	nodeA, nodeB *ArbiterEdge
 
 	Friction float64
+	Restitution float64
+
+	Surface_vr vect.Vect
 
 	// Used to keep a linked list of all arbiters in a space.
 	Next, Prev *Arbiter
@@ -50,6 +54,8 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 	arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)
 
 	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
+	arb.Restitution = math.Sqrt(sa.Restitution * sb.Restitution)
+	arb.Surface_vr = vect.Vect{}
 
 	arb.nodeA = new(ArbiterEdge)
 	arb.nodeB = new(ArbiterEdge)
@@ -68,182 +74,122 @@ func (arb1 *Arbiter) equals(arb2 *Arbiter) bool {
 	if arb1.ShapeA == arb2.ShapeA && arb1.ShapeB == arb2.ShapeB {
 		return true
 	}
-	/*if arb1.ShapeA == arb2.ShapeB && arb1.ShapeB == arb1.ShapeA {
-		return true
-	}*/
 
 	return false
 }
 
 func (arb *Arbiter) update() {
-	/*var mergedContacts [MaxPoints]Contact
+	var oldContacts [MaxPoints]Contact = arb.Contacts
+	var oldNumContacts = arb.NumContacts
 
-	for i := 0; i < numNewContacts; i++ {
-		cNew := newContacts[i]
-		k := -1
+	sa := arb.ShapeA
+	sb := arb.ShapeB
+
+	arb.NumContacts = collide(&arb.Contacts, sa, sb)
+	for i := 0; i < oldNumContacts; i++ {
+		oldC := &oldContacts[i]
 		for j := 0; j < arb.NumContacts; j++ {
-			cOld := arb.Contacts[j]
+			newC := &arb.Contacts[j]
 
-			if cNew.Feature.Value() == cOld.Feature.Value() {
-				k = j
-				break
+			if newC.hash == oldC.hash {
+				newC.jnAcc = oldC.jnAcc
+				newC.jtAcc = oldC.jtAcc
 			}
 		}
-
-		if k > -1 {
-			cOld := arb.Contacts[k]
-			mergedContacts[i] = cNew
-			c := mergedContacts[i]
-			const warmStarting = false
-			if warmStarting {
-				c.Pn = cOld.Pn
-				c.Pt = cOld.Pt
-				c.Pnb = cOld.Pnb
-			} else {
-				c.Pn = 0
-				c.Pt = 0
-				c.Pnb = 0
-			}
-		} else {
-			mergedContacts[i] = newContacts[i]
-		}
 	}
-
-	for i := 0; i < numNewContacts; i++ {
-		arb.Contacts[i] = mergedContacts[i]
-	}
-
-	arb.NumContacts = numNewContacts*/
-	arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)
+	
+	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
+	arb.Restitution = math.Sqrt(sa.Restitution * sb.Restitution)
+	arb.Surface_vr = vect.Sub(sa.Surface_v, sb.Surface_v)
 }
 
 func (arb *Arbiter) preStep(inv_dt float64) {
 	const allowedPenetration = 0.01
-	biasFactor := 0.0
+	bias := 0.0
 	if Settings.PositionCorrection {
-		biasFactor = 0.2
+		bias = 0.2
 	}
 
-	b1 := arb.ShapeA.Body
-	b2 := arb.ShapeB.Body
+	a := arb.ShapeA.Body
+	b := arb.ShapeB.Body
 
 	for i := 0; i < arb.NumContacts; i++ {
-		c := &arb.Contacts[i]
+		con := &arb.Contacts[i]
 
-		c.R1 = vect.Sub(c.Position, b1.Transform.Position)
-		c.R2 = vect.Sub(c.Position, b2.Transform.Position)
-		r1 := c.R1
-		r2 := c.R2
+		// Calculate the offsets.
+		con.R1 = vect.Sub(con.Position, a.Transform.Position)
+		con.R2 = vect.Sub(con.Position, b.Transform.Position)
 
-		//Precompute normal mass, tangent mass, and bias
-		rn1 := vect.Dot(r1, c.Normal)
-		rn2 := vect.Dot(r2, c.Normal)
-		kNormal := b1.invMass + b2.invMass
-		kNormal += b1.invI*(vect.Dot(r1, r1)-rn1*rn1) +
-			b2.invI*(vect.Dot(r2, r2)-rn2*rn2)
-		c.MassNormal = 1.0 / kNormal
+		// Calculate the mass normal and mass tangent.
+		con.nMass = 1.0 / k_scalar(a, b, con.R1, con.R2, con.Normal)
+		con.tMass = 1.0 / k_scalar(a, b, con.R1, con.R2, vect.Perp(con.Normal))
 
-		tangent := vect.CrossVF(c.Normal, 1.0)
-		rt1 := vect.Dot(r1, tangent)
-		rt2 := vect.Dot(r2, tangent)
-		kTangent := b1.invMass + b2.invMass
-		kTangent += b1.invI*(vect.Dot(r1, r1)-rt1*rt1) +
-			b2.invI*(vect.Dot(r2, r2)-rt2*rt2)
-		c.MassTangent = 1.0 / kTangent
+		// Calculate the target bias velocity.
+		con.bias = -bias * inv_dt * math.Min(0.0, con.Dist + allowedPenetration)
+		con.jBias = 0.0
 
-		c.Bias = -biasFactor * inv_dt * math.Min(0.0, c.Separation+allowedPenetration)
+		// Calculate the target bounce velocity.
+		con.bounce = normal_relative_velocity(a, b, con.R1, con.R2, con.Normal) * arb.Restitution
+	}
+}
 
-		if Settings.AccumulateImpulses {
-			//Apply normal + friction impulse
-			P := vect.Add(vect.Mult(c.Normal, c.Pn), vect.Mult(tangent, c.Pt))
-
-			b1.Velocity.Sub(vect.Mult(P, b1.invMass))
-			b1.AngularVelocity -= b1.invI * vect.Cross(r1, P)
-
-			b2.Velocity.Add(vect.Mult(P, b2.invMass))
-			b2.AngularVelocity += b2.invI * vect.Cross(r2, P)
-		}
-
+func (arb *Arbiter) applyCachedImpulse(dt_coef float64) {
+	return
+	//if(cpArbiterIsFirstContact(arb)) return;
+	a := arb.ShapeA.Body
+	b := arb.ShapeB.Body
+	for i := 0; i < arb.NumContacts; i++ {
+		con := &arb.Contacts[i]
+		j := transform.RotateVect(con.Normal, transform.Rotation{con.jnAcc, con.jtAcc})
+		apply_impulses(a, b, con.R1, con.R2, vect.Mult(j, dt_coef))
 	}
 }
 
 func (arb *Arbiter) applyImpulse() {
-	sA := arb.ShapeA
-	sB := arb.ShapeB
-
-	b1 := sA.Body
-	b2 := sB.Body
-
-	//xfA := b1.Transform
-	//xfB := b2.Transform
+	a := arb.ShapeA.Body
+	b := arb.ShapeB.Body
 
 	for i := 0; i < arb.NumContacts; i++ {
-		c := &arb.Contacts[i]
+		con := &arb.Contacts[i]
+		n := con.Normal
+		r1 := con.R1
+		r2 := con.R2
 
-		// Relative velocity at contact
-		dv := vect.Vect{}
-		{
-			t1 := vect.Add(b2.Velocity, vect.CrossFV(b2.AngularVelocity, c.R2))
-			t2 := vect.Sub(b1.Velocity, vect.CrossFV(b1.AngularVelocity, c.R1))
+		// Calculate the relative bias velocities.
+		vb1 := vect.Add(a.v_bias, vect.Mult(vect.Perp(r1), a.w_bias))
+		vb2 := vect.Add(b.v_bias, vect.Mult(vect.Perp(r2), b.w_bias))
+		vbn := vect.Dot(vect.Sub(vb2, vb1), n)
 
-			dv = vect.Sub(t1, t2)
-		}
+		// Calculate and clamp the bias impulse.
+		jbn := (con.bias - vbn) * con.nMass
+		jbnOld := con.jBias
+		con.jBias = math.Max(jbnOld + jbn, 0.0)
+		jbn = con.jBias - jbnOld
 
-		// Compute normal impulse
-		vn := vect.Dot(dv, c.Normal)
+		// Apply the bias impulse.
+		apply_bias_impulses(a, b, r1, r2, vect.Mult(n, jbn))
 
-		dPn := c.MassNormal * (-vn + c.Bias)
+		// Calculate the relative velocity.
+		vr := relative_velocity(a, b, r1, r2)
+		vrn := vect.Dot(vr, n)
 
-		if Settings.AccumulateImpulses {
-			// Clamp the accumulated impulse
-			Pn0 := c.Pn
-			c.Pn = math.Max(Pn0+dPn, 0.0)
-			dPn = c.Pn - Pn0
-		} else {
-			dPn = math.Max(dPn, 0.0)
-		}
+		// Calculate and clamp the normal impulse.
+		jn := -(con.bounce + vrn) * con.nMass
+		jnOld := con.jnAcc
+		con.jnAcc = math.Max(jnOld + jn, 0.0)
+		jn = con.jnAcc - jnOld
 
-		//Apply contact impulse
-		Pn := vect.Mult(c.Normal, dPn)
+		// Calculate the relative tangent velocity.
+		vrt := vect.Dot(vect.Add(vr, arb.Surface_vr), vect.Perp(n))
 
-		b1.Velocity.Sub(vect.Mult(Pn, b1.invMass))
-		b1.AngularVelocity -= b1.invI * vect.Cross(c.R1, Pn)
+		// Calculate and clamp the friction impulse.
+		jtMax := arb.Friction * con.jnAcc
+		jt := -vrt * con.tMass
+		jtOld := con.jtAcc
+		con.jtAcc = clamp(jtOld + jt, -jtMax, jtMax)
+		jt = con.jtAcc - jtOld
 
-		b2.Velocity.Add(vect.Mult(Pn, b2.invMass))
-		b2.AngularVelocity += b2.invI * vect.Cross(c.R2, Pn)
-
-		//Relative velocity at contact
-		{
-			t1 := vect.Add(b2.Velocity, vect.CrossFV(b2.AngularVelocity, c.R2))
-			t2 := vect.Sub(b1.Velocity, vect.CrossFV(b1.AngularVelocity, c.R1))
-
-			dv = vect.Sub(t1, t2)
-		}
-
-		tangent := vect.CrossVF(c.Normal, 1.0)
-		vt := vect.Dot(dv, tangent)
-		dPt := c.MassTangent * (-vt)
-
-		if Settings.AccumulateImpulses {
-			//Compute friction impulse
-			maxPt := arb.Friction * c.Pn
-
-			//Clamp Friction
-			oldTangentImpulse := c.Pt
-			c.Pt = clamp(oldTangentImpulse+dPt, -maxPt, maxPt)
-			dPt = c.Pt - oldTangentImpulse
-		} else {
-			maxPt := arb.Friction * dPn
-			dPt = clamp(dPt, -maxPt, maxPt)
-		}
-
-		// Apply contact impulse
-		Pt := vect.Mult(tangent, dPt)
-
-		b1.Velocity.Sub(vect.Mult(Pt, b1.invMass))
-		b1.AngularVelocity -= b1.invI * vect.Cross(c.R1, Pt)
-
-		b2.Velocity.Add(vect.Mult(Pt, b2.invMass))
-		b2.AngularVelocity += b2.invI * vect.Cross(c.R2, Pt)
+		// Apply the final impulse.
+		apply_impulses(a, b, r1, r2, transform.RotateVect(n, transform.Rotation{jn, jt}))
 	}
 }

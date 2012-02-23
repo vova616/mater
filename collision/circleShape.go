@@ -7,6 +7,7 @@ import (
 )
 
 type CircleShape struct {
+	Shape *Shape
 	// Center of the circle. Call Update() on the parent shape if changed.
 	Position vect.Vect
 	// Radius of the circle. Call Update() on the parent shape if changed.
@@ -17,11 +18,13 @@ type CircleShape struct {
 
 // Creates a new CircleShape with the given center and radius.
 func NewCircle(pos vect.Vect, radius float64) *Shape {
-	shape := new(Shape)
-	shape.ShapeClass = &CircleShape{
+	shape := newShape()
+	circle := &CircleShape{
 		Position: pos,
 		Radius:   radius,
+		Shape: shape,
 	}
+	shape.ShapeClass = circle
 	return shape
 }
 

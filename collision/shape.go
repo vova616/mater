@@ -30,6 +30,19 @@ type Shape struct {
 	UserData UserData
 
 	proxy shapeProxy
+
+	hash hashValue
+
+	// Surface velocity used when solving for friction.
+	Surface_v vect.Vect
+}
+
+var shapeIdCounter = hashValue(0)
+func newShape() *Shape {
+	shape := new(Shape)
+	shape.hash = shapeIdCounter
+	shapeIdCounter++
+	return shape
 }
 
 // Calls ShapeClass.update and sets the new AABB.

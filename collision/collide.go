@@ -214,7 +214,7 @@ func circle2circleQuery(p1, p2 vect.Vect, r1, r2 float64, con *Contact) int {
 		norm = vect.Mult(delta, 1.0/dist)
 	}
 
-	con.reset(pos, norm, dist-minDist)
+	con.reset(pos, norm, dist-minDist, 0)
 
 	return 1
 }
@@ -259,7 +259,7 @@ func circle2segmentFunc(contacts *[MaxPoints]Contact, circle *CircleShape, segme
 			}
 			con := &contacts[0]
 			pos := vect.Add(circle.Tc, vect.Mult(n, circle.Radius+dist*0.5))
-			con.reset(pos, n, dist)
+			con.reset(pos, n, dist, 0)
 			return 1
 		} else {
 			if dt < (dtMax + rsum) {
@@ -302,6 +302,7 @@ func circle2polyFunc(contacts *[MaxPoints]Contact, circle *CircleShape, poly *Po
 			vect.Sub(circle.Tc, vect.Mult(n, circle.Radius+min/2.0)),
 			vect.Mult(n, -1),
 			min,
+			0,
 		)
 		return 1
 	} else {
@@ -377,15 +378,15 @@ func nextContact(contacts *[MaxPoints]Contact, numPtr *int) *Contact {
 func findVerts(contacts *[MaxPoints]Contact, poly1, poly2 *PolygonShape, n vect.Vect, dist float64) int {
 	num := 0
 
-	for _, v := range poly1.TVerts {
+	for i, v := range poly1.TVerts {
 		if poly2.ContainsVert(v) {
-			nextContact(contacts, &num).reset(v, n, dist)
+			nextContact(contacts, &num).reset(v, n, dist, hashPair(poly1.Shape.hash, hashValue(i)))
 		}
 	}
 
-	for _, v := range poly2.TVerts {
+	for i, v := range poly2.TVerts {
 		if poly1.ContainsVert(v) {
-			nextContact(contacts, &num).reset(v, n, dist)
+			nextContact(contacts, &num).reset(v, n, dist, hashPair(poly2.Shape.hash, hashValue(i)))
 		}
 	}
 
@@ -401,15 +402,15 @@ func findVerts(contacts *[MaxPoints]Contact, poly1, poly2 *PolygonShape, n vect.
 func findVertsFallback(contacts *[MaxPoints]Contact, poly1, poly2 *PolygonShape, n vect.Vect, dist float64) int {
 	num := 0
 
-	for _, v := range poly1.TVerts {
+	for i, v := range poly1.TVerts {
 		if poly2.ContainsVertPartial(v, vect.Mult(n, -1)) {
-			nextContact(contacts, &num).reset(v, n, dist)
+			nextContact(contacts, &num).reset(v, n, dist, hashPair(poly1.Shape.hash, hashValue(i)))
 		}
 	}
 
-	for _, v := range poly2.TVerts {
+	for i, v := range poly2.TVerts {
 		if poly1.ContainsVertPartial(v, n) {
-			nextContact(contacts, &num).reset(v, n, dist)
+			nextContact(contacts, &num).reset(v, n, dist, hashPair(poly2.Shape.hash, hashValue(i)))
 		}
 	}
 
@@ -432,7 +433,7 @@ func findPoinsBehindSeg(contacts *[MaxPoints]Contact, num *int, seg *SegmentShap
 		if vect.Dot(v, n) < vect.Dot(seg.Tn, seg.Ta) * coef + seg.Radius {
 			dt := vect.Cross(seg.Tn, v)
 			if dta >= dt && dt >= dtb {
-				nextContact(contacts, num).reset(v, n, pDist)
+				nextContact(contacts, num).reset(v, n, pDist, hashPair(poly.Shape.hash, hashValue(i)))
 			}
 		}
 	}
@@ -471,10 +472,10 @@ func seg2polyFunc(contacts *[MaxPoints]Contact, seg *SegmentShape, poly *Polygon
 	va := vect.Add(seg.Ta, vect.Mult(poly_n, seg.Radius))
 	vb := vect.Add(seg.Tb, vect.Mult(poly_n, seg.Radius))
 	if poly.ContainsVert(va) {
-		nextContact(contacts, &num).reset(va, poly_n, poly_min)
+		nextContact(contacts, &num).reset(va, poly_n, poly_min, hashPair(seg.Shape.hash, 0))
 	}
 	if poly.ContainsVert(vb) {
-		nextContact(contacts, &num).reset(vb, poly_n, poly_min)
+		nextContact(contacts, &num).reset(vb, poly_n, poly_min, hashPair(seg.Shape.hash, 1))
 	}
 
 	if minNorm >= poly_min || minNeg >= poly_min {

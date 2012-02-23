@@ -170,6 +170,7 @@ func Lerp(v1, v2 Vect, s float64) Vect {
 	}
 }
 
+//Returns v rotated by 90 degrees
 func Perp(v Vect) Vect {
 	return Vect{-v.Y, v.X}
 }

@@ -15,6 +15,7 @@ type PolygonAxis struct {
 }
 
 type PolygonShape struct {
+	Shape *Shape
 	// The raw vertices of the polygon. Do not touch!
 	// Use polygon.SetVerts() to change this.
 	Verts Vertices
@@ -36,8 +37,8 @@ func NewPolygon(verts Vertices, offset vect.Vect) *Shape {
 		return nil
 	}
 
-	shape := new(Shape)
-	poly := &PolygonShape{}
+	shape := newShape()
+	poly := &PolygonShape{Shape: shape}
 
 	poly.SetVerts(verts, offset)
 

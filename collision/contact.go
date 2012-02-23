@@ -20,22 +20,29 @@ func (fp *FeaturePair) Value() int32 {
 type Contact struct {
 	Position vect.Vect
 	Normal   vect.Vect
-	R1, R2   vect.Vect
+	Dist     float64
 
-	Separation              float64
-	Pn                      float64 // accumulated normal impulse
-	Pt                      float64 // accumulated tangent impulse
-	Pnb                     float64 // accumulated normal impulse for position bias
-	MassNormal, MassTangent float64
-	Bias                    float64
+	R1, R2   vect.Vect
+	nMass float64
+	tMass float64
+	bounce float64
+
+	jnAcc float64
+	jtAcc float64
+	jBias float64
+
+	bias float64
+
+	hash hashValue
 }
 
-func (con *Contact) reset(pos, norm vect.Vect, sep float64) {
+func (con *Contact) reset(pos, norm vect.Vect, dist float64, hash hashValue) {
 	con.Position = pos
 	con.Normal = norm
-	con.Separation = sep
+	con.Dist = dist
+	con.hash = hash
 
-	con.Pn = 0.0
-	con.Pt = 0.0
-	con.Pnb = 0.0
+	con.jnAcc = 0.0
+	con.jtAcc = 0.0
+	con.jBias = 0.0
 }

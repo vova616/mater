@@ -370,7 +370,7 @@ func (circle *CircleShape) unmarshalShape(shape *Shape, data []byte) error {
 
 	//circle.Position = circleData.Position
 	circle.Radius = circleData.Radius
-
+	circle.Shape = shape
 	return nil
 }
 
@@ -419,6 +419,7 @@ func (segment *SegmentShape) unmarshalShape(shape *Shape, data []byte) error {
 	//segment.A = segmentData.A
 	//segment.B = segmentData.B
 	segment.Radius = segmentData.Radius
+	segment.Shape = shape
 
 	return nil
 }
@@ -459,6 +460,7 @@ func (poly *PolygonShape) unmarshalShape(shape *Shape, data []byte) error {
 	}
 
 	poly.SetVerts(*polyData.Vertices, vect.Vect{})
+	poly.Shape = shape
 	return nil
 }
 
@@ -513,6 +515,8 @@ func (box *BoxShape) unmarshalShape(shape *Shape, data []byte) error {
 	if box.Polygon == nil {
 		box.Polygon = new(PolygonShape)
 	}
+	box.Shape = shape
+	box.Polygon.Shape = shape
 	box.UpdatePoly()
 	return nil
 }

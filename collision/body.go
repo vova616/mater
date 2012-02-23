@@ -68,6 +68,9 @@ type Body struct {
 	UserData UserData
 
 	arbiterList *ArbiterEdge
+
+	w_bias float64
+	v_bias vect.Vect
 }
 
 func (body *Body) init() {

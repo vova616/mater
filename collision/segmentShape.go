@@ -8,6 +8,7 @@ import (
 
 //If Settings.AutoUpdateShapes is not set, call Update on the parent shape for changes to the A, B and Radius to take effect.
 type SegmentShape struct {
+	Shape *Shape
 	//start/end points of the segment.
 	A, B vect.Vect
 	//radius of the segment.
@@ -26,12 +27,14 @@ type SegmentShape struct {
 
 // Creates a new SegmentShape with the given points and radius.
 func NewSegment(a, b vect.Vect, r float64) *Shape {
-	shape := new(Shape)
-	shape.ShapeClass = &SegmentShape{
+	shape := newShape()
+	seg := &SegmentShape{
 		A:      a,
 		B:      b,
 		Radius: r,
+		Shape: shape,
 	}
+	shape.ShapeClass = seg
 	return shape
 }
 

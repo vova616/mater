@@ -20,6 +20,7 @@ type Space struct {
 
 	BroadPhase     *broadPhase
 	ContactManager *ContactManager
+	prev_dt float64
 }
 
 func (space *Space) init() {
@@ -111,6 +112,17 @@ func (space *Space) Step(dt float64) {
 		arb.preStep(inv_dt)
 	}
 
+	dt_coef := 0.0
+	if space.prev_dt != 0.0 {
+		dt_coef = dt/space.prev_dt
+	}
+	for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
+		if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
+			continue
+		}
+		arb.applyCachedImpulse(dt_coef)
+	}
+
 	//Perform Iterations
 	for i := 0; i < Settings.Iterations; i++ {
 		for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
@@ -134,6 +146,8 @@ func (space *Space) Step(dt float64) {
 
 		body.UpdateShapes()
 	}
+
+	space.prev_dt = dt
 }
 
 func (space *Space) GetDynamicTreeNodes() []dyntree.DynamicTreeNode {

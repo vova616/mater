@@ -8,6 +8,7 @@ import (
 
 // Convenience wrapper around PolygonShape.
 type BoxShape struct {
+	Shape *Shape
 	// The polygon that represents this box. Do not touch!
 	Polygon *PolygonShape
 	verts   [4]vect.Vect
@@ -21,12 +22,13 @@ type BoxShape struct {
 
 // Creates a new BoxShape with given position, width and height.
 func NewBox(pos vect.Vect, w, h float64) *Shape {
-	shape := new(Shape)
+	shape := newShape()
 	box := &BoxShape{
-		Polygon:  &PolygonShape{},
+		Polygon:  &PolygonShape{Shape: shape},
 		Width:    w,
 		Height:   h,
 		Position: pos,
+		Shape: shape,
 	}
 
 	hw := w / 2.0

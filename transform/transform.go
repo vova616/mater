@@ -46,6 +46,10 @@ func (rot *Rotation) RotateVectInv(v vect.Vect) vect.Vect {
 	}
 }
 
+func RotateVect(v vect.Vect, r Rotation) vect.Vect {
+	return r.RotateVect(v)
+}
+
 type Transform struct {
 	Position vect.Vect
 	Rotation
