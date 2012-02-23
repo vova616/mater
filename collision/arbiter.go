@@ -149,7 +149,7 @@ func (arb *Arbiter) applyCachedImpulse(dt_coef float64) {
 		arb.state = arbiterStateNormal
 		return
 	}
-	return
+
 	a := arb.ShapeA.Body
 	b := arb.ShapeB.Body
 	for i := 0; i < arb.NumContacts; i++ {
