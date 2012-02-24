@@ -50,6 +50,10 @@ func RotateVect(v vect.Vect, r Rotation) vect.Vect {
 	return r.RotateVect(v)
 }
 
+func RotateVectInv(v vect.Vect, r Rotation) vect.Vect {
+	return r.RotateVectInv(v)
+}
+
 type Transform struct {
 	Position vect.Vect
 	Rotation

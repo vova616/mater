@@ -139,10 +139,12 @@ func (space *Space) Step(dt float64) {
 			continue
 		}
 
-		body.Transform.Position.Add(vect.Mult(body.Velocity, dt))
+		body.Transform.Position.Add(vect.Mult(vect.Add(body.Velocity, body.v_bias), dt))
 
 		rot := body.Transform.Angle()
-		body.Transform.SetAngle(rot + dt*body.AngularVelocity)
+		body.Transform.SetAngle(rot + dt*(body.AngularVelocity + body.w_bias))
+		body.v_bias = vect.Vect{}
+		body.w_bias = 0.0
 
 		body.UpdateShapes()
 	}
