@@ -7,7 +7,7 @@ import (
 
 type Rotation struct {
 	//sine and cosine.
-	S, C float64
+	C, S float64
 }
 
 func NewRotation(angle float64) Rotation {
