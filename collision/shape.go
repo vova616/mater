@@ -38,6 +38,7 @@ type Shape struct {
 }
 
 var shapeIdCounter = hashValue(0)
+
 func newShape() *Shape {
 	shape := new(Shape)
 	shape.hash = shapeIdCounter

@@ -24,7 +24,7 @@ func hashPair(a, b hashValue) hashValue {
 
 func k_scalar_body(body *Body, r, n vect.Vect) float64 {
 	rcn := vect.Cross(r, n)
-	return body.invMass + body.invI * rcn * rcn
+	return body.invMass + body.invI*rcn*rcn
 }
 
 func k_scalar(a, b *Body, r1, r2, n vect.Vect) float64 {

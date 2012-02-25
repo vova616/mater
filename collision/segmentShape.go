@@ -32,7 +32,7 @@ func NewSegment(a, b vect.Vect, r float64) *Shape {
 		A:      a,
 		B:      b,
 		Radius: r,
-		Shape: shape,
+		Shape:  shape,
 	}
 	shape.ShapeClass = seg
 	return shape

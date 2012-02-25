@@ -1,8 +1,8 @@
 package collision
 
 import (
-	"github.com/teomat/mater/vect"
 	"github.com/teomat/mater/transform"
+	"github.com/teomat/mater/vect"
 	"math"
 )
 
@@ -14,7 +14,8 @@ type ArbiterEdge struct {
 }
 
 type arbiterState int
-const(
+
+const (
 	arbiterStateFirstColl = iota
 	arbiterStateNormal
 )
@@ -28,11 +29,11 @@ type Arbiter struct {
 	// The contact points between the shapes.
 	Contacts [MaxPoints]Contact
 	// The number of contact points.
-	NumContacts  int
+	NumContacts int
 
 	nodeA, nodeB *ArbiterEdge
 
-	Friction float64
+	Friction    float64
 	Restitution float64
 
 	Surface_vr vect.Vect
@@ -104,10 +105,10 @@ func (arb *Arbiter) update(contacts *[MaxPoints]Contact, numContacts int) {
 
 	arb.Contacts = *contacts
 	arb.NumContacts = numContacts
-	
+
 	arb.Friction = sa.Friction * sb.Friction
 	arb.Restitution = sa.Restitution * sb.Restitution
-	
+
 	arb.Surface_vr = vect.Sub(sa.Surface_v, sb.Surface_v)
 }
 
@@ -128,8 +129,8 @@ func (arb *Arbiter) preStep(inv_dt float64, slop, bias float64) {
 		con.tMass = 1.0 / k_scalar(a, b, con.R1, con.R2, vect.Perp(con.Normal))
 
 		// Calculate the target bias velocity.
-		con.bias = -bias * inv_dt * math.Min(0.0, con.Dist + slop)
-		con.jBias = 0.0		
+		con.bias = -bias * inv_dt * math.Min(0.0, con.Dist+slop)
+		con.jBias = 0.0
 
 		// Calculate the target bounce velocity.
 		con.bounce = normal_relative_velocity(a, b, con.R1, con.R2, con.Normal) * arb.Restitution
@@ -169,7 +170,7 @@ func (arb *Arbiter) applyImpulse() {
 		// Calculate and clamp the bias impulse.
 		jbn := (con.bias - vbn) * con.nMass
 		jbnOld := con.jBias
-		con.jBias = math.Max(jbnOld + jbn, 0.0)
+		con.jBias = math.Max(jbnOld+jbn, 0.0)
 		jbn = con.jBias - jbnOld
 
 		// Apply the bias impulse.
@@ -182,7 +183,7 @@ func (arb *Arbiter) applyImpulse() {
 		// Calculate and clamp the normal impulse.
 		jn := -(con.bounce + vrn) * con.nMass
 		jnOld := con.jnAcc
-		con.jnAcc = math.Max(jnOld + jn, 0.0)
+		con.jnAcc = math.Max(jnOld+jn, 0.0)
 		jn = con.jnAcc - jnOld
 
 		// Calculate the relative tangent velocity.
@@ -192,7 +193,7 @@ func (arb *Arbiter) applyImpulse() {
 		jtMax := arb.Friction * con.jnAcc
 		jt := -vrt * con.tMass
 		jtOld := con.jtAcc
-		con.jtAcc = clamp(jtOld + jt, -jtMax, jtMax)
+		con.jtAcc = clamp(jtOld+jt, -jtMax, jtMax)
 		jt = con.jtAcc - jtOld
 
 		// Apply the final impulse.

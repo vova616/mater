@@ -28,7 +28,7 @@ func NewBox(pos vect.Vect, w, h float64) *Shape {
 		Width:    w,
 		Height:   h,
 		Position: pos,
-		Shape: shape,
+		Shape:    shape,
 	}
 
 	hw := w / 2.0

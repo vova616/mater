@@ -430,7 +430,7 @@ func findPoinsBehindSeg(contacts *[MaxPoints]Contact, num *int, seg *SegmentShap
 
 	for i := 0; i < poly.NumVerts; i++ {
 		v := poly.TVerts[i]
-		if vect.Dot(v, n) < vect.Dot(seg.Tn, seg.Ta) * coef + seg.Radius {
+		if vect.Dot(v, n) < vect.Dot(seg.Tn, seg.Ta)*coef+seg.Radius {
 			dt := vect.Cross(seg.Tn, v)
 			if dta >= dt && dt >= dtb {
 				nextContact(contacts, num).reset(v, n, pDist, hashPair(poly.Shape.hash, hashValue(i)))
@@ -460,7 +460,7 @@ func seg2polyFunc(contacts *[MaxPoints]Contact, seg *SegmentShape, poly *Polygon
 		if dist > 0.0 {
 			return 0
 		} else if dist > poly_min {
-			poly_min = dist;
+			poly_min = dist
 			mini = i
 		}
 	}
@@ -489,7 +489,7 @@ func seg2polyFunc(contacts *[MaxPoints]Contact, seg *SegmentShape, poly *Polygon
 	// If no other collision points are found, try colliding endpoints.
 	if num == 0 {
 		poly_a := poly.TVerts[mini]
-		poly_b := poly.TVerts[(mini + 1) % poly.NumVerts]
+		poly_b := poly.TVerts[(mini+1)%poly.NumVerts]
 
 		if segmentEncapQuery(seg.Ta, poly_a, seg.Radius, 0.0, &contacts[0], vect.Mult(seg.A_tangent, -1)) != 0 {
 			return 1

@@ -21,7 +21,7 @@ type Space struct {
 
 	BroadPhase     *broadPhase
 	ContactManager *ContactManager
-	prev_dt float64
+	prev_dt        float64
 }
 
 func (space *Space) init() {
@@ -120,7 +120,7 @@ func (space *Space) Step(dt float64) {
 
 	dt_coef := 0.0
 	if space.prev_dt != 0.0 {
-		dt_coef = dt/space.prev_dt
+		dt_coef = dt / space.prev_dt
 	}
 	for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
 		if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
@@ -148,7 +148,7 @@ func (space *Space) Step(dt float64) {
 		body.Transform.Position.Add(vect.Mult(vect.Add(body.Velocity, body.v_bias), dt))
 
 		rot := body.Transform.Angle()
-		body.Transform.SetAngle(rot + dt*(body.AngularVelocity + body.w_bias))
+		body.Transform.SetAngle(rot + dt*(body.AngularVelocity+body.w_bias))
 		body.v_bias = vect.Vect{}
 		body.w_bias = 0.0
 

@@ -22,9 +22,9 @@ type Contact struct {
 	Normal   vect.Vect
 	Dist     float64
 
-	R1, R2   vect.Vect
-	nMass float64
-	tMass float64
+	R1, R2 vect.Vect
+	nMass  float64
+	tMass  float64
 	bounce float64
 
 	jnAcc float64

@@ -22,7 +22,7 @@ func NewCircle(pos vect.Vect, radius float64) *Shape {
 	circle := &CircleShape{
 		Position: pos,
 		Radius:   radius,
-		Shape: shape,
+		Shape:    shape,
 	}
 	shape.ShapeClass = circle
 	return shape
