@@ -5,6 +5,7 @@ import (
 	"github.com/teomat/mater/dyntree"
 	"github.com/teomat/mater/vect"
 	"log"
+	"math"
 )
 
 // Holds all bodies, the broadphase and the contactmanager.
@@ -104,12 +105,17 @@ func (space *Space) Step(dt float64) {
 		}
 	}
 
+	slop := Settings.CollisionSlop
+	biasCoef := 0.0
+	if Settings.PositionCorrection {
+		biasCoef = 1.0 - math.Pow(Settings.CollisionBias, dt)
+	}
 	//Perform pre-steps
 	for arb := cm.ArbiterList.Arbiter; arb != nil; arb = arb.Next {
 		if arb.ShapeA.IsSensor || arb.ShapeB.IsSensor {
 			continue
 		}
-		arb.preStep(inv_dt)
+		arb.preStep(inv_dt, slop, biasCoef)
 	}
 
 	dt_coef := 0.0

@@ -13,7 +13,7 @@ func OnKey(key, state int) {
 		case 'P':
 			Settings.Paused = !Settings.Paused
 		case 'S':
-			Settings.SingleStep = Settings.SingleStep
+			Settings.SingleStep = true
 		//Escape
 		case glfw.KeyEsc:
 			Settings.Running = false

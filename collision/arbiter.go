@@ -60,10 +60,6 @@ func CreateArbiter(sa, sb *Shape) *Arbiter {
 		arb.ShapeB = sa
 	}
 
-	/*arb.NumContacts = collide(&arb.Contacts, arb.ShapeA, arb.ShapeB)*/
-
-	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
-	arb.Restitution = math.Sqrt(sa.Restitution * sb.Restitution)
 	arb.Surface_vr = vect.Vect{}
 
 	arb.nodeA = new(ArbiterEdge)
@@ -109,17 +105,13 @@ func (arb *Arbiter) update(contacts *[MaxPoints]Contact, numContacts int) {
 	arb.Contacts = *contacts
 	arb.NumContacts = numContacts
 	
-	arb.Friction = math.Sqrt(sa.Friction * sb.Friction)
-	arb.Restitution = math.Sqrt(sa.Restitution * sb.Restitution)
+	arb.Friction = sa.Friction * sb.Friction
+	arb.Restitution = sa.Restitution * sb.Restitution
+	
 	arb.Surface_vr = vect.Sub(sa.Surface_v, sb.Surface_v)
 }
 
-func (arb *Arbiter) preStep(inv_dt float64) {
-	const allowedPenetration = 0.01
-	bias := 0.0
-	if Settings.PositionCorrection {
-		bias = 0.2
-	}
+func (arb *Arbiter) preStep(inv_dt float64, slop, bias float64) {
 
 	a := arb.ShapeA.Body
 	b := arb.ShapeB.Body
@@ -136,8 +128,8 @@ func (arb *Arbiter) preStep(inv_dt float64) {
 		con.tMass = 1.0 / k_scalar(a, b, con.R1, con.R2, vect.Perp(con.Normal))
 
 		// Calculate the target bias velocity.
-		con.bias = -bias * inv_dt * math.Min(0.0, con.Dist + allowedPenetration)
-		con.jBias = 0.0
+		con.bias = -bias * inv_dt * math.Min(0.0, con.Dist + slop)
+		con.jBias = 0.0		
 
 		// Calculate the target bounce velocity.
 		con.bounce = normal_relative_velocity(a, b, con.R1, con.R2, con.Normal) * arb.Restitution
@@ -145,7 +137,7 @@ func (arb *Arbiter) preStep(inv_dt float64) {
 }
 
 func (arb *Arbiter) applyCachedImpulse(dt_coef float64) {
-	if arb.state == arbiterStateFirstColl {
+	if arb.state == arbiterStateFirstColl && arb.NumContacts > 0 {
 		arb.state = arbiterStateNormal
 		return
 	}
