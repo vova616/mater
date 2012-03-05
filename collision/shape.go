@@ -40,9 +40,11 @@ type Shape struct {
 	// Surface velocity used when solving for friction.
 	Surface_v vect.Vect
 
-	// The groups this shape belongs to
+	// The categories this shape belongs to.
+	// If a shape has any bit in CollidesWith in common with another shape's CollisionCat, then they collide.
+	// i.e. if ShapeA.CollidesWith & ShapeB.CollisionCat != 0
 	CollisionCat CollisionCategory
-	// The groups this shape collides with
+	// The categories this shape collides with
 	CollidesWith CollisionCategory
 }
 
