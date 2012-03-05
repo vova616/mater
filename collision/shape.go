@@ -13,6 +13,10 @@ type shapeProxy struct {
 	Shape   *Shape
 }
 
+// Datatype used for Shape.CollisionCat and Shape.CollidesWith.
+// Change if you need more/less different categories.
+type CollisionCategory uint16
+
 // Base shape data.
 // Holds data all shapetypes have in common.
 type Shape struct {
@@ -35,15 +39,31 @@ type Shape struct {
 
 	// Surface velocity used when solving for friction.
 	Surface_v vect.Vect
+
+	// The groups this shape belongs to
+	CollisionCat CollisionCategory
+	// The groups this shape collides with
+	CollidesWith CollisionCategory
 }
 
 var shapeIdCounter = hashValue(0)
 
 func newShape() *Shape {
 	shape := new(Shape)
+	shape.init()
+	return shape
+}
+
+func (shape *Shape) init() {
+	if shape.hash != 0 {
+		log.Printf("Warning: Shape already initialized")
+		return
+	}
 	shape.hash = shapeIdCounter
 	shapeIdCounter++
-	return shape
+	//by default: in group 1, collides only with group 1
+	shape.CollisionCat = 1
+	shape.CollidesWith = 1
 }
 
 // Calls ShapeClass.update and sets the new AABB.

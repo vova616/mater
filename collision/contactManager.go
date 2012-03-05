@@ -251,5 +251,6 @@ func (cm *ContactManager) collide() {
 }
 
 func shouldCollide(sA, sB *Shape) bool {
-	return true
+	return sA.CollisionCat & sB.CollidesWith != 0 ||
+		sB.CollisionCat & sA.CollidesWith != 0
 }

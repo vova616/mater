@@ -10,6 +10,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"unsafe"
 )
 
 // float64 wrapper that can be used to marshal +/-Inf and NaN to json
@@ -255,11 +256,20 @@ func (shape *Shape) MarshalJSON() ([]byte, error) {
 		Friction    float64
 		Restitution float64
 		Sensor      bool
+		Surface_v   vect.Vect
+
+		CollisionCat string
+		CollidesWith string
 	}{
 		ShapeType:   shape.ShapeType().ToString(),
 		Friction:    shape.Friction,
 		Restitution: shape.Restitution,
 		Sensor:      shape.IsSensor,
+		Surface_v:   shape.Surface_v,
+
+		//encoded as bitstrings
+		CollisionCat: strconv.FormatUint(uint64(shape.CollisionCat), 2),
+		CollidesWith: strconv.FormatUint(uint64(shape.CollidesWith), 2),
 	}
 
 	data, err := json.Marshal(&shapeData)
@@ -281,15 +291,25 @@ func (shape *Shape) MarshalJSON() ([]byte, error) {
 }
 
 func (shape *Shape) UnmarshalJSON(data []byte) error {
+	shape.init()
+
 	shapeData := struct {
 		ShapeType   string
 		Friction    float64
 		Restitution float64
 		Sensor      bool
+		Surface_v   vect.Vect
+
+		CollisionCat string
+		CollidesWith string
 	}{
 		Friction:    shape.Friction,
 		Restitution: shape.Restitution,
 		Sensor:      shape.IsSensor,
+		Surface_v:   shape.Surface_v,
+
+		CollisionCat: strconv.FormatUint(uint64(shape.CollisionCat), 2),
+		CollidesWith: strconv.FormatUint(uint64(shape.CollidesWith), 2),
 	}
 
 	err := json.Unmarshal(data, &shapeData)
@@ -301,6 +321,21 @@ func (shape *Shape) UnmarshalJSON(data []byte) error {
 	shape.Friction = shapeData.Friction
 	shape.Restitution = shapeData.Restitution
 	shape.IsSensor = shapeData.Sensor
+	shape.Surface_v = shapeData.Surface_v
+
+	colCat, err := strconv.ParseUint(shapeData.CollisionCat, 2, int(unsafe.Sizeof(CollisionCategory(0))))
+	if err != nil {
+		log.Printf("Error decoding CollisionCat")
+		return err
+	}
+	colWith, err := strconv.ParseUint(shapeData.CollidesWith, 2, int(unsafe.Sizeof(CollisionCategory(0))))
+	if err != nil {
+		log.Printf("Error decoding CollidesWith")
+		return err
+	}
+
+	shape.CollisionCat = CollisionCategory(colCat)
+	shape.CollidesWith = CollisionCategory(colWith)
 
 	switch strings.ToLower(shapeData.ShapeType) {
 	case "circle":
