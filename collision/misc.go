@@ -37,7 +37,7 @@ func k_scalar(a, b *Body, r1, r2, n vect.Vect) float64 {
 
 func relative_velocity(a, b *Body, r1, r2 vect.Vect) vect.Vect {
 	v1_sum := vect.Add(a.Velocity, vect.Mult(vect.Perp(r1), a.AngularVelocity))
-	v2_sum := vect.Add(b.Velocity, vect.Mult(vect.Perp(r2), a.AngularVelocity))
+	v2_sum := vect.Add(b.Velocity, vect.Mult(vect.Perp(r2), b.AngularVelocity))
 
 	return vect.Sub(v2_sum, v1_sum)
 }
